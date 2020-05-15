@@ -1,0 +1,42 @@
+[
+    {
+      "ID": 1,
+      "NOMBRE": "Administrador"
+    },
+    {
+      "ID": 2,
+      "NOMBRE": "Usuario 1"
+    },
+    {
+      "ID": 3,
+      "NOMBRE": "Usuario 2"
+    },
+    {
+      "ID": 4,
+      "NOMBRE": "Usuario 3"
+    },
+    {
+      "ID": 5,
+      "NOMBRE": "Usuario 4"
+    },
+    {
+      "ID": 6,
+      "NOMBRE": "Usuario 5"
+    },
+    {
+      "ID": 7,
+      "NOMBRE": "Usuario 6"
+    },
+    {
+      "ID": 8,
+      "NOMBRE": "Usuario 7"
+    },
+    {
+      "ID": 9,
+      "NOMBRE": "Usuario 8"
+    },
+    {
+      "ID": 10,
+      "NOMBRE": "Usuario 9"
+    }
+  ]

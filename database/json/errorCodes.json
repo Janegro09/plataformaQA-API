@@ -1,0 +1,497 @@
+{
+  "ERR_01": {
+    "HTTP_CODE": 400,
+    "TEXTO": "Error al logear usuario. Faltan parametros",
+    "MENSAJE": "ERR_01 - Error al logear usuario. Faltan parametros"
+  },
+  "ERR_02": {
+    "HTTP_CODE": 401,
+    "TEXTO": "Error de autenticacion",
+    "MENSAJE": "ERR_02 - Error de autenticacion"
+  },
+  "ERR_03": {
+    "HTTP_CODE": 401,
+    "TEXTO": "Error al generar token",
+    "MENSAJE": "ERR_03 - Error al generar token"
+  },
+  "ERR_04": {
+    "HTTP_CODE": 401,
+    "TEXTO": "No autorizado",
+    "MENSAJE": "ERR_04 - No autorizado"
+  },
+  "ERR_05": {
+    "HTTP_CODE": 401,
+    "TEXTO": "Token vencido o invalido",
+    "MENSAJE": "ERR_05 - Token vencido o invalido"
+  },
+  "ERR_06": {
+    "HTTP_CODE": 403,
+    "TEXTO": "Error de permisos de usuario. No permitido",
+    "MENSAJE": "ERR_06 - Error de permisos de usuario. No permitido"
+  },
+  "ERR_07": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_07 -"
+  },
+  "ERR_08": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_08 -"
+  },
+  "ERR_09": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_09 -"
+  },
+  "ERR_10": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_10 -"
+  },
+  "ERR_11": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_11 -"
+  },
+  "ERR_12": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_12 -"
+  },
+  "ERR_13": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_13 -"
+  },
+  "ERR_14": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_14 -"
+  },
+  "ERR_15": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_15 -"
+  },
+  "ERR_16": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_16 -"
+  },
+  "ERR_17": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_17 -"
+  },
+  "ERR_18": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_18 -"
+  },
+  "ERR_19": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_19 -"
+  },
+  "ERR_20": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_20 -"
+  },
+  "ERR_21": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_21 -"
+  },
+  "ERR_22": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_22 -"
+  },
+  "ERR_23": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_23 -"
+  },
+  "ERR_24": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_24 -"
+  },
+  "ERR_25": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_25 -"
+  },
+  "ERR_26": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_26 -"
+  },
+  "ERR_27": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_27 -"
+  },
+  "ERR_28": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_28 -"
+  },
+  "ERR_29": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_29 -"
+  },
+  "ERR_30": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_30 -"
+  },
+  "ERR_31": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_31 -"
+  },
+  "ERR_32": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_32 -"
+  },
+  "ERR_33": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_33 -"
+  },
+  "ERR_34": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_34 -"
+  },
+  "ERR_35": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_35 -"
+  },
+  "ERR_36": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_36 -"
+  },
+  "ERR_37": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_37 -"
+  },
+  "ERR_38": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_38 -"
+  },
+  "ERR_39": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_39 -"
+  },
+  "ERR_40": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_40 -"
+  },
+  "ERR_41": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_41 -"
+  },
+  "ERR_42": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_42 -"
+  },
+  "ERR_43": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_43 -"
+  },
+  "ERR_44": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_44 -"
+  },
+  "ERR_45": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_45 -"
+  },
+  "ERR_46": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_46 -"
+  },
+  "ERR_47": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_47 -"
+  },
+  "ERR_48": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_48 -"
+  },
+  "ERR_49": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_49 -"
+  },
+  "ERR_50": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_50 -"
+  },
+  "ERR_51": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_51 -"
+  },
+  "ERR_52": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_52 -"
+  },
+  "ERR_53": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_53 -"
+  },
+  "ERR_54": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_54 -"
+  },
+  "ERR_55": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_55 -"
+  },
+  "ERR_56": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_56 -"
+  },
+  "ERR_57": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_57 -"
+  },
+  "ERR_58": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_58 -"
+  },
+  "ERR_59": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_59 -"
+  },
+  "ERR_60": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_60 -"
+  },
+  "ERR_61": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_61 -"
+  },
+  "ERR_62": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_62 -"
+  },
+  "ERR_63": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_63 -"
+  },
+  "ERR_64": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_64 -"
+  },
+  "ERR_65": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_65 -"
+  },
+  "ERR_66": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_66 -"
+  },
+  "ERR_67": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_67 -"
+  },
+  "ERR_68": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_68 -"
+  },
+  "ERR_69": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_69 -"
+  },
+  "ERR_70": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_70 -"
+  },
+  "ERR_71": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_71 -"
+  },
+  "ERR_72": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_72 -"
+  },
+  "ERR_73": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_73 -"
+  },
+  "ERR_74": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_74 -"
+  },
+  "ERR_75": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_75 -"
+  },
+  "ERR_76": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_76 -"
+  },
+  "ERR_77": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_77 -"
+  },
+  "ERR_78": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_78 -"
+  },
+  "ERR_79": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_79 -"
+  },
+  "ERR_80": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_80 -"
+  },
+  "ERR_81": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_81 -"
+  },
+  "ERR_82": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_82 -"
+  },
+  "ERR_83": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_83 -"
+  },
+  "ERR_84": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_84 -"
+  },
+  "ERR_85": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_85 -"
+  },
+  "ERR_86": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_86 -"
+  },
+  "ERR_87": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_87 -"
+  },
+  "ERR_88": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_88 -"
+  },
+  "ERR_89": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_89 -"
+  },
+  "ERR_90": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_90 -"
+  },
+  "ERR_91": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_91 -"
+  },
+  "ERR_92": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_92 -"
+  },
+  "ERR_93": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_93 -"
+  },
+  "ERR_94": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_94 -"
+  },
+  "ERR_95": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_95 -"
+  },
+  "ERR_96": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_96 -"
+  },
+  "ERR_97": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_97 -"
+  },
+  "ERR_98": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_98 -"
+  },
+  "ERR_99": {
+    "HTTP_CODE": 400,
+    "TEXTO": "",
+    "MENSAJE": "ERR_99 -"
+  }
+}

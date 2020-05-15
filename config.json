@@ -1,0 +1,60 @@
+{
+    "base_url": "",
+    "mainInfo": {
+        "port": 8000,
+        "envrioment": "DEVELOPMENT",
+        "routes": "/api/v1",
+        "jwtPass": "6EF28DF7C26525C45247E64E17CCC"
+    },
+    "sender": {
+        "mail": {
+            "service": "gmail",
+            "auth": {
+                "user": "recursosysoluciones2019@gmail.com",
+                "pass": "Febrero2019"
+            }
+        }
+    },
+    "productionDB": {
+        "mysql":{
+            "host": "localhost",
+            "user": "",
+            "password": "",
+            "database": "apiTelecom",
+            "port": 3306
+        },
+        "mongodb": {
+            "host": "localhost",
+            "user": "apiprincipal",
+            "password": "Recursos2020!",
+            "database": "plataformaQA",
+            "port": 27017
+        }
+    },
+    "developmentDB": {
+        "mysql":{
+            "host": "localhost",
+            "user": "root",
+            "password": "",
+            "database": "plataformaQA",
+            "port": 3306
+        },
+        "mongodb": {
+            "host": "localhost",
+            "user": "root",
+            "password": "root",
+            "database": "plataformaQA",
+            "port": 27017
+        }
+    },
+    "projectInformation": {
+        "author": [      
+            "Ramiro Macciuci",
+            "Maximiliano Leonel Coppola",
+            "Cesar I. Soler"
+        ],
+        "company": "Telecom Argentina S.A.",
+        "project": "Plataforma QA"
+    },
+    "routesNotToken": ["test", "login", "files"]
+}

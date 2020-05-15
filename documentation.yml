@@ -1,0 +1,179 @@
+openapi: 3.0.0
+servers:
+  - url: http://developers.ramiromacciuci.com.ar:{port}/api/{version}
+    description: Testing server
+    variables: 
+      port:
+        default: '8000'
+        description: Puerto de conexion a la API
+      version:
+        default: v1
+        description: Version de la API
+info:
+  title: Main APIRest for Ecommerce
+  description: API Base para ecommerce
+  contact:
+    name: Ramiro Macciuci
+    url: https://www.ramiromacciuci.com.ar
+    email: ramimacciuci@gmail.com
+  license:
+    name: Apache 2.0
+    url: 'http://www.apache.org/licenses/LICENSE-2.0.html'
+  version: "v1"
+tags:
+  - name: Users
+    description: Users Information
+  - name: Developers
+    description: Methods only used for developers
+paths:
+  /frontUtilities:
+    get:
+      tags:
+        - Developers
+      description: Retorna todas las bases y datos necesarios para utilizar en el frontend
+      summary: Return front utilities
+      responses:
+        '200': 
+          description: Retorna las utilidades de front
+          content: 
+            application/json: 
+              schema: 
+                $ref: '#/components/schemas/okResponse'
+  /test: 
+    get:
+      tags:
+       - Developers
+      description: Testea la conexion con la API
+      summary: Test Method
+      responses:
+        '200':
+          description: Prueba la conexion con la API sin autenticacion
+  /login:
+    post:
+      tags: 
+        - Users
+      description: Request para logear al usuario, retorna un token valido por 1 hora
+      summary: Return user token valid for 3600ms
+      requestBody:
+        content:
+          application/json:
+            schema:
+              properties:
+                email:
+                  example: example@example.com
+                  type: string
+                  description: Email del usuario a logear
+                password:
+                  example: adminadminPasword
+                  type: string
+                  description: Password del usuario a logear
+              required:
+                - email
+                - password
+      responses:
+        '202': 
+          description: Retorna objeto con token valido por 3600ms necesario en todos los request
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/withToken'
+        '400': 
+          description: Error de autenticacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        '401': 
+          description: Error de autenticacion
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/errorResponse'
+        
+components: 
+ schemas: 
+    withToken: 
+      type: object
+      description: Default Response for requests
+      properties: 
+        Success: 
+          type: boolean
+          example: true
+        Message: 
+          type: string
+          example: Utilidades para desarrolladores
+        Data:
+          type: object
+        loggedUser: 
+          type: object
+          example:
+            id: 5e99f17125802918e08cd4dd
+            name: Nombre
+            lastName: Example
+            email: example@example.com
+            dni: 0
+            level: Administrador
+            imagen: false
+            token: eyJhbGciOiJIUzI1NiI6IkpXVCJ9.eyJpZCI6ITcxMjU4MDI5MThlMDhjZDRkZCIVtYWlsIjoicmFtaW1hY2NpdWNpQGdtYWlsLmNvbSIsImlhdCI6MTU4NzM4NDI1MSwiZXhwIjoxNTg3Mzg3ODUxfQ.JjnCBY_4lCJIUvgfh4gaU-rXZQbU
+        HttpCodeResponse:
+          type: integer
+          format: int32
+          example: 202
+    loggedUser: 
+      type: object
+      description: Default Response for requests
+      properties: 
+        Success: 
+          type: boolean
+          example: true
+        Message: 
+          type: string
+          example: Utilidades para desarrolladores
+        Data:
+          type: object
+        loggedUser: 
+          type: object
+          example:
+            id: 5e99f17125802918e08cd4dd
+            name: Nombre
+            lastName: Example
+            email: example@example.com
+            dni: 0
+            level: Administrador
+            imagen: false
+        HttpCodeResponse:
+          type: integer
+          format: int32
+          example: 202
+    okResponse: 
+      type: object
+      description: Default Response for requests
+      properties: 
+        Success: 
+          type: boolean
+          example: true
+        Message: 
+          type: string
+          example: Utilidades para desarrolladores
+        Data:
+          type: object
+        HttpCodeResponse:
+          type: integer
+          format: int32
+          example: 200
+    errorResponse: 
+      type: object
+      description: Retorna un error con codigo unico
+      properties: 
+        Success: 
+          type: boolean
+          example: false
+        Message: 
+          type: string
+          example: ERR_03 - Usuario inexistente en nuestra base de datos
+        Data:
+          type: object
+        HttpCodeResponse:
+          type: integer
+          format: int32
+          example: 401
