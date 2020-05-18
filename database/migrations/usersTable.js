@@ -18,9 +18,6 @@ var Users = new Schema({
         required: true,
         lowercase: true
     },
-    group: {
-        type: String
-    },
     role: {
         type: String,
         required: true

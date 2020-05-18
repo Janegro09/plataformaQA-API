@@ -31,7 +31,7 @@ var controller = {
     login: async (req, res) => {
         const {user, password} = req.body;
         if(user == undefined || password == undefined) return views.error.code(res,'ERR_01');
-        let consulta = await Auth.checkUser(user,password);
+        let consulta = await Users.checkUserPassword(user,password);
         if(!consulta) return views.error.code(res,'ERR_02');
         // Asignamos Token
         let token = new Auth(consulta[0]);

@@ -36,15 +36,15 @@ var controller = {
         // let auth = await Permit.checkPermit(req,"Puede consultar usuarios");
         // console.log(auth);
         let id = req.params.id ? req.params.id : 0;
-
         let users;
         try{
-            users = await usersModel.get(id,false);
+            users = await usersModel.get(id,false,req);
             if(users.length == 0) return views.error.code(res, 'ERR_07');
             else{
                 views.customResponse(res,true,200,"",users);
             }    
-        }catch{
+        }catch(e){
+            console.log(e);
             return views.error.code(res, 'ERR_08');
         }
     },
@@ -88,7 +88,7 @@ var controller = {
         let id = req.params.id;
 
         // Buscamos el usuario por id 
-        let consulta = await usersModel.get(id);
+        let consulta = await usersModel.get(id, true, req);
         if(!consulta) return views.error.code(res, 'ERR_08');
         let update = new usersModel({
             id: id,

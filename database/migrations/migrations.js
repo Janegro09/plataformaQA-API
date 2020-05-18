@@ -10,6 +10,7 @@ const Files         = require('./Files');
 const Permissions   = require('./Permissions');
 const Roles         = require('./Roles');
 const Groups        = require('./groups');
+const groupsPerUser = require('./groupsperuser');
 
 
 var migrations = function() {
@@ -18,6 +19,7 @@ var migrations = function() {
     Permissions();
     Roles();
     Groups();
+    groupsPerUser();
 }
 
 module.exports = migrations;

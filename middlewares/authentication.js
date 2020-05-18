@@ -46,7 +46,7 @@ class Auth {
     static async checkToken(req, res, next) {
         let url = req.url;
         url = url.split('/')[3];
-        if(cfile.routesNotToken.indexOf(url) < 0) {
+        if(cfile.routesNotToken.indexOf(url) === -1) {
             var token   = req.headers.authorization;
             if(!token) return views.error.code(res,'ERR_04');
             token = token.split(" ");
@@ -70,16 +70,6 @@ class Auth {
             next();
         }
     }
-
-    static async checkUser(id, pass){
-        let consulta = await Users.get(id);
-        if(!consulta) return false;
-        let originPass = consulta[0].password;
-        if(!password_hash.verify(pass, originPass)) return false;
-        else return consulta;
-    }
-
-
 }
 
 module.exports = Auth;

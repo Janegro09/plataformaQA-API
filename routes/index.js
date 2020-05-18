@@ -9,5 +9,8 @@ app.use('/', require('./main'));
 app.use(`${routesPath}/users`,require('./users'));
 app.use(`${routesPath}/files`,require('./files'));
 app.use(`${routesPath}/roles`,require('./roles'));
+app.use(`${routesPath}/groups`,require('./groups'));
+app.use(`${routesPath}/permissions`,require('./permissions'));
+
 
 module.exports = app;

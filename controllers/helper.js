@@ -55,6 +55,7 @@ var controller = {
                 email: user.email,
                 dni: user.dni,
                 role: user.role,
+                group: user.group,
                 imagen: user.imagen,
                 token: token ? token : user.token
             }

@@ -48,10 +48,15 @@
         }
     },
     "projectInformation": {
-        "author": [      
-            "Ramiro Macciuci",
-            "Maximiliano Leonel Coppola",
-            "Cesar I. Soler"
+        "author": [
+            "Alejandra Velazquez",
+            "Cesar I. Soler",
+            "Maximiliano Leonel Cóppola",
+            "Javier Ricardo Sosa",
+            "Alfredo Gelberg Izrastzoff",
+            "Matias Sartori",
+            "Gabriel Navarro",        
+            "Ramiro Macciuci <rmacciucivicente@teco.com.ar>"
         ],
         "company": "Telecom Argentina S.A.",
         "project": "Plataforma QA"
