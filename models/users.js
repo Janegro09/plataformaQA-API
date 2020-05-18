@@ -65,7 +65,8 @@ class Users {
         data.createdAt = Date.now();
 
         // Asignamos una contraseña y la enviamos por mail
-        let password = `${data.name}${data.id}`;
+        //let password = `${data.name}${data.id}`;
+        let password = 'Telecom01';
         data.password = password_hash.generate(password);
 
         // Creamos el nuevo usuario

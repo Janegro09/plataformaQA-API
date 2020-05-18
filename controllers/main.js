@@ -38,7 +38,8 @@ var controller = {
         token = await token.generarToken();
         if(!token) return views.error.code(res,'ERR_03');
         else return views.customResponse(res,true,202,"",{},helper.users.loggedUser(consulta[0],token))
-    }   
+    }
+
 }
 
 module.exports = controller;
