@@ -17,12 +17,12 @@ const controller = {
 
         if(file.mimetype != "text/csv") return views.error.code(res, 'ERR_17'); 
 
-        controller.import(req, res);
+        controller.import(req);
 
         return views.customResponse(res, true, 200, "Los registros comenzaron a actualizarse, en breve recibira un mail con los resultados");
 
     },
-    import: async (req, res) => {
+    import: async (req) => {
 
         const archivo = new files(req);
         let c = await archivo.save();
@@ -30,22 +30,26 @@ const controller = {
         let tempData, user, group, agregados = 0, fallaron = 0;
         for(let i = 0; i < c.length; i++){
             if(!c[i]['Legajo'] && !c[i]['Mail']) continue;
+
+            // No agregamos los usuarios pertenecientes a 365
+            if(c[i]['Empresa'] == '365') continue;
+
             tempData = new UserNomina(c[i]);
             tempData = await tempData.getUserInfo();
             user     = new models.users(tempData);
-            user     = await user.saveOrUpdate();
-            if(!user) {
-                fallaron++
-            }
-            else agregados++;
-            console.log(i);
+            user     = user.saveOrUpdate().then(user => {
+                if(!user) {
+                    fallaron++
+                }
+                else agregados++;
+            })
         }
         let mailContain = "";
         mailContain     += `<h3>Actualizacion de nomina en ${helper.configFile().projectInformation.project}</h3>`;
-        mailContain     += `<br><p>Se agregaron a modificaron: <strong>${agregados} usuarios</strong></p>`;
+        mailContain     += `<br><p>Se agregaron o modificaron: <strong>${agregados} usuarios</strong></p>`;
         mailContain     += `<br><p>Fallaron: <strong>${fallaron} usuarios</strong></p>`;
         let mail = new helper.sender(['ramimacciuci@gmail.com'],`Actualizacion de nomina en ${helper.configFile().projectInformation.project}`,mailContain);
-        mail.send().then(ok => ok);
+        mail.send().then(ok => console.log(ok), err => console.log(err));
         
         // Enviamos el mail con la notificacion de finalizacion
 

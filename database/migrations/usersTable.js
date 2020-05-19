@@ -38,9 +38,8 @@ var Users = new Schema({
     },
     email: {
         type: String,
-        required: true,
-        lowercase: true,
-        unique: true
+        default: "",
+        lowercase: true
     },
     phone: {
         type: Number,

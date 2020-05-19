@@ -133,9 +133,27 @@ class Groups {
         return consulta;
     }
 
+    static async getUserGroupsName(userId){
+        let consulta = await Groups.getUserGroups(userId);
+        let ReturnData = [], tempData,c;
+        for(let x = 0; x < consulta.length; x++){
+            c = await groupsSchema.find({_id: consulta[x].groupId});
+            tempData = {
+                id: consulta[x].groupId,
+                name: c[0].group
+            }
+            ReturnData.push(tempData);
+        }
+        return ReturnData;
+    }
+
     static async getorcreateGroup(groupName){
         if(!groupName) return false;
         if(typeof groupName !== 'string') return false;
+        let teco = groupName.split(" ");
+        if(teco[0] == "TECO" || teco[0] == "CCT"){
+            groupName = "TELECOM";
+        }
         let c = await groupsSchema.find({group: groupName});
         let id;
         if(c.length === 0){
