@@ -83,9 +83,6 @@ var Users = new Schema({
     propiedad: {
         type: String
     },
-    propiedad: {
-        type: String
-    },
     canal: {
         type: String
     },

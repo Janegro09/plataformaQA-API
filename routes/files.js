@@ -6,7 +6,6 @@ let router = express.Router();
 
 router.route('/:section?/:id?')
                 .post(files.upload)
-                .delete(files.delete)
 
 
 module.exports = router;

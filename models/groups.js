@@ -19,10 +19,15 @@ class Groups {
 
     async save() {
         if(!this.group) return false;
+        let data = {};
+        for(let x in this){
+            if(!this[x]) continue;
+            data[x] = this[x];
+        }
 
         // Consultamos que el nombre de grupo no exista
         try {
-            let c = new groupsSchema(this);
+            let c = new groupsSchema(data);
             c = await c.save();
             return c;
         }catch (e) {
@@ -128,14 +133,26 @@ class Groups {
         return consulta;
     }
 
+    static async getorcreateGroup(groupName){
+        if(!groupName) return false;
+        if(typeof groupName !== 'string') return false;
+        let c = await groupsSchema.find({group: groupName});
+        let id;
+        if(c.length === 0){
+            // Entonces agregamos un nuevo grupo;
+            c = new Groups({group: groupName});
+            c = await c.save();
+            id = c._id;
+        }else{
+            id = c[0]._id;
+        }
+        return id;
+    }
+
     static async assignUserGroup(userId, GroupArray){
-        // Buscamos si existe el usuario
-        let consulta = await usersSchema.find({id: userId});
-        userId = consulta[0]._id;
-
         // Creamos un array de los grupos asignados
+        GroupArray = String(GroupArray);
         GroupArray = GroupArray.split('|');
-
         // Traemos los grupos de ese usuario
         await groupsPerUserSchema.deleteMany({userId: userId});
 

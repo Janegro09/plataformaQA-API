@@ -48,6 +48,7 @@ class uploadFile {
                 saveFile = new filesModel(fileData)
                 await saveFile.save()
                 fileData.id = saveFile._id;
+                this.uploadFile = fileData;
                 return fileData;
             }catch{
                 return false;
@@ -60,8 +61,19 @@ class uploadFile {
 
     }
 
-    static delete() {
-        
+    async delete() {
+        let id = this.uploadFile.id;
+        return new Promise((res, rej) => {
+            filesModel.findById(id).then((v) => {
+                helper.files.delete('../files/' + v.url);
+                filesModel.deleteOne({_id: id}).then((r) => {
+                    if(r.deletedCount > 0) res(true);
+                    else res(false)
+                })
+            }).catch((e) => {
+                res(false);
+            })
+        })
     }
 }
 

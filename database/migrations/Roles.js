@@ -7,6 +7,10 @@ var Roles = new Schema({
         required: true,
         unique: true
     },
+    description: {
+        type: String,
+        default: ""
+    },
     roleDeleted: {
         type: Boolean,
         default: false

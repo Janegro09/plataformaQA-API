@@ -59,7 +59,64 @@ var controller = {
                 imagen: user.imagen,
                 token: token ? token : user.token
             }
-        }        
+        },
+        convertNametoFullName: (fullName) => {
+            if(!fullName) return false;
+            let name = "", lastName = "";
+            fullName = fullName.split(" ");
+            switch (fullName.length){
+                case 1: // Entonces esta mal la sintaxis, asique devuelve el mismo valor en nombre y en apellido
+                    lastName    = fullName[0];
+                    name        = fullName[0];
+                break;
+                case 2: // Entonces tiene 1 apellido y 1 nombre
+                    lastName    = fullName[0];
+                    name        = fullName[1];
+                break;
+                case 3: // Entonces tiene 1 apellido y 2 nombres
+                    lastName    = fullName[0];
+                    name        = fullName[1] + " " + fullName[2];
+                break;
+                case 4: // Entonces tiene 2 apellidos y 2 nombres
+                    lastName    = fullName[0] + " " + fullName[1];
+                    name        = fullName[2] + " " + fullName[3];
+                break;
+                default: 
+                    if(fullName.length > 4){
+                        // Entonces los dos primeros son apellidos y los demas son nombres
+                        lastName = fullName[0] + " " + fullName[1];
+                        for(let i = 2; i < fullName.length; i++){
+                            name += name !== "" ? " " : "";
+                            name += fullName[i];
+                        }
+                    }else if(fullName.length === 0){
+                        return false;
+                    }
+                break;
+            }
+
+            return {
+                name: name,
+                lastName: lastName
+            }
+        },
+        convertCUILtoDNI: (cuil) => {
+            if(!cuil) return false;
+            let dataReturn = {
+                cuil: cuil,
+                dni: 0
+            }
+            if(cuil.length === 11 || cuil.length === 10){
+                // Entonces porque es un CUIL
+                dataReturn.dni = cuil.substr(2,8);
+            }else if(cuil.length < 10 && cuil.length >= 8){
+                // Entonces porque es un DNI
+                dataReturn.dni = cuil;
+            }else{
+                dataReturn.dni = cuil;
+            }
+            return dataReturn;
+        }      
     },
     files:{
         delete: (path) => {

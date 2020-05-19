@@ -61,5 +61,5 @@
         "company": "Telecom Argentina S.A.",
         "project": "Plataforma QA"
     },
-    "routesNotToken": ["test", "login", "files"]
+    "routesNotToken": ["test", "login", "files", "backoffice"]
 }

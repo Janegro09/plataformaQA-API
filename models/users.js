@@ -12,29 +12,87 @@ const Groups        = require('../models/groups');
  */
 class Users {
     constructor(userObject = {}){
-        let {
-            id = false, 
-            name = false, 
-            lastName = false, 
-            dni = false,
-            password = false,
-            email = false,
-            phone = false,
-            role = false,
-            imagen = false,
-            group  = false
-        } = userObject
+        this.id                 = userObject.id                 ? userObject.id                               : false;        
+        this.name               = userObject.name               ? userObject.name                             : false;
+        this.lastName           = userObject.lastName           ? userObject.lastName                         : false;
+        this.role               = userObject.role               ? userObject.role                             : false;
+        this.dni                = userObject.dni                ? userObject.dni                              : false;
+        this.cuil               = userObject.cuil               ? userObject.cuil                             : false;
+        this.password           = userObject.password           ? password_hash.generate(userObject.password) : false;
+        this.legajo             = userObject.legajo             ? userObject.legajo                           : false;
+        this.userActive         = userObject.userActive         ? userObject.userActive                       : true;
+        this.email              = userObject.email              ? userObject.email                            : false;
+        this.phone              = userObject.phone              ? userObject.phone                            : false;
+        this.imagen             = userObject.imagen             ? userObject.imagen                           : false;
+        this.sexo               = userObject.sexo               ? userObject.sexo                             : false;
+        this.status             = userObject.status             ? userObject.status                           : false;
+        this.fechaIngresoLinea  = userObject.fechaIngresoLinea  ? userObject.fechaIngresoLinea                : false;
+        this.fechaBaja          = userObject.fechaBaja          ? userObject.fechaBaja                        : false;
+        this.motivoBaja         = userObject.motivoBaja         ? userObject.motivoBaja                       : false;
+        this.propiedad          = userObject.propiedad          ? userObject.propiedad                        : false;
+        this.canal              = userObject.canal              ? userObject.canal                            : false;
+        this.negocio            = userObject.negocio            ? userObject.negocio                          : false;
+        this.razonSocial        = userObject.razonSocial        ? userObject.razonSocial                      : false;
+        this.edificioLaboral    = userObject.edificioLaboral    ? userObject.edificioLaboral                  : false;
+        this.gerencia1          = userObject.gerencia1          ? userObject.gerencia1                        : false;
+        this.nameG1             = userObject.nameG1             ? userObject.nameG1                           : false;
+        this.gerencia2          = userObject.gerencia2          ? userObject.gerencia2                        : false;
+        this.nameG2             = userObject.nameG2             ? userObject.nameG2                           : false;
+        this.jefeCoordinador    = userObject.jefeCoordinador    ? userObject.jefeCoordinador                  : false;
+        this.responsable        = userObject.responsable        ? userObject.responsable                      : false;
+        this.supervisor         = userObject.supervisor         ? userObject.supervisor                       : false;
+        this.lider              = userObject.lider              ? userObject.lider                            : false;
+        this.provincia          = userObject.provincia          ? userObject.provincia                        : false;
+        this.region             = userObject.region             ? userObject.region                           : false;
+        this.subregion          = userObject.subregion          ? userObject.subregion                        : false;
+        this.equipoEspecifico   = userObject.equipoEspecifico   ? userObject.equipoEspecifico                 : false;
+        this.puntoVenta         = userObject.puntoVenta         ? userObject.puntoVenta                       : false;
+        this.group              = userObject.group              ? userObject.group                            : false;
+        this.turno              = userObject.turno              ? userObject.turno                            : false;
+    }
 
-        this.id         = id;
-        this.name       = name;
-        this.lastName   = lastName;
-        this.dni        = dni;
-        this.password   = password === false ? password : password_hash.generate(password);
-        this.email      = email;
-        this.phone      = phone;
-        this.role       = role;
-        this.imagen     = imagen;
-        this.group      = group;
+    async saveOrUpdate () {
+        if(!this.id) return false;
+        // Consultamos si el usuario existe
+        let c = await userSchema.find({id: this.id});
+        let data = {};
+        for (let x in this){
+            if((c.length > 0 && x == 'dni') || (c.length > 0 && x == 'cuil') || (c.length > 0 && x == 'id')) continue;
+            if(this[x] !== false || x == 'userActive'){
+                data[x] = this[x];
+            }
+        }
+        if(c.length === 0){
+            // entonces creamos el nuevo usuario
+            let d = new userSchema(data);
+            try {
+                if(data.group){                    
+                    await Groups.assignUserGroup(d._id, data.group);
+                }
+                c = await d.save();
+                if(c.id) return true;
+                else return false;
+            }catch (e) {
+                return false;
+            }
+
+        }else {
+            // Entonces modificamos el usuario
+            try {
+                if(data.group){
+                    await Groups.assignUserGroup(c[0]._id, data.group);
+                }
+                c = await userSchema.updateOne({_id: c._id},data);
+                if(c.ok > 0){
+                    return true;
+                }else{
+                    return false;
+                }
+                
+            }catch (e) {
+                return false;
+            }
+        }
     }
 
     /**
@@ -44,7 +102,7 @@ class Users {
         // Preparamos el objeto de usuario
         let data = {};
         for (let x in this){
-            if(this[x] !== false){
+            if(this[x] !== false || x == 'userActive'){
                 data[x] = this[x];
             }
         }
@@ -53,8 +111,6 @@ class Users {
             data.id == undefined ||
             data.email == undefined ||
             data.role == undefined) return false;
-
-
         // Consultamos que el rol exista
         let rol = await Roles.get(data.role, true);
         if(rol.length == 0) return false;
@@ -205,16 +261,16 @@ class Users {
         /**
          * Solo listamos los usuarios que estan asignados a los mismos grupos que el usuario que consulta, salvo que sea con rol Administrator o Develop
          */
-        if(req){
-            let usuariosPermitidos = await Users.getUsersperGroup(req.authUser[0].id);
-            if(usuariosPermitidos[0] !== 'all' && usuariosPermitidos.length > 0){
-                where._id = {
-                    $in: usuariosPermitidos
-                }
-            }else if(usuariosPermitidos[0] !== 'all' || usuariosPermitidos.length === 0 || !usuariosPermitidos){
-                return false;
-            }
-        }
+        // if(req){
+        //     let usuariosPermitidos = await Users.getUsersperGroup(req.authUser[0].id);
+        //     if(usuariosPermitidos[0] !== 'all' && usuariosPermitidos.length > 0){
+        //         where._id = {
+        //             $in: usuariosPermitidos
+        //         }
+        //     }else if(usuariosPermitidos[0] !== 'all' || usuariosPermitidos.length === 0 || !usuariosPermitidos){
+        //         return false;
+        //     }
+        // }
         
         where.userDelete = false;
 
@@ -233,19 +289,60 @@ class Users {
         }
         let respuesta = await userSchema.find().where(where);
         if(respuesta.length == 0) return false;
-        let img, userObject, role, group;
+        let img, userObject, role = "", group = "";
         for(let y = 0; y < respuesta.length; y++){
-            if(respuesta[y].imagen){
-                img = await files.findById(respuesta[y].imagen);
-                respuesta[y].imagen = global.completeUrl + helper.configFile().mainInfo.routes + '/files/' + img.url;
+            if(id != 0){
+                if(respuesta[y].imagen){
+                    img = await files.findById(respuesta[y].imagen);
+                    respuesta[y].imagen = global.completeUrl + helper.configFile().mainInfo.routes + '/files/' + img.url;
+                }
+                role = await Roles.get(respuesta[y].role,roleTotal);
+                group = await Groups.getUserGroups(respuesta[y]._id);
+
+                var {
+                    fechaIngresoLinea,
+                    cuil,
+                    legajo,
+                    sexo,
+                    status,
+                    fechaBaja,
+                    motivoBaja,
+                    propiedad,
+                    canal,
+                    negocio,
+                    edificioLaboral,
+                    gerencia1,
+                    nameG1,
+                    gerencia2,
+                    nameG2,
+                    equipoEspecifico,
+                    puntoVenta,
+                    turno
+                } = respuesta[y];
             }
-            role = await Roles.get(respuesta[y].role,roleTotal);
-            group = await Groups.getUserGroups(respuesta[y]._id);
             userObject = {
                 id: respuesta[y].id,
                 name: respuesta[y].name,
                 lastName: respuesta[y].lastName,
                 dni: respuesta[y].dni,
+                fechaIngresoLinea :                     fechaIngresoLinea,
+                cuil: cuil,
+                legajo : legajo,
+                sexo : sexo,
+                status : status,
+                fechaBaja : fechaBaja,
+                motivoBaja : motivoBaja,
+                propiedad : propiedad,
+                canal : canal,
+                negocio : negocio,
+                edificioLaboral : edificioLaboral,
+                gerencia1 : gerencia1,
+                nameG1 : nameG1,
+                gerencia2 : gerencia2,
+                nameG2 : nameG2,
+                equipoEspecifico : equipoEspecifico,
+                puntoVenta : puntoVenta,
+                turno : turno,
                 role: role[0],
                 email: respuesta[y].email,
                 phone: respuesta[y].phone == null ? false : respuesta[y].phone,

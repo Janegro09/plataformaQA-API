@@ -11,18 +11,26 @@ const userSchema        = require('../database/migrations/usersTable');
  */
 class Roles {
     constructor(req) {
-        let {id, role, permissions} = req;
+        let {id, role, permissions, description} = req;
         this.role               = role;
-        this.permissionAssign    = permissions;
+        this.permissionAssign   = permissions;
         this.id                 = id;
+        this.description        = description;
     }
 
     async save() {
-        if(!this.role || !this.permissionAssign) return false;
+        if(!this.role) return false;
+        let data = {};
+        for(let x in this){
+            if(!this[x]) continue;
+            else {
+                data[x] = this[x];
+            }
+        }
         let c = new rolesSchema(this);
         try {
             return c.save().then(response => {
-                return true;
+                return response;
             }, e => {
                 return false;
             })
@@ -93,6 +101,23 @@ class Roles {
         }catch (e) {
             throw new Error(e.message);
         }
+    }
+
+    static async getornewRol(rolName, rolDescription = ""){
+        if(!rolName) return false;
+        if(typeof rolName !== 'string') return false;
+        let c = await rolesSchema.find({role: rolName});
+        let id = "";
+        if(c.length === 0) {
+            // Significa que no existe y creamos uno nuevo
+            c = new Roles({role: rolName, description: rolDescription});
+            c = await c.save();
+            id = c._id;
+        }else{
+            // Devolvemos el id
+            id = c[0]._id;
+        }
+        return id;
     }
 
     static async get(id = 0, fullData = false) {
