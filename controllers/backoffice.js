@@ -30,20 +30,18 @@ const controller = {
         let tempData, user, group, agregados = 0, fallaron = 0;
         for(let i = 0; i < c.length; i++){
             if(!c[i]['Legajo'] && !c[i]['Mail']) continue;
-
             // No agregamos los usuarios pertenecientes a 365
             if(c[i]['Empresa'] == '365') continue;
-
             tempData = new UserNomina(c[i]);
             tempData = await tempData.getUserInfo();
             user     = new models.users(tempData);
-            user     = user.saveOrUpdate().then(user => {
-                if(!user) {
-                    fallaron++
-                }
-                else agregados++;
-            })
+            user     = await user.saveOrUpdate()
+            if(!user) {
+                fallaron++
+            }
+            else agregados++;;
         }
+
         let mailContain = "";
         mailContain     += `<h3>Actualizacion de nomina en ${helper.configFile().projectInformation.project}</h3>`;
         mailContain     += `<br><p>Se agregaron o modificaron: <strong>${agregados} usuarios</strong></p>`;
