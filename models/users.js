@@ -245,7 +245,7 @@ class Users {
 
     static async checkUserPassword(user, password){
         let consulta = await userSchema.find({id: user});
-        if(!consulta) return false;
+        if(!consulta.length) return false;
         let originPass = consulta[0].password;
         if(!password_hash.verify(password, originPass)) return false;
         else return consulta;
