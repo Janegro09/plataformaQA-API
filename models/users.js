@@ -300,30 +300,30 @@ class Users {
                     img = await files.findById(respuesta[y].imagen);
                     respuesta[y].imagen = global.completeUrl + helper.configFile().mainInfo.routes + '/files/' + img.url;
                 }
-                role = await Roles.get(respuesta[y].role,roleTotal);
-                group = await Groups.getUserGroupsName(respuesta[y]._id);
+                role    = await Roles.get(respuesta[y].role,roleTotal);
+                group   = await Groups.getUserGroupsName(respuesta[y]._id);
 
-                var {
-                    fechaIngresoLinea,
-                    cuil,
-                    legajo,
-                    sexo,
-                    status,
-                    fechaBaja,
-                    motivoBaja,
-                    propiedad,
-                    canal,
-                    negocio,
-                    edificioLaboral,
-                    gerencia1,
-                    nameG1,
-                    gerencia2,
-                    nameG2,
-                    equipoEspecifico,
-                    puntoVenta,
-                    turno
-                } = respuesta[y];
             }
+            var {
+                fechaIngresoLinea,
+                cuil,
+                legajo,
+                sexo,
+                status,
+                fechaBaja,
+                motivoBaja,
+                propiedad,
+                canal,
+                negocio,
+                edificioLaboral,
+                gerencia1,
+                nameG1,
+                gerencia2,
+                nameG2,
+                equipoEspecifico,
+                puntoVenta,
+                turno
+            } = respuesta[y];
             userObject = {
                 id: respuesta[y].id,
                 name: respuesta[y].name,

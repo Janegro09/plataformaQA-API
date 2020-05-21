@@ -2,6 +2,8 @@ const fs            = require('fs');
 const path          = require('path');
 const files         = require('../database/migrations/Files');
 const nodeMailer    = require('nodemailer');
+const Roles         = require('../models/roles')
+const Groups         = require('../models/groups')
 
 var controller = {
     regExCheck: (value,type) => {
@@ -52,9 +54,10 @@ var controller = {
                 id: user.id,
                 name: user.name,
                 lastName: user.lastName,
+                sexo: user.sexo,
                 email: user.email,
                 dni: user.dni,
-                role: user.role,
+                role: user.roleInfo || user.role,
                 group: user.group,
                 imagen: user.imagen,
                 token: token ? token : user.token

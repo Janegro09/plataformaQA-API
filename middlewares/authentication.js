@@ -5,6 +5,8 @@ const Tokens        = require('../database/migrations/tokenTable');
 const views         = require('../views');
 const helper        = require('../controllers/helper')
 const cfile         = helper.configFile();
+const Roles         = require('../models/roles')
+const Groups         = require('../models/groups')
 
 const routesPath    = cfile.mainInfo.routes;
 const TOKEN_PASS    = cfile.mainInfo.jwtPass;
@@ -61,7 +63,7 @@ class Auth {
 
                 // Asignamos un nuevo token
                 let newToken    = new Auth(user[0]);
-                user[0].token   = await newToken.generarToken();;
+                user[0].token   = await newToken.generarToken();
                 req.authUser = user;
                 res.authUser = user;
                 next();            
