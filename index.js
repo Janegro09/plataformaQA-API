@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Archivo de entrada principal, conexion principal a express y bases de datos
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 const app       = require('./app');
 const mongoose  = require('mongoose');
 const helper    = require('./controllers/helper');
@@ -5,6 +19,8 @@ const db        = require('./controllers/db');
 const cfile     = helper.configFile();
 const dbConfig  = db.getData();
 mongoose.Promise= global.Promise;
+
+// Realizamos las conexiones a la base de datos e iniciamos expressS
 
 mongoose.connect(`mongodb://${dbConfig.mongodb.user}:${dbConfig.mongodb.password}@${dbConfig.mongodb.host}:${dbConfig.mongodb.port}/${dbConfig.mongodb.database}`,{ useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true }).then(() => {
     console.log("-------------------------------------------------- ");

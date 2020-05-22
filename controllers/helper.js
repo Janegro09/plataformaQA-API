@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Type: Controller | Controlador general de funciones de ayuda
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 const fs            = require('fs');
 const path          = require('path');
 const files         = require('../database/migrations/Files');
@@ -6,6 +20,15 @@ const Roles         = require('../models/roles')
 const Groups         = require('../models/groups')
 
 var controller = {
+    /**
+     * Esta funcion checkea el tipo de valor en comparacion con expresiones regulares
+     * @param {mixed} value valor para validar
+     * @param {Integer} type 
+     *  1 - Solo numeros (max 7 caracteres)
+     *  2 - empty
+     *  3 - Emails
+     *  4 - Planes de Personal (TECO) 
+     */
     regExCheck: (value,type) => {
         let regEx, exp;
         switch(type){
@@ -17,9 +40,7 @@ var controller = {
                 // id regex
             break;
             case 2:
-                regEx   = /^([A-Za-z]{1,15})+( [A-Za-z]{1,15})?$/;
-                exp     = new RegExp(regEx);
-                return exp.test(value);
+                return true;
             break;
             case 3:
                 regEx   = /^([A-Za-z0-9\.\_\-]{1,20})+@+([a-z]{1,15})+(\.[a-z]{1,4})+(\.[a-z]{1,3})?$/;
@@ -37,6 +58,9 @@ var controller = {
     objectSize: (obj) => {
         return Object.keys(obj).length
     },
+    /**
+     * Get config.json
+     */
     configFile: () => {
         let configFile = JSON.parse(fs.readFileSync("./config.json"));
         return configFile;
@@ -49,6 +73,9 @@ var controller = {
             })
             return level[0].NOMBRE;
         },
+        /**
+         * Object return for loggedUser
+         */
         loggedUser: (user, token) => {
             return {
                 id: user.id,
@@ -63,6 +90,12 @@ var controller = {
                 token: token ? token : user.token
             }
         },
+        /**
+         * Convierte un nombre en nombre y apellido
+         * @param {String} fullName Nombre completo separado por espacios
+         * 
+         * @returns {Object} {name,lastName}
+         */
         convertNametoFullName: (fullName) => {
             if(!fullName) return false;
             let name = "", lastName = "";
@@ -103,6 +136,11 @@ var controller = {
                 lastName: lastName
             }
         },
+        /** Convierte un nombre en nombre y apellido
+        * @param {String} cuil Cuil completo de 11 o 10 caracteres - Solo valido para Argentina
+        * 
+        * @returns {Object} {cuil,dni}
+        */
         convertCUILtoDNI: (cuil) => {
             if(!cuil) return false;
             let dataReturn = {
@@ -122,6 +160,10 @@ var controller = {
         }      
     },
     files:{
+        /**
+         * Eliminar archivo
+         * @param {String} path Ruta del archivo a eliminar
+         */
         delete: (path) => {
             try{
                 fs.unlinkSync(path);
@@ -130,6 +172,11 @@ var controller = {
                 return false;
             }
         },
+        /**
+         * Consulta si el archivo existe
+         * @param {String} path Ruta del archivo o directorio a consultar
+         * @param {Boolean} checkDir true si consulta si es un directorio
+         */
         exists: (path, checkDir = false) => {
             try{
                 let c = fs.statSync(path);
@@ -154,14 +201,24 @@ var controller = {
         }
     },
     dates: {
+        /**
+         * Devuelve fecha actual en formato UNIX
+         */
         unix: () => {
             return Math.round((new Date()).getTime() / 1000);
         },
+        /**
+         * Convierte DATE to dd/mm/YYYY
+         * @param {Date} date
+         */
         mySqltoDate: (date) => {
             let obj = new Date(Date.parse(date));
             return `${obj.getDate()}/${obj.getMonth() + 1}/${obj.getFullYear()}`;
         }
     },
+    /**
+     * Sender de mails 
+     */
     sender: class {
         constructor(to,subject = "Soluciones Digitales Telecom Argentina", text = "Sin contenido") {
             if(!to) return false;

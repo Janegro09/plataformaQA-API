@@ -1,6 +1,6 @@
 openapi: 3.0.0
 servers:
-  - url: http://developers.ramiromacciuci.com.ar:{port}/api/{version}
+  - url: http://200.89.172.2:{port}/api/{version}
     description: Testing server
     variables: 
       port:
@@ -10,8 +10,8 @@ servers:
         default: v1
         description: Version de la API
 info:
-  title: Main APIRest for Ecommerce
-  description: API Base para ecommerce
+  title: Main API PlataformaQA - Telecom Arg.
+  description: API para plataforma QA
   contact:
     name: Ramiro Macciuci
     url: https://www.ramiromacciuci.com.ar

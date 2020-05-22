@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Type: Controller | Controlador de archivos
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 'use strict'
 
 const helper = require('./helper');
@@ -11,6 +25,13 @@ class uploadFile {
         this.file = req.files;
     }
 
+    /**
+     * Valida que el archivo subido no sea mayor a 3MB, y lo guarda en la carpeta ../files/nombrederoute/tipodearchivo/fileName.fileType
+     * 
+     * @example
+     *  Se sube un archivo text/csv desde la route /users entonces el archivo esta almacenado en:
+     * ../files/users/text/xmskjn9832hu42ui4hiu2j432k42.csv
+     */
     async save() {
         let folder = '../files/';
         if(!helper.files.exists(`${folder}${this.url}`,true)){
@@ -57,10 +78,9 @@ class uploadFile {
         }
     }
 
-    static upload() {
-
-    }
-
+    /**
+     * Elimina el archivo que se subio y borra el registro de la base de datos
+     */
     async delete() {
         let id = this.uploadFile.id;
         return new Promise((res, rej) => {

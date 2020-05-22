@@ -1,9 +1,26 @@
+/**
+ * @fileoverview Type: Controller | Funciones para conexion y manipulacion de bases de datos MySQL
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 const mysql         = require('mysql');
 const mongoose      = require('mongoose');
 const dotenv        = require('dotenv');
 const helper        = require('./helper');
 const configFile    = helper.configFile();
 
+/**
+ * Trae los datos de autenticacion de config.json
+ */
 function getAuthData() {
     dotenv.config();
     let dbConfig = {};
@@ -16,12 +33,19 @@ function getAuthData() {
 }
 
 var mysqld = {
+    /**
+     * Realiza una nueva conexion con la base de datos
+     */
     connect: () => {
         let dbConfig = getAuthData();
         let c = mysql.createConnection(dbConfig.mysql);
         c.connect();
         return c;
     },
+    /**
+     * 
+     * @param {String} sql Realiza un query a la base de datos 
+     */
     query: async function(sql){
         return new Promise((res, rej) => {
             let connection = mysqld.connect();
@@ -241,6 +265,11 @@ var mysqld = {
             })
         })
     },
+    /**
+     * Metodo utilizado para eliminar registros
+     * @param {String} tableName 
+     * @param {Object} where 
+     */
     deleteOn: function(tableName, where){
         return new Promise((res,rej) => {
             if(helper.objectSize(where) == 0){

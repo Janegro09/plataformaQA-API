@@ -1,11 +1,27 @@
+/**
+ * @fileoverview Controller | Controlador de usuarios
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 const helper        = require('./helper');
 const views         = require('../views');    
 const usersModel    = require('../models/users');
 const FileUpload    = require('./files');
-const Permit        = require('../models/permissions');
+const Permit        = require('../models/permissions')
 
 var controller = {
     async new(req, res) {
+        let auth = await Permit.checkPermit(req,"Puede agregar usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         let img;
         if(!helper.regExCheck(req.body.email, 3)) {
             return views.error.code(res,'ERR_09')
@@ -14,17 +30,8 @@ var controller = {
             img = new FileUpload(req);
             img = await img.save();
         }
-        let User = new usersModel({
-            name: req.body.name,
-            lastName: req.body.lastName,
-            email: req.body.email,
-            role: req.body.role,
-            id: req.body.id,
-            phone: req.body.phone,
-            dni: req.body.dni,
-            group: req.body.group,
-            imagen: img ? img.id : false
-        })
+        req.body.imagen = img ? img.id : false;
+        let User = new usersModel(req.body);
         let c = await User.save();
         if(!c) return views.error.code(res,'ERR_10');
         else{
@@ -33,8 +40,8 @@ var controller = {
     },
     async get(req, res) {
         // Registamos route
-        // let auth = await Permit.checkPermit(req,"Puede consultar usuarios");
-        // console.log(auth);
+        let auth = await Permit.checkPermit(req,"Puede consultar usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         let id = req.params.id ? req.params.id : 0;
         let users;
         try{
@@ -48,13 +55,17 @@ var controller = {
             return views.error.code(res, 'ERR_08');
         }
     },
-    delete(req, res) {
+    async delete(req, res) {
+        let auth = await Permit.checkPermit(req,"Puede eliminar usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         usersModel.userDelete(req.params.id).then((v) => {
             if(!v) return views.error.code(res, 'ERR_10');
             else return views.success.delete(res)
         })
     },
     async update(req, res) {
+        let auth = await Permit.checkPermit(req,"Puede actualizar usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         let dataUpdate = {
             id: req.params.id
         };
@@ -76,7 +87,9 @@ var controller = {
         if(!update.length) return views.error.code(res, 'ERR_11');
         return views.customResponse(res, true, 200, "", update);
     },
-    diabled: (req, res) => {
+    async diabled(req, res) {
+        let auth = await Permit.checkPermit(req,"Puede cambiar el estado de usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         if(!req.params.id) return views.error.code(res, 'ERR_09');
         usersModel.userChangeStatus(req.params.id).then((v) => {
             if(v) return views.success.update(res)
@@ -84,6 +97,8 @@ var controller = {
         })
     },
     async passchange(req, res){
+        let auth = await Permit.checkPermit(req,"Puede cambiar constraseñas de usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         if(!req.params.id || !req.body.password) return views.error.code(res, 'ERR_09');
         let id = req.params.id;
 

@@ -1,12 +1,25 @@
+/**
+ * @fileoverview Models | Modelo para Grupos
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
+
 const helper            = require('../controllers/helper');
 const groupsSchema        = require('../database/migrations/groups');
 const groupsPerUserSchema = require('../database/migrations/groupsperuser');
 const usersSchema       = require('../database/migrations/usersTable');
 
 /**
- * Clase para manejar usuarios 
- * 
- * Si en el constructor se especifica ID entonces va a modificar sobre 
+ * Clase para manejar Grupos 
  */
 class Groups {
     constructor(req) {
@@ -17,6 +30,9 @@ class Groups {
         this.id     = id;
     }
 
+    /**
+     * Guarda un nuevo grupo
+     */
     async save() {
         if(!this.group) return false;
         let data = {};
@@ -35,6 +51,9 @@ class Groups {
         }
     }
 
+    /**
+     * Actualiza un grupo existente por _id
+     */
     async update() {
         if(!this.id || !this.group) return false;
 
@@ -51,27 +70,10 @@ class Groups {
         }
     }
 
-    static async userPerGroup(userId,groupId) {
-        let where, c;
-        if(userId && !groupId){
-            // devuelve array con los grupos que pertenece el usuario
-            where = {
-                userId: userId
-            }
-        }else if(groupId && !userId){
-            // Devuelve los usuarios que pertenecen a ese grupo
-            where = {
-                groupId: groupId
-            }
-        }else return false;
-        try{
-            c = await groupsPerUserSchema.find(where)
-            return c;
-        }catch (e) {
-            console.log(e)
-        }
-    }
-
+    /**
+     * Devuelve los datos del grupo consultado por ID
+     * @param {String} id ID de grupo
+     */
     static async get(id = 0) {
         let returnData = [], tempData, where = {
             groupDeleted: false
@@ -98,11 +100,15 @@ class Groups {
 
     }
 
+    /**
+     * Consulta si el grupo tiene usuarios asignados, y si no tiene ninguno entonces elimina el grupo
+     * @param {String} id 
+     */
     static async delete(id){
         if(!id) return false;
         
         // Comprobamos si existen usuarios registrados a ese grupo
-        let useringroup = await Groups.userPerGroup(false,id);
+        let useringroup = await Groups.getUserGroups(false,id);
         if(useringroup.length) throw new Error('No se puede eliminar un grupo con usuarios asignados');
 
         // Eliminamos el grupo
@@ -117,7 +123,11 @@ class Groups {
 
     }
 
-    //5ebc72db9abf1332dc573fcf
+    /**
+     * Si se especifica solo userId devuelve array con los grupos que pertenece el usuario, si solo se especifica groupId, devuelve los usuarios que pertenecen a ese grupo 
+     * @param {String} userId 
+     * @param {String} groupId 
+     */
     static async getUserGroups(userId, groupId) {
         let consulta;
         if(userId && !groupId){
@@ -133,6 +143,10 @@ class Groups {
         return consulta;
     }
 
+    /**
+     * 
+     * @param {String} userId Devuelve los nombres de los grupos pertenecientes a un usuario 
+     */
     static async getUserGroupsName(userId){
         let consulta = await Groups.getUserGroups(userId);
         let ReturnData = [], tempData,c;
@@ -147,6 +161,11 @@ class Groups {
         return ReturnData;
     }
 
+    /**
+     * Esta, consulta la existencia de un grupo con ese nombre, si existe devuelve el ID del mismo, sino lo crea y devuelve el ID
+     * @param {String} groupName Nombre del grupo
+     * 
+     */
     static async getorcreateGroup(groupName){
         if(!groupName) return false;
         if(typeof groupName !== 'string') return false;
@@ -167,6 +186,11 @@ class Groups {
         return id;
     }
 
+    /**
+     * Esta funcion asigna grupos a un usuari
+     * @param {String} userId ID del usuario a asignar
+     * @param {String} GroupArray se pueden enviar mas de un grupo, separados por |
+     */
     static async assignUserGroup(userId, GroupArray){
         // Creamos un array de los grupos asignados
         GroupArray = String(GroupArray);

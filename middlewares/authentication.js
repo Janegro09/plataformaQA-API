@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Middleware | Middleware de autenticacion que valida token
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 const jwt           = require('jsonwebtoken');
 const password_hash = require('password-hash');
 const Users         = require('../models/users');
@@ -18,6 +32,9 @@ class Auth {
         return true;
     }
 
+    /**
+     * Esta funcion genera un token con los datos de usuario, con una valides de 1 hora (60*60) y almacena el token referido a un userID, o sino lo actualiza
+     */
     async generarToken() {
         let tokenData = {
             id: this.user.id,
@@ -44,7 +61,11 @@ class Auth {
         }
         return token;
     }
-
+    /**
+     * Esta funcion consulta si la ruta ingresada existe en routeNotToken de config.json, solicita el token, verifica que sea el mismo al de la base de datos,
+     * si es el mismo entonces permitira el acceso y recogera el userId del token, ya que si el token es el mismo que el almacenado entonces significa que nadie lo
+     * altero, por lo tanto el userID que trae dentro del token es el indicado
+     */
     static async checkToken(req, res, next) {
         let url = req.url;
         url = url.split('/')[3];

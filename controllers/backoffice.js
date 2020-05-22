@@ -1,7 +1,22 @@
+/**
+ * @fileoverview Type: Controller | Controlador de backoffice
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 const helper        = require('./helper');
 const files         = require('./files');
 const csvtojson     = require('csvtojson');
 const views         = require('../views');
+const Permit        = require('../models/permissions')
 
 const models = {
     users: require('../models/users'),
@@ -10,7 +25,12 @@ const models = {
 }
 
 const controller = {
-    importNomina: (req, res) => {
+    /**
+     * Metodo desde la ruta que valida el archivo e inicia la imortacion del archivo
+     */
+    importNomina: async (req, res) => {
+        let auth = await Permit.checkPermit(req,"Puede importar nominas");
+        if(!auth) return views.error.code(res, 'ERR_04');
         if(!req.files) return views.error.code(res, 'ERR_09'); 
         if(!req.files.file) return views.error.code(res, 'ERR_09'); 
         const file = req.files.file;
@@ -22,6 +42,10 @@ const controller = {
         return views.customResponse(res, true, 200, "Los registros comenzaron a actualizarse, en breve recibira un mail con los resultados");
 
     },
+    /**
+     * Metodo para importar todos los usuarios desde la nomina 
+     * @param {Object} req Objeto req completo para extraer el archivo .csv
+     */
     import: async (req) => {
 
         const archivo = new files(req);
@@ -64,6 +88,10 @@ class UserNomina {
         this.usuario = {};
     }
 
+    /**
+     * Prepara un objeto principal con la sintaxis del schema users.
+     * Prepara todos los campos como por ejemplo convertir un unico nombre en nombre y apellido y el CUIL en dni
+     */
     async getUserInfo() {
         // Convertimos el nombre a nombre y apellido
         this.usuario = helper.users.convertNametoFullName(this.obj['Nombre']);

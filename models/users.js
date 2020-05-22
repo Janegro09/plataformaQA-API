@@ -1,3 +1,17 @@
+/**
+ * @fileoverview Models | Modelo para usuarios
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 const helper        = require('../controllers/helper');
 const password_hash = require('password-hash');
 const userSchema    = require('../database/migrations/usersTable');
@@ -7,8 +21,6 @@ const Groups        = require('../models/groups');
 
 /**
  * Clase para manejar usuarios 
- * 
- * Si en el constructor se especifica ID entonces va a modificar sobre 
  */
 class Users {
     constructor(userObject = {}){
@@ -51,6 +63,10 @@ class Users {
         this.turno              = userObject.turno              ? userObject.turno                            : false;
     }
 
+    /**
+     * Metodo creado para la creacion o actualizacion de usuarios provenientes de la nomina
+     * consulta si el usuario existe segun ID, o sino lo crea
+     */
     async saveOrUpdate () {
         if(!this.id) return false;
         // Consultamos si el usuario existe
@@ -64,6 +80,7 @@ class Users {
         }
         if(c.length === 0){
             // entonces creamos el nuevo usuario
+            data.createdAt = Date.now();
             let d = new userSchema(data);
             try {
                 if(data.group){                    
@@ -96,7 +113,7 @@ class Users {
     }
 
     /**
-     * Sirve para crear o modificar un usuario
+     * Guarda un usuario
      */
     async save() {
         // Preparamos el objeto de usuario
@@ -110,7 +127,7 @@ class Users {
             data.lastName == undefined ||
             data.id == undefined ||
             data.email == undefined ||
-            data.role == undefined) return false;
+            data.role == undefined || data.dni == undefined) return false;
         // Consultamos que el rol exista
         let rol = await Roles.get(data.role, true);
         if(rol.length == 0) return false;
@@ -150,10 +167,13 @@ class Users {
         }
     }
 
+    /**
+     * Modifica un usuario existente
+     */
     async update() {
         let data = {};
         for(let x in this){
-            if(x == 'id' || x == 'email') continue;
+            if(x == 'id' || x == 'email' || x == "dni" || x == "cuil") continue;
             if(this[x] !== false){
                 data[x] = this[x];
             }
@@ -176,6 +196,7 @@ class Users {
         if(data.group){
             await Groups.assignUserGroup(this.id, data.group);
         }
+
         // if(data.group) {
         //     data.group = (await Groups.get(data.group))._id;
         // }
@@ -187,7 +208,10 @@ class Users {
         }
     }
 
-    
+    /**
+     * Modifica el estado de un usuario
+     * @param {String} id 
+     */
     static async userChangeStatus(id = 0){
         if(id == 0) return false;
         let c = await userSchema.findOne().where({userDelete: false, id: id})
@@ -202,6 +226,7 @@ class Users {
 
     /**
      * HardDelete a usuario
+     * @param {String} id
      */
     static async userDelete(id) {
         if(id == 0 || !id) return false;
@@ -215,6 +240,11 @@ class Users {
         else return true;
     }
 
+    /**
+     * Devuelve un array de todos los usuarios que pertenecen a uno o mas grupos que el userID, esta funcion se usa cuando un usuario especifico solicita la lista
+     * de todos los usuarios, esta devolvera los IDs de los usuarios que les devolvera.
+     * @param {String} userId 
+     */
     static async getUsersperGroup(userId){
         if(!userId) return false;
         // Buscamos el usuario, si tiene rol develop o admin entonces muestra todos
@@ -243,6 +273,11 @@ class Users {
 
     }
 
+    /**
+     * Verifica la password y el usuario
+     * @param {String} user 
+     * @param {String} password 
+     */
     static async checkUserPassword(user, password){
         let consulta = await userSchema.find({id: user});
         if(!consulta.length) return false;
@@ -252,9 +287,11 @@ class Users {
     }
 
     /**
-     * 
+     * Devuelve la informacion del usuario
      * @param {mixed} id 
-     * 
+     * @param {Boolean} allData Trae toda la data del usuario
+     * @param {Object} req Objeto REQ con el que devolvera la cantidad de usuarios permitidos por el usuario logedo
+     *  
      * @example userModel.get("ramimacciuci@gmail.com").then((v) => {
                     console.log(v);
                 })

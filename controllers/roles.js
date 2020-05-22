@@ -1,9 +1,27 @@
+/**
+ * @fileoverview Controller | Controlador de roles de usuarios
+ * 
+ * @version 1.0
+ * 
+ * @author Soluciones Digitales - Telecom Argentina S.A.
+ * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+ * @copyright Soluciones Digitales - Telecom Argentina
+ * 
+ * History:
+ * 1.0 - Version principal
+ */
+
+// Incluimos controladores, modelos, schemas y modulos
 const helper        = require('./helper');
 const views         = require('../views');
 const Roles         = require('../models/roles');
+const Permit        = require('../models/permissions')
+
 
 var controller = {
-    get: (req, res) => {
+    get: async (req, res) => {
+        let auth = await Permit.checkPermit(req,"Puede obtener roles de usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         let id = req.params.id ? req.params.id : "";
         Roles.get(id, true).then(response => {
             return views.customResponse(res,true,200,"",response);
@@ -11,7 +29,9 @@ var controller = {
             return views.error.message(res, err);
         })
     },
-    new: (req, res) => {
+    new: async (req, res) => {
+        let auth = await Permit.checkPermit(req,"Puede agregar roles de usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         if(req.params.id !== 'new' || !req.body.role || !req.body.permissions) return views.error.code(res,'ERR_09');
         let c = new Roles(req.body);
         c.save().then(v => {
@@ -21,7 +41,9 @@ var controller = {
             return views.error.message(res, e);
         })
     },
-    delete: (req, res) => {
+    delete: async (req, res) => {
+        let auth = await Permit.checkPermit(req,"Puede eliminar roles de usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         if(!req.params.id) return views.error.code(res,"ERR_09");
         Roles.delete(req.params.id).then(response => {
             if(!response) return views.error.code(res,"ERR_09");
@@ -30,7 +52,9 @@ var controller = {
             return views.error.message(res, err)
         })
     },
-    update: (req, res) => {
+    update: async (req, res) => {
+        let auth = await Permit.checkPermit(req,"Puede actualizar roles de usuarios");
+        if(!auth) return views.error.code(res, 'ERR_04');
         if(!req.params.id) return views.error.code(res,"ERR_09");
 
         let c = new Roles({
@@ -43,7 +67,7 @@ var controller = {
             else return views.error.code(res, 'ERR_11');
         }, err => views.error.message(res, err))
     },
-    getPermissions(req, res) {
+    async getPermissions(req, res) {
         Roles.getPermission().then(v => {
             return views.customResponse(res, true, 200, "", v);
         })
