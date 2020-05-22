@@ -237,11 +237,9 @@ var controller = {
                 html: this.text
             }
             this.transporter.sendMail(mailOptions, (err, info) => {
-               	console.log("ERR", err);
-		        console.log("INFO", info);
-                if(info) return true;
-                        if(err) return false;
-                    })
+                   if(err) return false;
+                   else return true;
+            })
         }
 
 
