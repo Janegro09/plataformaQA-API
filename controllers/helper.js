@@ -221,7 +221,7 @@ var controller = {
      */
     sender: class {
         constructor(to,subject = "Soluciones Digitales Telecom Argentina", text = "Sin contenido") {
-            if(!to) return false;
+	    if(!to) return false;
             this.transporter = nodeMailer.createTransport(controller.configFile().sender.mail); 
             this.from = '"Soluciones Digitales Telecom S.A." <recursosysoluciones2019@gmail.com>';
             this.to = to;
@@ -237,11 +237,11 @@ var controller = {
                 html: this.text
             }
             this.transporter.sendMail(mailOptions, (err, info) => {
-                if(info) return true;
+               	console.log("ERR", err);
+		console.log("INFO", info);
+		 if(info) return true;
                 if(err) return false;
             })
-
-            return true;
         }
 
 
