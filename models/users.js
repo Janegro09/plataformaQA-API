@@ -156,7 +156,7 @@ class Users {
                 mailContain += `<br><p>Pwd: <strong>${password}</strong></p>`;
                 mailContain += `<br><br><p>Link de acceso: https://plataformaQA.com.ar${helper.configFile().mainInfo.routes }/login</p>`;
                 mailContain += '<br><br><br><strong style="color: #f00;">Solicitamos que cambie su contraseña lo antes posible</strong>';
-                let mail = new helper.sender([data.email],`Nuevo registro en ${helper.configFile().projectInformation.project}`,mailContain);
+                let mail = new helper.sender(data.email,`Nuevo registro en ${helper.configFile().projectInformation.project}`,mailContain);
                 mail.send().then(ok => ok);
                 return await Users.get(c.id,false);
             }else{

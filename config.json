@@ -8,7 +8,10 @@
     },
     "sender": {
         "mail": {
-            "service": "gmail",
+            "host": "smtp.gmail.com",
+            "port": 465,
+            "secure": true,
+            "pool": true,
             "auth": {
                 "user": "recursosysoluciones2019@gmail.com",
                 "pass": "Febrero2019"

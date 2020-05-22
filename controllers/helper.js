@@ -233,16 +233,14 @@ var controller = {
             let mailOptions = {
                 from: this.from,
                 subject: this.subject,
-                to: "",
+                to: this.to,
                 html: this.text
             }
-            let enviados = 0;
-            for(let x = 0; x < this.to.length; x++){
-                mailOptions.to = this.to[x];
-                this.transporter.sendMail(mailOptions, (err, info) => {
-                    if(!err) enviados++;
-                })
-            }
+            this.transporter.sendMail(mailOptions, (err, info) => {
+                if(info) return true;
+                if(err) return false;
+            })
+
             return true;
         }
 
