@@ -27,12 +27,13 @@ let Permit = {
      * @param {Object} req 
      * @param {String} name 
      */
-    checkPermit: async function (req, name){
+    checkPermit: async function (req){
         // Generamos el string de la ruta
         let url = req.originalUrl;
         url = url.split('/')[3];
         if(cfile.routesNotToken.indexOf(url) === -1) {
-            let consulta = String(await Permit.getorAdd(req, name));
+            let consulta = String(await Permit.get(req));
+            if(!consulta) return false;
             if(!req.authUser[0]) return false;
             else if(req.authUser[0].role == 'Develop') return true;
             else{
@@ -54,7 +55,7 @@ let Permit = {
      * @param {Object} req 
      * @param {String} name 
      */
-    getorAdd: async function(req, name) {
+    get: async function(req) {
         // Generamos el string de la ruta
         let url = req.originalUrl;
         let urlBase = "";
@@ -73,20 +74,8 @@ let Permit = {
         }
         // Consultamos si existe registrada esa ruta en la base de datos
         let consulta = await PermissionSchema.find({route: route});
-        let PermitId;
-        if(!consulta.length){
-            // Registramos la ruta
-            let Permit = new PermissionSchema({
-                name: name,
-                group: section,
-                route: route
-            });
-            Permit.save();
-            PermitId = Permit._id;
-        }else{
-            PermitId = consulta[0]._id;
-        }
-        return PermitId;
+        if(!consulta.length) return false;
+        return consulta[0]._id;
     }
 }
 

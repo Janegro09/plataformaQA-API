@@ -18,6 +18,7 @@ const helper        = require('../controllers/helper')
 const cfile         = helper.configFile();
 const routesPath    = cfile.mainInfo.routes;
 const app = express();
+const register      = require('./register.js');
 
 
 app.use('/', require('./main'));
@@ -26,5 +27,6 @@ app.use(`${routesPath}/roles`,require('./roles'));
 app.use(`${routesPath}/groups`,require('./groups'));
 app.use(`${routesPath}/permissions`,require('./permissions'));
 
+register(app)
 
 module.exports = app;

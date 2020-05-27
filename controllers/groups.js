@@ -1,15 +1,15 @@
 /**
- * @fileoverview Type: Controller | Controlador de grupos de usuarios
- * 
- * @version 1.0
- * 
- * @author Soluciones Digitales - Telecom Argentina S.A.
- * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
- * @copyright Soluciones Digitales - Telecom Argentina
- * 
- * History:
- * 1.0 - Version principal
- */
+* @fileoverview Type: Controller | Controlador de grupos de usuarios
+* 
+* @version 1.0
+* 
+* @author Soluciones Digitales - Telecom Argentina S.A.
+* @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
+* @copyright Soluciones Digitales - Telecom Argentina
+* 
+* History:
+* 1.0 - Version principal
+*/
 
 // Incluimos controladores, modelos, schemas y modulos
 const helper        = require('./helper');
@@ -17,8 +17,7 @@ const views         = require('../views');
 const Groups         = require('../models/groups');
 const Permit        = require('../models/permissions')
 
-
-var controller = {
+const controller = {
     async get(req, res) {
         let auth = await Permit.checkPermit(req,"Puede consultar grupos de usuarios");
         if(!auth) return views.error.code(res, 'ERR_04');
