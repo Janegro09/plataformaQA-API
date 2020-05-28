@@ -29,8 +29,6 @@ const controller = {
      * Metodo desde la ruta que valida el archivo e inicia la imortacion del archivo
      */
     importNomina: async (req, res) => {
-        let auth = await Permit.checkPermit(req,"Puede importar nominas");
-        if(!auth) return views.error.code(res, 'ERR_04');
         if(!req.files) return views.error.code(res, 'ERR_09'); 
         if(!req.files.file) return views.error.code(res, 'ERR_09'); 
         const file = req.files.file;

@@ -46,8 +46,6 @@ var controller = {
         }
     },
     login: async (req, res) => {
-        let auth = await Permit.checkPermit(req,"Puede logear usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         const {user, password} = req.body;
         if(user == undefined || password == undefined) return views.error.code(res,'ERR_01');
         let consulta = await Users.checkUserPassword(user,password);

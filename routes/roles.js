@@ -16,11 +16,17 @@
 const express           = require('express');
 const roles             = require('../controllers/roles');
 let router = express.Router();
+const permit            = require('../models/permissions');
+
+/**
+ * permit.checkPermit --> sirve para comprobar si el usuario tiene los permisos para acceder a ese request 
+ */
+
 
 router.route("/:id?")
-            .get(roles.get)
-            .post(roles.new)
-            .delete(roles.delete)
-            .put( roles.update);
+            .get(permit.checkPermit, roles.get)
+            .post(permit.checkPermit, roles.new)
+            .delete(permit.checkPermit, roles.delete)
+            .put( permit.checkPermit, roles.update);
 
 module.exports = router;

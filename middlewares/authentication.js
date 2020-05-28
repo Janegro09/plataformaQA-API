@@ -13,14 +13,12 @@
 
 // Incluimos controladores, modelos, schemas y modulos
 const jwt           = require('jsonwebtoken');
-const password_hash = require('password-hash');
 const Users         = require('../models/users');
 const Tokens        = require('../database/migrations/tokenTable');
 const views         = require('../views');
 const helper        = require('../controllers/helper')
 const cfile         = helper.configFile();
 const Roles         = require('../models/roles')
-const Groups         = require('../models/groups')
 
 const routesPath    = cfile.mainInfo.routes;
 const TOKEN_PASS    = cfile.mainInfo.jwtPass;

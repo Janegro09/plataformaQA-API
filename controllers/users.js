@@ -20,8 +20,6 @@ const Permit        = require('../models/permissions')
 
 var controller = {
     async new(req, res) {
-        let auth = await Permit.checkPermit(req,"Puede agregar usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         let img;
         if(!helper.regExCheck(req.body.email, 3)) {
             return views.error.code(res,'ERR_09')
@@ -40,8 +38,6 @@ var controller = {
     },
     async get(req, res) {
         // Registamos route
-        let auth = await Permit.checkPermit(req,"Puede consultar usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         let id = req.params.id ? req.params.id : 0;
         let users;
         try{
@@ -56,16 +52,12 @@ var controller = {
         }
     },
     async delete(req, res) {
-        let auth = await Permit.checkPermit(req,"Puede eliminar usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         usersModel.userDelete(req.params.id).then((v) => {
             if(!v) return views.error.code(res, 'ERR_10');
             else return views.success.delete(res)
         })
     },
     async update(req, res) {
-        let auth = await Permit.checkPermit(req,"Puede actualizar usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         let dataUpdate = {
             id: req.params.id
         };
@@ -88,8 +80,6 @@ var controller = {
         return views.customResponse(res, true, 200, "", update);
     },
     async diabled(req, res) {
-        let auth = await Permit.checkPermit(req,"Puede cambiar el estado de usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         if(!req.params.id) return views.error.code(res, 'ERR_09');
         usersModel.userChangeStatus(req.params.id).then((v) => {
             if(v) return views.success.update(res)
@@ -97,8 +87,6 @@ var controller = {
         })
     },
     async passchange(req, res){
-        let auth = await Permit.checkPermit(req,"Puede cambiar constraseñas de usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         if(!req.params.id || !req.body.password) return views.error.code(res, 'ERR_09');
         let id = req.params.id;
 

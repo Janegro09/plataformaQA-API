@@ -15,12 +15,15 @@
 const express       = require('express');
 const groups        = require('../controllers/groups');
 let router          = express.Router();
-
+const permit            = require('../models/permissions');
+/**
+ * permit.checkPermit --> sirve para comprobar si el usuario tiene los permisos para acceder a ese request 
+ */
 
 router.route("/:id?")
-            .get(groups.get)
-            .post(groups.new)
-            .delete(groups.delete)
-            .put(groups.update);
+            .get(permit.checkPermit, groups.get)
+            .post(permit.checkPermit, groups.new)
+            .delete(permit.checkPermit, groups.delete)
+            .put(permit.checkPermit, groups.update);
 
 module.exports = router;

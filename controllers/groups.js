@@ -19,8 +19,6 @@ const Permit        = require('../models/permissions')
 
 const controller = {
     async get(req, res) {
-        let auth = await Permit.checkPermit(req,"Puede consultar grupos de usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         try{
             let c = await Groups.get(req.params.id);
             if(!c) return views.error.code(res, "ERR_07");
@@ -30,8 +28,6 @@ const controller = {
         }
     },
     async new (req, res) {
-        let auth = await Permit.checkPermit(req,"Puede agregar grupos de usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         if(req.params.id !== 'new') return views.error.code(res, 'ERR_09');
         let group = new Groups({group: req.body.group});
         group = await group.save();
@@ -39,8 +35,6 @@ const controller = {
         else return views.success.create(res);
     },
     async delete(req, res) {
-        let auth = await Permit.checkPermit(req,"Puede eliminar grupos de usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         Groups.delete(req.params.id).then(v => {
             if(!v) return views.error.code(res,"ERR_14");
             else views.success.delete(res);
@@ -49,8 +43,6 @@ const controller = {
         })
     },
     async update(req, res) {
-        let auth = await Permit.checkPermit(req,"Puede actualizar grupos de usuarios");
-        if(!auth) return views.error.code(res, 'ERR_04');
         let c = new Groups({
             id: req.params.id,
             group: req.body.group

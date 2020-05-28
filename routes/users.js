@@ -14,18 +14,21 @@
 // Incluimos controladores, modelos, schemas y modulos
 const express           = require('express');
 const users             = require('../controllers/users');
-
+const permit            = require('../models/permissions');
+/**
+ * permit.checkPermit --> sirve para comprobar si el usuario tiene los permisos para acceder a ese request 
+ */
 
 
 let router = express.Router();
 
-router.post('/new',users.new);
-router.post('/passchange/:id?',users.passchange);
+router.post('/new',permit.checkPermit,users.new);
+router.post('/passchange/:id?',permit.checkPermit,users.passchange);
 
 router.route("/:id?")
-            .get(users.get)
-            .post(users.update)
-            .delete(users.delete)
-            .put( users.diabled);
+            .get(permit.checkPermit,users.get)
+            .post(permit.checkPermit,users.update)
+            .delete(permit.checkPermit,users.delete)
+            .put(permit.checkPermit,users.diabled);
 
 module.exports = router;

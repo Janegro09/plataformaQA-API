@@ -17,6 +17,7 @@ const files             = require('../database/migrations/Files');
 const PermissionSchema  = require('../database/migrations/Permissions');
 const Roles             = require('./roles');
 const cfile         = helper.configFile();
+const views         = require('../views');
 
 /**
  * Clase para registrar una ruta y crear un permiso para esa ruta en particular
@@ -27,26 +28,30 @@ let Permit = {
      * @param {Object} req 
      * @param {String} name 
      */
-    checkPermit: async function (req){
+    checkPermit: async function (req, res, next){
         // Generamos el string de la ruta
         let url = req.originalUrl;
         url = url.split('/')[3];
         if(cfile.routesNotToken.indexOf(url) === -1) {
             let consulta = String(await Permit.get(req));
-            if(!consulta) return false;
-            if(!req.authUser[0]) return false;
-            else if(req.authUser[0].role == 'Develop') return true;
+            if(!consulta) return views.error.code(res, 'ERR_18');
+            if(!req.authUser[0]) return views.error.code(res, 'ERR_18');
+            else if(req.authUser[0].role == 'Develop') {
+                next();
+            }
             else{
                 // Verificamos si el usuario tiene permiso para acceder
                 let permisosArray = await Roles.get(req.authUser[0].role.id,true)
-                if(permisosArray.length == 0) return false;
+                if(permisosArray.length == 0) return views.error.code(res, 'ERR_18');
                 for(let x = 0; x < permisosArray[0].permissionAssign.length; x++){
-                    if(permisosArray[0].permissionAssign[x]._id == consulta) return true;
+                    if(permisosArray[0].permissionAssign[x]._id == consulta) {
+                        return next();
+                    }
                 }
-                return false;
+                return views.error.code(res, 'ERR_18');
             }
         }else{
-            return true;
+            next();
         }
 
     },
