@@ -31,63 +31,63 @@
   },
   "ERR_07": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_07 -"
+    "TEXTO": "No existen registros en nuestras bases de datos",
+    "MENSAJE": "ERR_07 - No existen registros en nuestras bases de datos"
   },
   "ERR_08": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_08 -"
+    "TEXTO": "El usuario buscado no existe en la base de datos",
+    "MENSAJE": "ERR_08 - El usuario buscado no existe en la base de datos"
   },
   "ERR_09": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_09 -"
+    "TEXTO": "Error con los paremetros enviados",
+    "MENSAJE": "ERR_09 - Error con los paremetros enviados"
   },
   "ERR_10": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_10 -"
+    "TEXTO": "Error al eliminar el usuario",
+    "MENSAJE": "ERR_10 - Error al eliminar el usuario"
   },
   "ERR_11": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_11 -"
+    "TEXTO": "Error al actualizar el registro",
+    "MENSAJE": "ERR_11 - Error al actualizar el registro"
   },
   "ERR_12": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_12 -"
+    "TEXTO": "Error al crear el registro",
+    "MENSAJE": "ERR_12 - Error al crear el registro"
   },
   "ERR_13": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_13 -"
+    "TEXTO": "Error al traer la categoria",
+    "MENSAJE": "ERR_13 - Error al traer la categoria"
   },
   "ERR_14": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_14 -"
+    "TEXTO": "Error al eliminar el registro",
+    "MENSAJE": "ERR_14 - Error al eliminar el registro"
   },
   "ERR_15": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_15 -"
+    "TEXTO": "Error general al traer registros",
+    "MENSAJE": "ERR_15 - Error general al traer registros"
   },
   "ERR_16": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_16 -"
+    "TEXTO": "Error al ingresar registro",
+    "MENSAJE": "ERR_16 - Error al ingresar registro"
   },
   "ERR_17": {
-    "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_17 -"
+    "HTTP_CODE": 401,
+    "TEXTO": "El usuario no tiene ningun permiso asignado",
+    "MENSAJE": "ERR_17 - El usuario no tiene ningun permiso asignado"
   },
   "ERR_18": {
     "HTTP_CODE": 400,
-    "TEXTO": "",
-    "MENSAJE": "ERR_18 -"
+    "TEXTO": "El usuario no tiene permiso para acceder a esta seccion",
+    "MENSAJE": "ERR_18 - El usuario no tiene permiso para acceder a esta seccion"
   },
   "ERR_19": {
     "HTTP_CODE": 400,

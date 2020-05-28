@@ -37,7 +37,7 @@ let Permit = {
             if(!consulta) return views.error.code(res, 'ERR_18');
             if(!req.authUser[0]) return views.error.code(res, 'ERR_18');
             else if(req.authUser[0].role == 'Develop') {
-                next();
+                return next();
             }
             else{
                 // Verificamos si el usuario tiene permiso para acceder
@@ -53,7 +53,6 @@ let Permit = {
         }else{
             next();
         }
-
     },
     /**
      * Genera un nuevo permiso, con el nombre especificado en name, asigna la ruta proveniente de REQ
