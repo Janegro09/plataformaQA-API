@@ -54,8 +54,6 @@ class Auth {
             let c = await Tokens.updateOne({_id: consulta.id},{
                 token: token
             })
-            if(c.nModified == 0) return false;
-
         }
         return token;
     }
