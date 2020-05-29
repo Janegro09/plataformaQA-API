@@ -80,6 +80,9 @@ let Permit = {
                 urlBase += `/${url[x]}`;
             }
         }
+        if(urlBase[urlBase.length - 1] == '/'){
+            urlBase = urlBase.substr(0,urlBase.length - 1);
+        }
         let route = req.method + "|" + urlBase;
         for(let params in req.params){
             route += `/:${params}`;
