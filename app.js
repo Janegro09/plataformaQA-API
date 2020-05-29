@@ -28,6 +28,14 @@ app.set('view engine','pug');
 app.use(bodyParser.urlencoded({
     extended: true
 }));
+
+// Incluimos los modulos
+try {
+    require('./modules');
+} catch (e) {
+    console.log(e);
+}
+
 app.use(cors())
 app.use(fileUpload());
 

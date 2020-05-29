@@ -21,40 +21,42 @@ const PermissionSchema  = require('../database/migrations/Permissions');
 
 function register (routerObject) {
     let group;
-    routerObject._router.stack.map(v => {
-        group = getGroupName(v.regexp);
-        if(v.handle.stack){
-            let path, method, functions, name, route, dataTemp;
-            for(let x = 0, y = v.handle.stack; x < y.length; x++){
-                // Prepara el string de path
-                path = String(y[x].route.path);
-                path = path.replace(/\?/gi,'');
-                path = path.replace( cfile.mainInfo.routes ,'');
-                functions = y[x].route.stack
-                for(let i = 0; i < functions.length; i++){
-                    if(functions[i].name == 'checkPermit') continue;
-                    name = group ? functions[i].name + ' ' + group : functions[i].name;
-                    // group = group || name;
-                    
-                    method = (functions[i].method).toUpperCase();
-                    if(group != "" && path == '/'){
-                        route = method + '|' + group;
-                    }else{
-                        route = method + '|' + group + path;
+    PermissionSchema.deleteMany({}).then(e => {
+        routerObject._router.stack.map(v => {
+            group = getGroupName(v.regexp);
+            if(v.handle.stack){
+                let path, method, functions, name, route, dataTemp;
+                for(let x = 0, y = v.handle.stack; x < y.length; x++){
+                    // Prepara el string de path
+                    path = String(y[x].route.path);
+                    path = path.replace(/\?/gi,'');
+                    path = path.replace( cfile.mainInfo.routes ,'');
+                    functions = y[x].route.stack
+                    for(let i = 0; i < functions.length; i++){
+                        if(functions[i].name == 'checkPermit') continue;
+                        name = group ? functions[i].name + ' ' + group : functions[i].name;
+                        // group = group || name;
+                        
+                        method = (functions[i].method).toUpperCase();
+                        if(group != "" && path == '/'){
+                            route = method + '|' + group;
+                        }else{
+                            route = method + '|' + group + path;
+                        }
+                        route = route.replace('|/','|');
+                        // Sacamos la / principal en caso que exista
+                        
+                        dataTemp = new PermissionSchema({
+                            name: name,
+                            route: route,
+                            group: group
+                        });
+                        // Agrega la ruta si no existe
+                        dataTemp.save().then(ok => {ok}).catch(e => {e});
                     }
-                    route = route.replace('|/','|');
-                    // Sacamos la / principal en caso que exista
-                    dataTemp = new PermissionSchema({
-                        name: name,
-                        route: route,
-                        group: group
-                    });
-
-                    // Agrega la ruta si no existe
-                    dataTemp.save().then(ok => {ok}).catch(e => {e});
                 }
             }
-        }
+        })
     })
 }
 
