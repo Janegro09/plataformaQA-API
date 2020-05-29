@@ -32,19 +32,24 @@ function register (routerObject) {
                 path = path.replace( cfile.mainInfo.routes ,'');
                 functions = y[x].route.stack
                 for(let i = 0; i < functions.length; i++){
+                    if(functions[i].name == 'checkPermit') continue;
                     name = group ? functions[i].name + ' ' + group : functions[i].name;
                     // group = group || name;
+                    
                     method = (functions[i].method).toUpperCase();
                     if(group != "" && path == '/'){
                         route = method + '|' + group;
                     }else{
                         route = method + '|' + group + path;
                     }
+                    route = route.replace('|/','|');
+                    // Sacamos la / principal en caso que exista
                     dataTemp = new PermissionSchema({
                         name: name,
                         route: route,
                         group: group
                     });
+
                     // Agrega la ruta si no existe
                     dataTemp.save().then(ok => {ok}).catch(e => {e});
                 }

@@ -34,6 +34,5 @@ router.get(`${routesPath}/files/:section?/:type?/:file?`,main.getPublicFile);
 router.post(`${routesPath}/login`, main.login);
 router.post(`${routesPath}/backoffice/nomina`, permit.checkPermit ,backoffice.importNomina);
 
-// register(router);
 
 module.exports = router;

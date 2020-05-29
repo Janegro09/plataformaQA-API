@@ -22,8 +22,7 @@ var Permissions = new Schema({
         unique: true
     },
     group: {
-        type: String,
-        required: true
+        type: String
     },
     route: {
         type: String,

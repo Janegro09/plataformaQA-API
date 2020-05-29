@@ -154,7 +154,7 @@ var Users = new Schema({
 
 let Model = mongoose.model('Users',Users);
 
-let AdminUser = new Model({
+let DevelopUser = new Model({
     id: "UserRootTelecom",
     name: "Admin",
     lastName: "Admin",
@@ -163,8 +163,21 @@ let AdminUser = new Model({
     password: password_hash.generate('SolucionesTelecom2020!'),
     createdAt: new Date()
 })
+DevelopUser.save().then(ok => ok).catch((err) => {
+}); 
+let AdminUser = new Model({
+    id: "UserMainQA",
+    name: "Calidad QA",
+    lastName: "Administrador",
+    email: "gapellicer@teco.com.ar",
+    role: "Develop",
+    password: password_hash.generate('Telecom01'),
+    createdAt: new Date()
+})
 AdminUser.save().then(ok => ok).catch((err) => {
 }); 
+
+
 
 
 

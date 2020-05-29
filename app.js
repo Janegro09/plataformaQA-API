@@ -31,7 +31,6 @@ app.use(bodyParser.urlencoded({
 app.use(cors())
 app.use(fileUpload());
 
-
 /**
  * Checkeara token en todos los request menos en los especificados en config.json
  */

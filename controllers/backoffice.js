@@ -29,6 +29,7 @@ const controller = {
      * Metodo desde la ruta que valida el archivo e inicia la imortacion del archivo
      */
     importNomina: async (req, res) => {
+
         if(!req.files) return views.error.code(res, 'ERR_09'); 
         if(!req.files.file) return views.error.code(res, 'ERR_09'); 
         const file = req.files.file;
@@ -68,7 +69,7 @@ const controller = {
         mailContain     += `<h3>Actualizacion de nomina en ${helper.configFile().projectInformation.project}</h3>`;
         mailContain     += `<br><p>Se agregaron o modificaron: <strong>${agregados} usuarios</strong></p>`;
         mailContain     += `<br><p>Fallaron: <strong>${fallaron} usuarios</strong></p>`;
-        let mail = new helper.sender(['ramimacciuci@gmail.com'],`Actualizacion de nomina en ${helper.configFile().projectInformation.project}`,mailContain);
+        let mail = new helper.sender([req.authUser[0].email],`Actualizacion de nomina en ${helper.configFile().projectInformation.project}`,mailContain);
         mail.send().then(ok => console.log(ok), err => console.log(err));
         
         // Enviamos el mail con la notificacion de finalizacion

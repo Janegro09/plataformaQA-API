@@ -37,6 +37,7 @@ let Permit = {
             if(!consulta) return views.error.code(res, 'ERR_18');
             if(!req.authUser[0]) return views.error.code(res, 'ERR_18');
             else if(req.authUser[0].role == 'Develop') {
+                
                 return next();
             }
             else{
