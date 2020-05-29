@@ -66,7 +66,14 @@ let Permit = {
         let urlBase = "";
         url = url.split('/');
         let section = url[3];
-        for(let x = 3; x < (url.length - Object.keys(req.params).length); x++){
+        let paramsCount = 0;
+        for(let count in req.params) {
+            if(req.params[count] !== undefined) {
+                paramsCount++
+            }
+        }
+
+        for(let x = 3; x < (url.length - paramsCount); x++){
             if(urlBase === ""){
                 urlBase = url[x];
             }else{
