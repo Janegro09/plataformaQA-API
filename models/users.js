@@ -73,7 +73,7 @@ class Users {
         let c = await userSchema.find({id: this.id});
         let data = {};
         for (let x in this){
-            if((c.length > 0 && x == 'dni') || (c.length > 0 && x == 'cuil') || (c.length > 0 && x == 'id')) continue;
+            if((c.length > 0 && x == 'dni') || (c.length > 0 && x == 'cuil') || (c.length > 0 && x == 'id') || (c.length > 0 && x == 'password')) continue;
             if(this[x] !== false || x == 'userActive'){
                 data[x] = this[x];
             }
