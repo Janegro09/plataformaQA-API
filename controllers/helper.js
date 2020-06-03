@@ -78,6 +78,7 @@ var controller = {
          */
         loggedUser: (user, token) => {
             return {
+                token: token ? token : user.token,
                 id: user.id,
                 name: user.name,
                 lastName: user.lastName,
@@ -86,8 +87,7 @@ var controller = {
                 dni: user.dni,
                 role: user.roleInfo || user.role,
                 group: user.group,
-                imagen: user.imagen,
-                token: token ? token : user.token
+                imagen: user.imagen
             }
         },
         /**

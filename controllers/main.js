@@ -47,17 +47,21 @@ var controller = {
     },
     login: async (req, res) => {
         const {user, password} = req.body;
-        if(user == undefined || password == undefined) return views.error.code(res,'ERR_01');
-        let consulta = await Users.checkUserPassword(user,password);
-        if(!consulta) return views.error.code(res,'ERR_02');
-        // Asignamos Token
-        let token = new Auth(consulta[0]);
-        consulta[0].roleInfo = await Roles.get(consulta[0].role,true)
-        if(consulta[0].roleInfo[0].permissionAssign === false) return views.error.code(res, "ERR_17")
-        consulta[0].group = await Groups.getUserGroupsName(consulta[0]._id)
-        token = await token.generarToken();
-        if(!token) return views.error.code(res,'ERR_03');
-        else return views.customResponse(res,true,202,"",{},helper.users.loggedUser(consulta[0],token))
+        try{
+            if(user == undefined || password == undefined) return views.error.code(res,'ERR_01');
+            let consulta = await Users.checkUserPassword(user,password);
+            if(!consulta) return views.error.code(res,'ERR_02');
+            // Asignamos Token
+            let token = new Auth(consulta[0]);
+            consulta[0].roleInfo = await Roles.get(consulta[0].role,true)
+            if(consulta[0].roleInfo[0].permissionAssign === false) return views.error.code(res, "ERR_17")
+            consulta[0].group = await Groups.getUserGroupsName(consulta[0]._id)
+            token = await token.generarToken();
+            if(!token) return views.error.code(res,'ERR_03');
+            else return views.customResponse(res,true,202,"",{},helper.users.loggedUser(consulta[0],token))
+        }catch (e) {
+            return views.error.code(res,'ERR_02');
+        }
     }
 
 }

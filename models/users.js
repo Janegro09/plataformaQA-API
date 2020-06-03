@@ -18,6 +18,7 @@ const userSchema    = require('../database/migrations/usersTable');
 const files         = require('../database/migrations/Files');
 const Roles         = require('../models/roles');
 const Groups        = require('../models/groups');
+const groupsSchema        = require('../database/migrations/groups');
 
 /**
  * Clase para manejar usuarios 
@@ -127,11 +128,17 @@ class Users {
             data.lastName == undefined ||
             data.id == undefined ||
             data.email == undefined ||
-            data.role == undefined || data.dni == undefined) return false;
+            data.role == undefined || 
+            data.dni == undefined) return false;
         // Consultamos que el rol exista
         let rol = await Roles.get(data.role, true);
-        if(rol.length == 0) return false;
+        if(rol.length == 0 || !rol) return false;
 
+        if(!data.group){
+            let group = await groupsSchema.find({group: 'General'});
+            data.group = group[0]._id;
+        }
+        
         // Consultamos que no exista user con ese id o email
         let consulta = await userSchema.find().where({id: data.id, email: data.email});
         if(consulta.length > 0) return false; 
@@ -145,7 +152,12 @@ class Users {
         // Creamos el nuevo usuario
         let d = new userSchema(data);
         if(data.group){
-            await Groups.assignUserGroup(d._id, data.group);
+            consulta = await groupsSchema.find({_id: data.group});
+            if(consulta.length > 0){
+                await Groups.assignUserGroup(d._id, data.group);
+            }else{
+                return false;
+            }
         }
         try {
             let c = await d.save();
@@ -158,7 +170,7 @@ class Users {
                 mailContain += '<br><br><br><strong style="color: #f00;">Solicitamos que cambie su contraseña lo antes posible</strong>';
                 let mail = new helper.sender(data.email,`Nuevo registro en ${helper.configFile().projectInformation.project}`,mailContain);
                 mail.send().then(ok => ok);
-                return await Users.get(c.id,false);
+                return true;
             }else{
                 return false;
             }
@@ -279,7 +291,7 @@ class Users {
      * @param {String} password 
      */
     static async checkUserPassword(user, password){
-        let consulta = await userSchema.find({id: user});
+        let consulta = await userSchema.find({id: user, userDelete: false});
         if(!consulta.length) return false;
         let originPass = consulta[0].password;
         if(!password_hash.verify(password, originPass)) return false;
@@ -339,7 +351,6 @@ class Users {
                 }
                 role    = await Roles.get(respuesta[y].role,roleTotal);
                 group   = await Groups.getUserGroupsName(respuesta[y]._id);
-
             }
             var {
                 fechaIngresoLinea,

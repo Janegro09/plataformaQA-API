@@ -31,7 +31,7 @@ var controller = {
         req.body.imagen = img ? img.id : false;
         let User = new usersModel(req.body);
         let c = await User.save();
-        if(!c) return views.error.code(res,'ERR_10');
+        if(!c) return views.error.code(res,'ERR_12');
         else{
             return views.customResponse(res, true, 200, "", c)
         }
@@ -42,7 +42,7 @@ var controller = {
         let users;
         try{
             users = await usersModel.get(id,false,req);
-            if(users.length == 0) return views.error.code(res, 'ERR_07');
+            if(users.length == 0 || !users) return views.error.code(res, 'ERR_07');
             else{
                 views.customResponse(res,true,200,"",users);
             }    
