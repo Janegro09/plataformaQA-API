@@ -16,7 +16,7 @@ const helper        = require('./helper');
 const views         = require('../views');    
 const usersModel    = require('../models/users');
 const FileUpload    = require('./files');
-const Permit        = require('../models/permissions')
+const permit            = require('../models/permissions');
 
 var controller = {
     async new(req, res) {

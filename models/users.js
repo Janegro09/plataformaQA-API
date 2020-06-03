@@ -206,7 +206,12 @@ class Users {
 
         // Verificamos si existe el grupo
         if(data.group){
-            await Groups.assignUserGroup(this.id, data.group);
+            consulta = await groupsSchema.find({_id: data.group});
+            if(consulta.length > 0){
+                await Groups.assignUserGroup(this.id, data.group);
+            }else{
+                return false;
+            }
         }
 
         // if(data.group) {
@@ -293,6 +298,7 @@ class Users {
     static async checkUserPassword(user, password){
         let consulta = await userSchema.find({id: user, userDelete: false});
         if(!consulta.length) return false;
+        if(!consulta[0].userActive) return false;
         let originPass = consulta[0].password;
         if(!password_hash.verify(password, originPass)) return false;
         else return consulta;

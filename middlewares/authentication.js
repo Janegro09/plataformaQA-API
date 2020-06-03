@@ -70,7 +70,6 @@ class Auth {
             if(!token) return views.error.code(res,'ERR_04');
             token = token.split(" ");
             if(token[0] != 'Bearer') return views.error.code(res,'ERR_04');
-
             jwt.verify(token[1], TOKEN_PASS, async (err, t) => {
                 if(err) return views.error.code(res,'ERR_04');
                 let user = await Users.get(t.id);

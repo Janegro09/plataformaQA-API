@@ -34,6 +34,9 @@ let Permit = {
         url = url.split('/')[3];
         if(cfile.routesNotToken.indexOf(url) === -1) {
             let consulta = String(await Permit.get(req));
+            if(consulta === 'Usuario_Cambio_Clave'){
+                return next();
+            }
             if(!consulta) return views.error.code(res, 'ERR_18');
             if(!req.authUser[0]) return views.error.code(res, 'ERR_18');
             else if(req.authUser[0].role == 'Develop') {
@@ -83,6 +86,16 @@ let Permit = {
         if(urlBase[urlBase.length - 1] == '/'){
             urlBase = urlBase.substr(0,urlBase.length - 1);
         }
+
+        /**
+         * Permitimos solo al usuario que ingresa poder cambiar su contraseña
+         */
+        if(urlBase == 'users/passchange'){;
+            if(req.authUser[0].id == req.params.id) {
+                return "Usuario_Cambio_Clave";
+            }
+        }
+
         let route = req.method + "|" + urlBase;
         for(let params in req.params){
             route += `/:${params}`;
