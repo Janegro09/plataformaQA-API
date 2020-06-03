@@ -43,6 +43,19 @@ function register (routerObject) {
                         }else{
                             route = method + '|' + group + path;
                         }
+                        // No almacenamos las rutas que estan en config.json
+                        let r = route.split('|');
+                        if(r[1] == '/') {
+                            continue;
+                        }else{
+                            if(r[1].charAt(0) == '/'){
+                                r[1] = r[1].substr(1,r[1].length - 1);
+                            }
+                            r[1] = r[1].split('/');
+                            if(cfile.routesNotToken.indexOf(r[1][0]) >= 0){
+                                continue;
+                            }
+                        }
                         route = route.replace('|/','|');
                         // Sacamos la / principal en caso que exista
                         
