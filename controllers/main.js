@@ -31,8 +31,18 @@ var controller = {
     test: (req, res) => {
         return views.success.test(res);
     },
-    frontUtilities: (req, res) => {
-        console.log('oka front utilities');
+    frontUtilities: async (req, res) => {
+        // Listamos las bases necesarias para front
+        let returnData = {
+            groups: [],
+            roles: []
+        }
+        // Enviamos Grupos
+        returnData.groups = await Groups.get();
+        // Enviamos Roles
+        returnData.roles= await Roles.get();
+
+        return views.customResponse(res,true,202,"",returnData)
     },
     getPublicFile: (req, res) => {
         let section = req.params.section;
