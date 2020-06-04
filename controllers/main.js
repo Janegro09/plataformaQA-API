@@ -63,7 +63,7 @@ var controller = {
             if(!consulta) return views.error.code(res,'ERR_02');
             // Asignamos Token
             let token = new Auth(consulta[0]);
-            //consulta[0].roleInfo = await Roles.get(consulta[0].role,true)
+            consulta[0].roleInfo = await Roles.get(consulta[0].role,true)
             // if(consulta[0].roleInfo[0].permissionAssign === false) return views.error.code(res, "ERR_17")
             consulta[0].group = await Groups.getUserGroupsName(consulta[0]._id)
             token = await token.generarToken();
