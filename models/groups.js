@@ -199,11 +199,15 @@ class Groups {
         await groupsPerUserSchema.deleteMany({userId: userId});
 
         for(let x = 0, c; x < GroupArray.length; x++){
-            c = new groupsPerUserSchema({
-                userId: userId,
-                groupId: GroupArray[x]
-            });
-            c.save().then(k => k)
+            // Verificamos si existe el grupo
+            c = await groupsSchema.find({_id: GroupArray[x]});
+            if(c.length > 0){
+                c = new groupsPerUserSchema({
+                    userId: userId,
+                    groupId: GroupArray[x]
+                });
+                c.save().then(k => k)
+            }
         }
     }
 }

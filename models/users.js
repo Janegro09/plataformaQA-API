@@ -151,13 +151,10 @@ class Users {
 
         // Creamos el nuevo usuario
         let d = new userSchema(data);
+
+        // Le asginamos los grupos
         if(data.group){
-            consulta = await groupsSchema.find({_id: data.group});
-            if(consulta.length > 0){
-                await Groups.assignUserGroup(d._id, data.group);
-            }else{
-                return false;
-            }
+            Groups.assignUserGroup(d._id, data.group);
         }
         try {
             let c = await d.save();
@@ -206,14 +203,8 @@ class Users {
 
         // Verificamos si existe el grupo
         if(data.group){
-            consulta = await groupsSchema.find({_id: data.group});
-            if(consulta.length > 0){
-                await Groups.assignUserGroup(this.id, data.group);
-            }else{
-                return false;
-            }
+            await Groups.assignUserGroup(resultado[0].idDB, data.group);
         }
-
         // if(data.group) {
         //     data.group = (await Groups.get(data.group))._id;
         // }
@@ -379,6 +370,7 @@ class Users {
                 turno
             } = respuesta[y];
             userObject = {
+                idDB: respuesta[y]._id,
                 id: respuesta[y].id,
                 name: respuesta[y].name,
                 lastName: respuesta[y].lastName,
