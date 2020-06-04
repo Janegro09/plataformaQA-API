@@ -138,6 +138,14 @@ class Users {
             let group = await groupsSchema.find({group: 'General'});
             data.group = group[0]._id;
         }
+
+        if(data.sexo) {
+            data.sexo = data.sexo == 'FEMENINO' || data.sexo == 'MASCULINO' ? data.sexo : "";
+        }
+
+        if(data.turno) {
+            data.turno = data.turno == 'TT' || data.turno == 'TM' ? data.turno : "";
+        }
         
         // Consultamos que no exista user con ese id o email
         let consulta = await userSchema.find().where({id: data.id, email: data.email});
@@ -182,7 +190,7 @@ class Users {
     async update() {
         let data = {};
         for(let x in this){
-            if(x == 'id' || x == 'email' || x == "dni" || x == "cuil") continue;
+            if(x == 'id' || x == "dni" || x == "cuil") continue;
             if(this[x] !== false){
                 data[x] = this[x];
             }
@@ -199,6 +207,14 @@ class Users {
         if(data.role){
             let rol = await Roles.get(data.role, true);
             if(!rol) return false;
+        }
+
+        if(data.sexo) {
+            data.sexo = data.sexo == 'FEMENINO' || data.sexo == 'MASCULINO' ? data.sexo : "";
+        }
+
+        if(data.turno) {
+            data.turno = data.turno == 'TT' || data.turno == 'TM' ? data.turno : "";
         }
 
         // Verificamos si existe el grupo
