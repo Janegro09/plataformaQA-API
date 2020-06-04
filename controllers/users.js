@@ -98,7 +98,9 @@ var controller = {
             password: req.body.password
         })
         update.update().then(v => {
-            if(v) return views.success.update(res)
+            if(v) {
+                return views.success.update(res)
+            } 
             else return views.error.code(res, 'ERR_11');
         })
     }

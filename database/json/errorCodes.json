@@ -1,26 +1,26 @@
 {
   "ERR_01": {
-    "HTTP_CODE": 400,
+    "HTTP_CODE": 401,
     "TEXTO": "Error al logear usuario. Faltan parametros",
     "MENSAJE": "ERR_01 - Error al logear usuario. Faltan parametros"
   },
   "ERR_02": {
-    "HTTP_CODE": 400,
+    "HTTP_CODE": 401,
     "TEXTO": "Error de autenticacion",
     "MENSAJE": "ERR_02 - Error de autenticacion"
   },
   "ERR_03": {
-    "HTTP_CODE": 400,
+    "HTTP_CODE": 401,
     "TEXTO": "Error al generar token",
     "MENSAJE": "ERR_03 - Error al generar token"
   },
   "ERR_04": {
-    "HTTP_CODE": 400,
+    "HTTP_CODE": 401,
     "TEXTO": "No autorizado",
     "MENSAJE": "ERR_04 - No autorizado"
   },
   "ERR_05": {
-    "HTTP_CODE": 400,
+    "HTTP_CODE": 401,
     "TEXTO": "Token vencido o invalido",
     "MENSAJE": "ERR_05 - Token vencido o invalido"
   },

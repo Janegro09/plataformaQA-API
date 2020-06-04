@@ -171,7 +171,7 @@ class Users {
                 mailContain += `<h3>Registro en ${helper.configFile().projectInformation.project}</h3>`;
                 mailContain += `<br><p>Usuario: <strong>${data.id}</strong></p>`;
                 mailContain += `<br><p>Pwd: <strong>${password}</strong></p>`;
-                mailContain += `<br><br><p>Link de acceso: https://plataformaQA.com.ar${helper.configFile().mainInfo.routes }/login</p>`;
+                mailContain += `<br><br><p>Link de acceso: http://plataformaqa.solucionesdigitalesteco.com.ar</p>`;
                 mailContain += '<br><br><br><strong style="color: #f00;">Solicitamos que cambie su contraseña lo antes posible</strong>';
                 let mail = new helper.sender(data.email,`Nuevo registro en ${helper.configFile().projectInformation.project}`,mailContain);
                 mail.send().then(ok => ok);
