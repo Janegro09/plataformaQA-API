@@ -75,7 +75,7 @@ class Roles {
             
             // Actualizamos los registros
             consulta = await rolesSchema.updateOne({_id: this.id}, dataUpdate);
-            if(consulta.nModified) return true;
+            if(consulta.nModified || consulta.ok) return true;
             else return false;
         }catch (e) {
             throw new Error(e.message);
