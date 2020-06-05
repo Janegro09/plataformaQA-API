@@ -109,12 +109,12 @@ class Groups {
         
         // Comprobamos si existen usuarios registrados a ese grupo
         let useringroup = await Groups.getUserGroups(false,id);
-        if(useringroup.length) throw new Error('No se puede eliminar un grupo con usuarios asignados');
+        if(useringroup.length) return false;
 
         // Eliminamos el grupo
         try {
             let c = await groupsSchema.deleteOne({_id: id});
-            if(!c.deketedCount) throw new Error('Registro Inexistente');
+            if(!c.deketedCount) return false;
             else return true; 
         }catch {
             return false;
