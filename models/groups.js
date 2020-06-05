@@ -109,12 +109,10 @@ class Groups {
         
         // Comprobamos si existen usuarios registrados a ese grupo
         let useringroup = await Groups.getUserGroups(false,id);
-        if(useringroup.length) return false;
-
-        // Eliminamos el grupo
+        if(useringroup.length > 0) return false;
         try {
             let c = await groupsSchema.deleteOne({_id: id});
-            if(!c.deketedCount) return false;
+            if(!c.deletedCount) return false;
             else return true; 
         }catch {
             return false;
