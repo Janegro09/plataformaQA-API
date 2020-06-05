@@ -72,7 +72,6 @@ class Roles {
                 else if(!this[x]) continue;
                 dataUpdate[x] = this[x];
             }
-
             
             // Actualizamos los registros
             consulta = await rolesSchema.updateOne({_id: this.id}, dataUpdate);
@@ -178,12 +177,10 @@ class Roles {
                 if(fullData){
                     // Traemos todos los permisos
                     let permisos = await Roles.getPermission(rol[x].permissionAssign);
-                    console.log('permisos', permisos);
                     tempData.permissionAssign = permisos;
                 }
                 dataReturn.push(tempData);
             }
-            console.log(dataReturn)
             return dataReturn;
         }catch (e) {
             return false;

@@ -52,7 +52,8 @@ var controller = {
         let c = new Roles({
             role: req.body.role,
             permissions: req.body.permissions,
-            id: req.params.id
+            id: req.params.id,
+            description: req.params.description
         });
         c.update().then(response => {
             if(response) return views.success.update(res);
