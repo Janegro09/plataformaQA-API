@@ -172,7 +172,8 @@ class Roles {
             for(let x = 0; x < rol.length; x++){
                 tempData = {
                     id: rol[x]._id,
-                    role: rol[x].role
+                    role: rol[x].role,
+                    description: rol[x].description
                 };
                 if(fullData){
                     // Traemos todos los permisos
