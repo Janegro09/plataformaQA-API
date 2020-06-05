@@ -72,6 +72,7 @@ class Roles {
                 else if(!this[x]) continue;
                 dataUpdate[x] = this[x];
             }
+
             
             // Actualizamos los registros
             consulta = await rolesSchema.updateOne({_id: this.id}, dataUpdate);
