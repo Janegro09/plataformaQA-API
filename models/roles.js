@@ -166,6 +166,7 @@ class Roles {
         where = id == 'Develop' ? {role: 'Administrator'} : where;
         try {
             let rol = await rolesSchema.find(where);
+
             if(rol.length == 0) return false;
             for(let x = 0; x < rol.length; x++){
                 tempData = {
@@ -175,10 +176,12 @@ class Roles {
                 if(fullData){
                     // Traemos todos los permisos
                     let permisos = await Roles.getPermission(rol[x].permissionAssign);
+                    console.log('permisos', permisos);
                     tempData.permissionAssign = permisos;
                 }
                 dataReturn.push(tempData);
             }
+            console.log(dataReturn)
             return dataReturn;
         }catch (e) {
             return false;
