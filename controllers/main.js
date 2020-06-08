@@ -60,7 +60,6 @@ var controller = {
         try{
             if(user == undefined || password == undefined) return views.error.code(res,'ERR_01');
             let consulta = await Users.checkUserPassword(user,password);
-            if(!consulta) return views.error.code(res,'ERR_02');
             // Asignamos Token
             let token = new Auth(consulta[0]);
             consulta[0].roleInfo = await Roles.get(consulta[0].role,true)
@@ -70,7 +69,7 @@ var controller = {
             if(!token) return views.error.code(res,'ERR_03');
             else return views.customResponse(res,true,202,"",{},helper.users.loggedUser(consulta[0],token))
         }catch (e) {
-            return views.error.code(res,'ERR_02');
+            return views.error.message(res, e.message);
         }
     }
 

@@ -12,13 +12,16 @@
  */
 
 // Incluimos controladores, modelos, schemas y modulos
-const helper        = require('../controllers/helper');
-const password_hash = require('password-hash');
-const userSchema    = require('../database/migrations/usersTable');
-const files         = require('../database/migrations/Files');
-const Roles         = require('../models/roles');
-const Groups        = require('../models/groups');
-const groupsSchema        = require('../database/migrations/groups');
+const helper                = require('../controllers/helper');
+const password_hash         = require('password-hash');
+const userSchema            = require('../database/migrations/usersTable');
+const files                 = require('../database/migrations/Files');
+const Roles                 = require('../models/roles');
+const Groups                = require('../models/groups');
+const groupsSchema          = require('../database/migrations/groups');
+const userLoginSchema       = require('../database/migrations/usersLogin');
+
+
 
 /**
  * Clase para manejar usuarios 
@@ -184,7 +187,7 @@ class Users {
         }
     }
 
-    /**
+    /**console.log(c);
      * Modifica un usuario existente
      */
     async update() {
@@ -304,11 +307,17 @@ class Users {
      */
     static async checkUserPassword(user, password){
         let consulta = await userSchema.find({id: user, userDelete: false});
-        if(!consulta.length) return false;
-        if(!consulta[0].userActive) return false;
+        if(!consulta.length) throw new Error('Usuario inexistente');
+        if(!consulta[0].userActive) throw new Error('Usuario bloqueado o inactivo. Comuniquese con el administrador.');
+        // Consultamos si el usuario tiene permiso
+        let consultaInicio = await this.checkAttemptsLogin(consulta[0]);
+        if(!consultaInicio) throw new Error('Debido a los intentos reiterados de inicio de sesion, su cuenta ha sido bloqueada.');
         let originPass = consulta[0].password;
-        if(!password_hash.verify(password, originPass)) return false;
-        else return consulta;
+        if(!password_hash.verify(password, originPass)) throw new Error('Contraseña Erronea');
+        else {
+            this.restartCountAttempts(consultaInicio);
+            return consulta;
+        };
     }
 
     /**
@@ -426,6 +435,52 @@ class Users {
             }
         } 
 
+    }
+
+    /**
+     * Esta funcion sirve para consultar la cantidad de inicios de sesion de un usuario
+     * que sumara uno al intento, o devolvera false en caso que se hayan superado los numero de intentos
+     * @param {object} userID especificamos el id del usuario a verificar 
+     */
+    static async checkAttemptsLogin(userID) {
+        // Consultamos si el usuario tiene permiso de inciar sesion
+        let c = await userLoginSchema.find({userId: userID._id});
+        let idReturn;
+        if(c.length === 0) {
+            // Usuario nunca inicio sesion
+            c = new userLoginSchema({
+                userId: userID._id,
+                NofAttempts: 1
+            });
+            idReturn = c._id
+            c.save();
+        }else{
+            if(c[0].NofAttempts < 5){
+                // Suma un intento
+                await userLoginSchema.updateOne({_id: c[0]._id}, {
+                    NofAttempts: c[0].NofAttempts + 1
+                })
+                idReturn = c[0]._id;
+            }else{
+                // Inactiva el usuario
+                await userSchema.updateOne({_id: userID._id},{
+                    userActive: false
+                })
+                return false;
+            }
+        }
+        return idReturn;
+    }
+
+    /**
+     * Esta funcion volvera el contador de inicio de sesion a 0 ya que el usuario pudo
+     * logearse correctamente.
+     * @param {object} registerId id del registro de usuario 
+     */
+    static restartCountAttempts(registerId) {
+        userLoginSchema.updateOne({_id: registerId}, {
+            NofAttempts: 0
+        }).then(v => {v})
     }
 }
 
