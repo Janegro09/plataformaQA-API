@@ -59,6 +59,9 @@ var controller = {
     },
     login: async (req, res) => {
         const {user, password} = req.body;
+        if(req.body.user === undefined || req.body.recaptcha === undefined || req.body.password === undefined){
+            return views.error.message(res,'Error en los parametros enviados');
+        }
         const recaptcha = req.body['g-recaptcha-response'];
         const urlGoogle = "https://www.google.com/recaptcha/api/siteverify";
         const SecretGoogleCaptcha = "6Lc_kQEVAAAAAC4geSN7f-zIhtK0oeZbE9nkWOFp"
