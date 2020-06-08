@@ -59,6 +59,8 @@ var controller = {
     },
     login: async (req, res) => {
         const {user, password} = req.body;
+        // Solo pedimos recaptcha si esta en produccion
+        if(process.env.ENVRIORMENT != 'development'){
         if(req.body.user === undefined || req.body['g-recaptcha-response'] === undefined || req.body.password === undefined){
             return views.error.message(res,'Error en los parametros enviados');
         }
@@ -77,6 +79,7 @@ var controller = {
         })
         googleQuery = await googleQuery.json();
         if(!googleQuery.success) return views.error.message(res,'Error con captcha de google');
+        }
         try{
             if(user == undefined || password == undefined) return views.error.code(res,'ERR_01');
             let consulta = await Users.checkUserPassword(user,password);
