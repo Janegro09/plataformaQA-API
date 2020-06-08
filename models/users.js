@@ -466,6 +466,7 @@ class Users {
                 await userSchema.updateOne({_id: userID._id},{
                     userActive: false
                 })
+                this.restartCountAttempts(c[0]._id);
                 return false;
             }
         }
