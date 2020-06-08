@@ -158,7 +158,7 @@ let DevelopUser = new Model({
     id: "UserRootTelecom",
     name: "Admin",
     lastName: "Admin",
-    email: "recursosysoluciones@gmail.com",
+    email: "recursosysoluciones2019@gmail.com",
     role: "Develop",
     password: password_hash.generate('SolucionesTelecom2020!'),
     createdAt: new Date()

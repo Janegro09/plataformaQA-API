@@ -36,20 +36,73 @@ const controller = {
 
         if(file.mimetype != "text/csv") return views.error.code(res, 'ERR_17'); 
 
-        controller.import(req);
+        // Verificamos que los campos necesarios se encuentren correctamente
+        const required = [
+            "Legajo",
+            "Sexo",
+            "Mail",
+            "Activo",
+            "Estado",
+            "Fecha Ingreso Linea",
+            "Fecha de Baja",
+            "Motivo de Baja",
+            "Propiedad",
+            "Canal",
+            "Negocio",
+            "Razon Social",
+            "Edificio Laboral",
+            "Nombre Gerencia 1",
+            "Nombre G1",
+            "Nombre Gerencia 2",
+            "Nombre G2",
+            "JefeCoordinador",
+            "Responsable",
+            "Supervisor",
+            "Lider",
+            "Provincia",
+            "Region",
+            "Subregion",
+            "Equipo Especifico",
+            "Punto de Venta",
+            "Turno",
+            "CUIL",
+            "Nombre",
+            "Funcion",
+            "Detalle de Funcion",
+            "Empresa"
+        ];
 
-        return views.customResponse(res, true, 200, "Los registros comenzaron a actualizarse, en breve recibira un mail con los resultados");
+        const archivo = new files(req);
+        let c = await archivo.save();
+
+        c = await csvtojson({}).fromFile("../files/" + c.url);
+        let columnasExistentes = [];
+        for(let x in c[0]){
+            columnasExistentes.push(x);
+        }
+
+        // Consultamos que todas las required existan sino retornamos false
+        let requiredFields = true;
+        required.map(v => {
+            if(columnasExistentes.indexOf(v) === -1) {
+                requiredFields = false;
+            }
+        })
+
+        if(requiredFields) {
+            controller.import(c, archivo);
+            return views.customResponse(res, true, 200, "Los registros comenzaron a actualizarse, en breve recibira un mail con los resultados");
+        }else{
+            archivo.delete();
+            return views.error.code(res, 'ERR_18'); 
+        }
 
     },
     /**
      * Metodo para importar todos los usuarios desde la nomina 
      * @param {Object} req Objeto req completo para extraer el archivo .csv
      */
-    import: async (req) => {
-
-        const archivo = new files(req);
-        let c = await archivo.save();
-        c = await csvtojson({}).fromFile("../files/" + c.url);
+    import: async (c, archivo) => {
         let tempData, user, group, agregados = 0, fallaron = 0;
         for(let i = 0; i < c.length; i++){
             if(!c[i]['Legajo'] && !c[i]['Mail']) continue;

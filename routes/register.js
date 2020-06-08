@@ -21,7 +21,7 @@ const PermissionSchema  = require('../database/migrations/Permissions');
 
 function register (routerObject) {
     let group;
-
+    let routesExists = [];
     routerObject._router.stack.map(v => {
         group = getGroupName(v.regexp);
         if(v.handle.stack){
@@ -58,6 +58,10 @@ function register (routerObject) {
                     }
                     route = route.replace('|/','|');
                     // Sacamos la / principal en caso que exista
+
+                    // Almacenamos todas las rutas existentes
+                    routesExists.push(route);
+
                     
                     dataTemp = new PermissionSchema({
                         name: name,
@@ -70,6 +74,35 @@ function register (routerObject) {
             }
         }
     })
+    
+    deleteNotUsed(routesExists);
+}
+
+function deleteNotUsed(routesExists) {
+    // Buscamos todas las rutas registradas
+    let rutasDB;
+    PermissionSchema.find().then(response => {
+        rutasDB = response;
+        routesExists.map((v, i) => {
+            rutasDB = deleteToArray(rutasDB, v);
+        })
+        if(rutasDB.length > 0) {
+            // Eliminamos las rutas sobrantes
+            for(let x = 0; x < rutasDB.length; x++){
+                PermissionSchema.deleteOne({_id: rutasDB[x]._id}).then(e => {e}).catch(e => {e})
+            }
+        }
+    })
+}
+
+function deleteToArray(arr, route) {
+    for(let x = 0; x < arr.length; x++) {
+        if(arr[x].route === route) {
+            // Si existe eliminamos la ruta del array
+            arr.splice(x, 1);
+        }
+    }
+    return arr;
 }
 
 function getGroupName(group) {
