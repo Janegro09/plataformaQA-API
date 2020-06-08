@@ -19,6 +19,8 @@ const Auth          = require('../middlewares/authentication');
 const Roles         = require('../models/roles')
 const Groups         = require('../models/groups')
 const Permit        = require('../models/permissions')
+const fetch         = require('node-fetch');
+const { request } = require('express');
 
 
 var controller = {
@@ -57,6 +59,21 @@ var controller = {
     },
     login: async (req, res) => {
         const {user, password} = req.body;
+        const recaptcha = req.body['g-recaptcha-response'];
+        const urlGoogle = "https://www.google.com/recaptcha/api/siteverify";
+        const SecretGoogleCaptcha = "6Lc_kQEVAAAAAC4geSN7f-zIhtK0oeZbE9nkWOFp"
+        
+        const params = new URLSearchParams();
+        params.append('secret', SecretGoogleCaptcha);
+        params.append('response', recaptcha);
+
+        // Consultamos valides de recaptcha
+        let googleQuery = await fetch(urlGoogle, {
+            method: 'POST',
+            body: params
+        })
+        googleQuery = await googleQuery.json();
+        if(!googleQuery.success) return views.error.message(res,'Error con captcha de google');
         try{
             if(user == undefined || password == undefined) return views.error.code(res,'ERR_01');
             let consulta = await Users.checkUserPassword(user,password);
