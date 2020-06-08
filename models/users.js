@@ -315,6 +315,7 @@ class Users {
         let originPass = consulta[0].password;
         if(!password_hash.verify(password, originPass)) throw new Error('Contraseña Erronea');
         else {
+            console.log(consultaInicio)
             this.restartCountAttempts(consultaInicio);
             return consulta;
         };
@@ -453,7 +454,7 @@ class Users {
                 NofAttempts: 1
             });
             idReturn = c._id
-            c.save();
+            await c.save();
         }else{
             if(c[0].NofAttempts < 5){
                 // Suma un intento
