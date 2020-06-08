@@ -59,7 +59,7 @@ var controller = {
     },
     login: async (req, res) => {
         const {user, password} = req.body;
-        if(req.body.user === undefined || req.body.recaptcha === undefined || req.body.password === undefined){
+        if(req.body.user === undefined || req.body['g-recaptcha-response'] === undefined || req.body.password === undefined){
             return views.error.message(res,'Error en los parametros enviados');
         }
         const recaptcha = req.body['g-recaptcha-response'];
