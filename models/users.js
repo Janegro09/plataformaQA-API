@@ -162,11 +162,13 @@ class Users {
 
         // Creamos el nuevo usuario
         let d = new userSchema(data);
+        
 
         // Le asginamos los grupos
         if(data.group){
-            Groups.assignUserGroup(d._id, data.group);
+            //Groups.assignUserGroup(d._id, data.group);
         }
+
         try {
             let c = await d.save();
             if(c.id != undefined){
@@ -315,7 +317,6 @@ class Users {
         let originPass = consulta[0].password;
         if(!password_hash.verify(password, originPass)) throw new Error('Contraseña Erronea');
         else {
-            console.log(consultaInicio)
             this.restartCountAttempts(consultaInicio);
             return consulta;
         };
@@ -393,7 +394,8 @@ class Users {
                 nameG2,
                 equipoEspecifico,
                 puntoVenta,
-                turno
+                turno,
+
             } = respuesta[y];
             userObject = {
                 idDB: respuesta[y]._id,
@@ -421,6 +423,14 @@ class Users {
                 turno : turno,
                 group: group,
                 role: role[0],
+                razonSocial: respuesta[y].razonSocial,
+                jefeCoordinador: respuesta[y].jefeCoordinador,
+                responsable: respuesta[y].responsable,
+                supervisor: respuesta[y].supervisor,
+                lider: respuesta[y].lider,
+                provincia: respuesta[y].provincia,
+                region: respuesta[y].region,
+                subregion: respuesta[y].subregion,
                 email: respuesta[y].email,
                 phone: respuesta[y].phone == null ? false : respuesta[y].phone,
                 userActive: respuesta[y].userActive,
