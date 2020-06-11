@@ -20,6 +20,8 @@ const cfile     = helper.configFile();
 const dbConfig  = db.getData();
 mongoose.Promise= global.Promise;
 
+const port = process.env.PORT || cfile.mainInfo.port;
+
 // Realizamos las conexiones a la base de datos e iniciamos expressS
 
 mongoose.connect(`mongodb://${dbConfig.mongodb.user}:${dbConfig.mongodb.password}@${dbConfig.mongodb.host}:${dbConfig.mongodb.port}/${dbConfig.mongodb.database}`,{ useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true }).then(() => {
@@ -31,8 +33,8 @@ mongoose.connect(`mongodb://${dbConfig.mongodb.user}:${dbConfig.mongodb.password
     console.log("-------------------------------------------------- ");
     console.log("MAIN SERVER CONNECTION");
     console.log("");
-    app.listen(cfile.mainInfo.port, () => {
-        console.log(`Servidor corriendo correctamente en puerto: ${cfile.mainInfo.port}`);
+    app.listen(port, () => {
+        console.log(`Servidor corriendo correctamente en puerto: ${port}`);
         console.log("-------------------------------------------------- ");
         console.log("-------------------------------------------------- ");
         console.log("PROJECT INFO");
