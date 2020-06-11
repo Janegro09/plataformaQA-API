@@ -46,7 +46,7 @@
             "host": "localhost",
             "user": "root",
             "password": "root",
-            "database": "plataformaQA",
+            "database": "plataformaQADev",
             "port": 27017
         }
     },
