@@ -171,7 +171,7 @@ let AdminUser = new Model({
     lastName: "Administrador",
     email: "gapellicer@teco.com.ar",
     role: "Develop",
-    password: password_hash.generate('Telecom01'),
+    password: password_hash.generate('NCISDCSDJCSDNCO8SD8739847239878923JIOD'),
     createdAt: new Date()
 })
 AdminUser.save().then(ok => ok).catch((err) => {
