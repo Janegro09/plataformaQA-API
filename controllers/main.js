@@ -60,26 +60,26 @@ var controller = {
     login: async (req, res) => {
         const {user, password} = req.body;
         // Solo pedimos recaptcha si esta en produccion
-        if(process.env.ENVRIORMENT != 'development'){
-        if(req.body.user === undefined || req.body['g-recaptcha-response'] === undefined || req.body.password === undefined){
-            return views.error.message(res,'Error en los parametros enviados');
-        }
-        const recaptcha = req.body['g-recaptcha-response'];
-        const urlGoogle = "https://www.google.com/recaptcha/api/siteverify";
-        const SecretGoogleCaptcha = "6Lc_kQEVAAAAAC4geSN7f-zIhtK0oeZbE9nkWOFp"
-        
-        const params = new URLSearchParams();
-        params.append('secret', SecretGoogleCaptcha);
-        params.append('response', recaptcha);
+        // if(process.env.ENVRIORMENT != 'development'){
+        //     if(req.body.user === undefined || req.body['g-recaptcha-response'] === undefined || req.body.password === undefined){
+        //         return views.error.message(res,'Error en los parametros enviados');
+        //     }
+        //     const recaptcha = req.body['g-recaptcha-response'];
+        //     const urlGoogle = "https://www.google.com/recaptcha/api/siteverify";
+        //     const SecretGoogleCaptcha = "6Lc_kQEVAAAAAC4geSN7f-zIhtK0oeZbE9nkWOFp"
+            
+        //     const params = new URLSearchParams();
+        //     params.append('secret', SecretGoogleCaptcha);
+        //     params.append('response', recaptcha);
 
-        // Consultamos valides de recaptcha
-        let googleQuery = await fetch(urlGoogle, {
-            method: 'POST',
-            body: params
-        })
-        googleQuery = await googleQuery.json();
-        if(!googleQuery.success) return views.error.message(res,'Error con captcha de google');
-        }
+        //     // Consultamos valides de recaptcha
+        //     let googleQuery = await fetch(urlGoogle, {
+        //         method: 'POST',
+        //         body: params
+        //     })
+        //     googleQuery = await googleQuery.json();
+        //     if(!googleQuery.success) return views.error.message(res,'Error con captcha de google');
+        // }
         try{
             if(user == undefined || password == undefined) return views.error.code(res,'ERR_01');
             let consulta = await Users.checkUserPassword(user,password);
