@@ -90,7 +90,7 @@ const controller = {
         })
 
         if(requiredFields) {
-            controller.import(c, archivo);
+            controller.import(c, archivo, req);
             return views.customResponse(res, true, 200, "Los registros comenzaron a actualizarse, en breve recibira un mail con los resultados");
         }else{
             archivo.delete();
@@ -102,7 +102,7 @@ const controller = {
      * Metodo para importar todos los usuarios desde la nomina 
      * @param {Object} req Objeto req completo para extraer el archivo .csv
      */
-    import: async (c, archivo) => {
+    import: async (c, archivo, req) => {
         let tempData, user, group, agregados = 0, fallaron = 0;
         for(let i = 0; i < c.length; i++){
             if(!c[i]['Legajo'] && !c[i]['Mail']) continue;
