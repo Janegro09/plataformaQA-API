@@ -161,7 +161,7 @@ class UserNomina {
         this.usuario.legajo             = "u" + this.obj['Legajo'];
         this.usuario.sexo               = this.obj['Sexo'].toLowerCase();
         this.usuario.email              = this.obj['Mail'].toLowerCase();
-        this.usuario.activeUser         = this.obj['Activo'].toLowerCase() === 'true' ? true : false 
+        this.usuario.activeUser         = this.obj['Activo'].toLowerCase() === 'true' && this.obj['Estado'].toLowerCase() === 'activo' ? true : false 
         this.usuario.status             = this.obj['Estado'].toLowerCase();
         this.usuario.fechaIngresoLinea  = this.obj['Fecha Ingreso Linea'];
         this.usuario.fechaBaja          = this.obj['Fecha de Baja'];
