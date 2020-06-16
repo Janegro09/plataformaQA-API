@@ -12,6 +12,15 @@
  */
 const includes = require('../../includes');
 
+// Tables 
+const groupsByUsers     = require('./groupsByUsers.table');
+const programs          = require('./programs.table');
+const programsByGroups  = require('./programsByGroups.table');
+const programsGroups    = require('./programsGroups.table');
+
 module.exports = function() {
-    
+    groupsByUsers();
+    programs();
+    programsByGroups();
+    programsGroups();
 }();
