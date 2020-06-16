@@ -10,7 +10,7 @@
  * History:
  * 1.0 - Version principal
  */
-const includes = require('../../includes');
+
 
 // Tables 
 const groupsByUsers     = require('./groupsByUsers.table');
