@@ -94,6 +94,9 @@ class Program {
         if(response.length === 0) throw new Error('No existen registros en nuestra base de datos');
 
         for(let i = 0; i < response.length; i++){
+
+            // Mostramos los programas que tengan asignados los usuarios que puede ver el usuario que consulta
+
             const tempData = {
                 id: response[i]._id,
                 name: response[i].name,

@@ -24,6 +24,7 @@ router.post(`${baseProgramsGroups}/new`, controllerGroups.create);
 router.get(`${baseProgramsGroups}/:id?`, controllerGroups.get);
 router.put(`${baseProgramsGroups}/:id?`, controllerGroups.modify);
 router.delete(`${baseProgramsGroups}/:id?`, controllerGroups.delete);
+router.delete(`${baseProgramsGroups}/:groupId/:userId`, controllerGroups.unassignUser);
 
 
 // Programs
