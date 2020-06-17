@@ -16,9 +16,19 @@ const includes      = require('../includes');
 let router          = includes.express.Router();
 
 const controller = require('./controllers/programs');
+const controllerGroups = require('./controllers/groups');
 
+// Programs groups
+const baseProgramsGroups = "/groups";
+router.post(`${baseProgramsGroups}/new`, controllerGroups.create);
+router.get(`${baseProgramsGroups}/:id?`, controllerGroups.get);
+router.put(`${baseProgramsGroups}/:id?`, controllerGroups.modify);
+router.delete(`${baseProgramsGroups}/:id?`, controllerGroups.delete);
+
+
+// Programs
 router.post('/new',controller.create);
-router.route('/:id')
+router.route('/:id?')
                 .get(controller.get)
                 .put(controller.modify)
                 .delete(controller.delete)

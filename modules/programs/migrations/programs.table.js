@@ -27,6 +27,9 @@ var Programs = new Schema({
         type: Date,
         default: Date.now
     },
+    fechaFin: {
+        type: Date
+    },
     parentProgram: {
         type: String,
         default: ""

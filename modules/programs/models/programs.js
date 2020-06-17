@@ -32,7 +32,7 @@ class Program {
 
     assignCreatedBy(req){
         if(req.authUser) {
-            this.createdBy = req.authUser[0].idDB;
+            this.createdBy = req.authUser[0].id;
         }
     }
 
@@ -79,8 +79,45 @@ class Program {
 
     }
 
-    async get() {
+    static async get(id = 0) {
+        let responseData = [];
+        let where = {
+            deleted: false
+        }
+        if(id){
+            where._id = id;
+        }
 
+        let response = await Schemas.programs.find().where(where);
+        if(response.length === 0) throw new Error('No existen registros en nuestra base de datos');
+
+        for(let i = 0; i < response.length; i++){
+            const tempData = {
+                id: response[i]._id,
+                name: response[i].name,
+                status: response[i].status,
+                createdBy: response[i].createdBy,
+                programParent: response[i].programParent,
+                section: response[i].section,
+                description: response[i].description,
+                dates: {
+                    start: response[i].fechaInicio,
+                    end: response[i].fechaFin,
+                    created: response[i].createdAt
+                }
+            }
+            if(id) {
+                // Hacemos los request para traer toda la info
+                if(tempData.programParent) {
+                    // Buscamos el padre
+                }
+                tempData.assignedGroups = [];
+            }
+
+            responseData.push(tempData);
+        }
+
+        return responseData;
     }
 }
 
