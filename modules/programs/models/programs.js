@@ -82,44 +82,62 @@ class Program {
     }
 
     static async get(id = 0) {
+        const req = id;
+        if(id != 0 && (typeof id != 'string' && typeof id == 'object')){
+            id = id.params.id || 0;
+        }
+        let usuariosPermitidos, UsuarioLogeado;
         let responseData = [];
         let where = {
             deleted: false
         }
-        if(id){
+        if(id != 0){
             where._id = id;
         }
 
         let response = await Schemas.programs.find().where(where);
         if(response.length === 0) throw new Error('No existen registros en nuestra base de datos');
 
+        if(req && typeof req == 'object'){
+            UsuarioLogeado = req.authUser[0].id;
+            usuariosPermitidos = await includes.users.model.getUsersperGroup(UsuarioLogeado);
+            if(usuariosPermitidos[0] !== 'all' && usuariosPermitidos.length > 0) {
+
+            }else if(usuariosPermitidos[0] !== 'all' || usuariosPermitidos.length === 0 || !usuariosPermitidos){
+                throw new Error('No existen registros para mostrar');
+            }
+        }
+
+
         for(let i = 0; i < response.length; i++){
 
             // Mostramos los programas que tengan asignados los usuarios que puede ver el usuario que consulta
 
-            const tempData = {
-                id: response[i]._id,
-                name: response[i].name,
-                status: response[i].status,
-                createdBy: response[i].createdBy,
-                programParent: response[i].programParent,
-                section: response[i].section,
-                description: response[i].description,
-                dates: {
-                    start: response[i].fechaInicio,
-                    end: response[i].fechaFin,
-                    created: response[i].createdAt
+            if(usuariosPermitidos.length > 0 && usuariosPermitidos[0] === 'all'){
+                const tempData = {
+                    id: response[i]._id,
+                    name: response[i].name,
+                    status: response[i].status,
+                    createdBy: response[i].createdBy,
+                    programParent: response[i].programParent,
+                    section: response[i].section,
+                    description: response[i].description,
+                    dates: {
+                        start: response[i].fechaInicio,
+                        end: response[i].fechaFin,
+                        created: response[i].createdAt
+                    }
                 }
-            }
-            if(id) {
-                // Hacemos los request para traer toda la info
-                if(tempData.programParent) {
-                    // Buscamos el padre
+                if(id) {
+                    // Hacemos los request para traer toda la info
+                    if(tempData.programParent) {
+                        // Buscamos el padre
+                    }
+                    tempData.assignedGroups = [];
                 }
-                tempData.assignedGroups = [];
+    
+                responseData.push(tempData);
             }
-
-            responseData.push(tempData);
         }
 
         return responseData;

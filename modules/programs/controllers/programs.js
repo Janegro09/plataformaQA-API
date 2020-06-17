@@ -30,7 +30,7 @@ const controller = {
 
     },
     get: (req, res) => {
-        return programModel.get(req.params.id).then(response => {
+        return programModel.get(req).then(response => {
             if(!response) return includes.views.error.message(res, "Error al mostrar los programas");
             else {
                 includes.views.customResponse(res, true, 200, "", response);
