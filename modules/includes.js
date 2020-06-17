@@ -14,7 +14,8 @@ const includes = {
     helper: require('../controllers/helper'),
     userModel: require('../models/users'),
     express: require('express'),
-    permit: require('../models/permissions')
+    permit: require('../models/permissions'),
+    views: require('../views')
 }
 
-module.exports = includes
+module.exports = includes;

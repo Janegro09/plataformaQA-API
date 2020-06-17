@@ -12,7 +12,7 @@
  * 1.0 - Version principal
  */
 
-const includes = require('../../includes');
+const includes = require('../includes');
 const modules = require('../../modules');
 
 const helper = {

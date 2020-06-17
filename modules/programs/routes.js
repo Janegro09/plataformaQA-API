@@ -12,11 +12,15 @@
  */
 
 // Incluimos controladores, modelos, schemas y modulos
-const includes = require('../includes');
-let router     = includes.express.Router();
+const includes      = require('../includes');
+let router          = includes.express.Router();
 
 const controller = require('./controllers/programs');
 
-router.get('/',controller.get);
+router.post('/new',controller.create);
+router.route('/:id')
+                .get(controller.get)
+                .put(controller.modify)
+                .delete(controller.delete)
 
 module.exports = router;
