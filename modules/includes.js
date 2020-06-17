@@ -12,7 +12,10 @@
  */
 const includes = {
     helper: require('../controllers/helper'),
-    userModel: require('../models/users'),
+    users: {
+        model: require('../models/users'),
+        schema: require('../database/migrations/usersTable')
+    },
     express: require('express'),
     permit: require('../models/permissions'),
     views: require('../views')

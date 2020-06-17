@@ -21,8 +21,9 @@ const Schemas = {
 
 class Program {
     constructor(program){
-        const {name, parentProgram, syncGroups, id, section} = program;
+        const {name, parentProgram, syncGroups, id, section, description} = program;
         this.name           = name          || "";
+        this.description    = description   || "";
         this.id             = id            || 0;
         this.syncGroups     = syncGroups    || [];
         this.parentProgram  = parentProgram || "";
@@ -59,6 +60,7 @@ class Program {
         // Creamos el nuevo registro
         c = new Schemas.programs({
             name: this.name,
+            description: this.description,
             parentProgram: this.parentProgram,
             section: this.section,
             createdBy: this.createdBy
