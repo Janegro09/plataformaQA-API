@@ -82,6 +82,7 @@ class ProgramsGroups {
 
         let c = await Schemas.usersByGroups.insertMany(userstoAssign);
         if(c) return true;
+        else return false;
     }
 
     static async unassignUser(groupId, userId) {
@@ -206,6 +207,17 @@ class ProgramsGroups {
         }
 
         return responseData;
+    }
+
+    static async getUserGroups(id) {
+        if(!id) throw new Error('Error en los parametros enviados');
+        let tempData = [];
+
+        let consulta = await Schemas.usersByGroups.find({userId: id});
+        for(let x = 0; x < consulta.length; x++){
+            tempData.push(consulta[x].groupId);
+        }
+        return tempData;
     }
 }
 

@@ -27,7 +27,15 @@ const controller = {
         })
     },
     modify: (req, res) => {
-
+        if(!req.params.id) return includes.views.error.message(res, "Error en los parametros enviados");
+        const program = new programModel(req.body);
+        program.id = req.params.id;
+        return program.modify().then(response => {
+            if(response === true) return includes.views.success.update(res);
+            else return includes.views.error.message(res, "Error al modificar el programa"); 
+        }, err => {
+            return includes.views.error.message(res, err.message);
+        })
     },
     get: (req, res) => {
         return programModel.get(req).then(response => {

@@ -16,8 +16,11 @@ const includes = require('../../includes');
 // Schemas
 const helper = require('../helper');
 const Schemas = {
-    programs: require('../migrations/programs.table')
+    programs: require('../migrations/programs.table'),
+    groupsbyPrograms: require('../migrations/programsByGroups.table'),
+    programsGroups: require('../migrations/programsGroups.table')
 }
+const programsGroupsModel = require('./programsGroups');
 
 class Program {
     constructor(program){
@@ -35,6 +38,33 @@ class Program {
         if(req.authUser) {
             this.createdBy = req.authUser[0].id;
         }
+    }
+
+    async assigngroup() {
+        let groupstoassign = [];
+        let groups = [];
+        // Consultamos que los grupos no esten asignados al programa
+        for(let i = 0; i < this.syncGroups.length; i++) {
+            let c = await Schemas.groupsbyPrograms.find().where({
+                programId: this.id,
+                groupId: this.syncGroups[i]
+            })
+            if(c.length === 0){
+                groups.push(this.syncGroups[i]);
+            }
+        }
+
+        groups.map(v => {
+            const tempData = new Schemas.groupsbyPrograms({
+                programId: this.id,
+                groupId: v
+            })
+            groupstoassign.push(tempData)
+        })
+
+        let c = await Schemas.groupsbyPrograms.insertMany(groupstoassign);
+        if(c) return true;
+        else false;
     }
 
     async save() {
@@ -78,7 +108,23 @@ class Program {
     }
 
     async modify() {
+        if(this.id == 0) throw new Error('ID Not specified');
 
+        let tempData = {};
+        for(let d in this) {
+            if(d == "id" || d == "syncGroups" || d == "createdBy") continue;
+            if(this[d]){
+                tempData[d] = this[d];
+            }
+        }
+
+        // Consultamos si existe el programa
+        let c = await Schemas.programs.find({_id: this.id}).where({deleted: false});
+        if(c.length === 0) throw new Error('Programa inexistente');
+        c = await this.assigngroup();
+        c = await Schemas.programs.updateOne({_id: this.id}, tempData);
+        if(c.ok > 0) return true;
+        else throw new Error('Error al actualizar el programa')
     }
 
     static async get(id = 0) {
@@ -95,52 +141,106 @@ class Program {
             where._id = id;
         }
 
-        let response = await Schemas.programs.find().where(where);
-        if(response.length === 0) throw new Error('No existen registros en nuestra base de datos');
-
+        let gruposDisponibles   = [];
+        let programasPermitidos = [];
         if(req && typeof req == 'object'){
             UsuarioLogeado = req.authUser[0].id;
             usuariosPermitidos = await includes.users.model.getUsersperGroup(UsuarioLogeado);
             if(usuariosPermitidos[0] !== 'all' && usuariosPermitidos.length > 0) {
+                // Buscamos los grupos de programa de cada usuario
+                for(let x = 0; x < usuariosPermitidos.length; x++) {
+                    let tempData = await programsGroupsModel.getUserGroups(usuariosPermitidos[x]);
+                    if(tempData.length > 0) {
+                        tempData.map(v => {
+                            if(gruposDisponibles.indexOf(v) === -1) {
+                                gruposDisponibles.push(v);
+                            }
+                        })
+                    }
+                }
 
+                // Buscamos que programas pertenencen a estos grupos
+                let programas = await Schemas.groupsbyPrograms.find().where({
+                    groupId: {
+                        $in: gruposDisponibles
+                    }
+                });
+                programas.map(v => {
+                    programasPermitidos.push(v.programId);
+                })
             }else if(usuariosPermitidos[0] !== 'all' || usuariosPermitidos.length === 0 || !usuariosPermitidos){
                 throw new Error('No existen registros para mostrar');
             }
         }
+        let response;
+        if(usuariosPermitidos[0] === 'all'){
+            response = await Schemas.programs.find().where(where);
+        }else{
+            if(id != 0) {
+                // Usuario no admin busca un programa especifico
+                if(programasPermitidos.indexOf(id) === -1){
+                    throw new Error('No existe el registro buscado en nuestra base de datos');
+                }else {
+                    response = await Schemas.programs.find().where(where);
+                }
+            }else {
+                // Solo le listamos los programas disponibles porque esta buscando todos los programas
+                where._id = {
+                    $in: programasPermitidos
+                }
+                response = await Schemas.programs.find().where(where);
+            }
+
+        }
+        if(response.length === 0) throw new Error('No existen registros en nuestra base de datos');
 
 
         for(let i = 0; i < response.length; i++){
 
             // Mostramos los programas que tengan asignados los usuarios que puede ver el usuario que consulta
-
-            if(usuariosPermitidos.length > 0 && usuariosPermitidos[0] === 'all'){
-                const tempData = {
-                    id: response[i]._id,
-                    name: response[i].name,
-                    status: response[i].status,
-                    createdBy: response[i].createdBy,
-                    programParent: response[i].programParent,
-                    section: response[i].section,
-                    description: response[i].description,
-                    dates: {
-                        start: response[i].fechaInicio,
-                        end: response[i].fechaFin,
-                        created: response[i].createdAt
-                    }
+            const tempData = {
+                id: response[i]._id,
+                name: response[i].name,
+                status: response[i].status,
+                createdBy: response[i].createdBy,
+                programParent: response[i].programParent,
+                section: response[i].section,
+                description: response[i].description,
+                dates: {
+                    start: response[i].fechaInicio,
+                    end: response[i].fechaFin,
+                    created: response[i].createdAt
                 }
-                if(id) {
-                    // Hacemos los request para traer toda la info
-                    if(tempData.programParent) {
-                        // Buscamos el padre
-                    }
-                    tempData.assignedGroups = [];
-                }
-    
-                responseData.push(tempData);
             }
+            if(id) {
+                // Hacemos los request para traer toda la info
+                if(tempData.programParent) {
+                    // Buscamos el padre
+                }
+                tempData.assignedGroups  = await Program.getgroupsbyPrograms(response[i]._id);
+            }
+
+            responseData.push(tempData);
         }
 
         return responseData;
+    }
+
+    static async getgroupsbyPrograms(programId) {
+        let dataReturn = [];
+        let c = await Schemas.groupsbyPrograms.find({programId: programId});
+        for(let i = 0; i < c.length; i++){
+            let tempData = await Schemas.programsGroups.find({_id: c[i].groupId});
+            if(tempData.length === 0) continue;
+            dataReturn.push({
+                id: tempData[0]._id,
+                name: tempData[0].name,
+                status: tempData[0].status
+            })
+        }
+
+        return dataReturn;
+
     }
 }
 
