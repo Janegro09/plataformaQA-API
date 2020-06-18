@@ -18,7 +18,6 @@
     "express-fileupload": "^1.1.7-alpha.3",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.10",
-    "msexcel-builder": "0.0.2",
     "mysql": "^2.18.1",
     "node-fetch": "^2.6.0",
     "nodemailer": "^6.4.6",
