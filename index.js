@@ -20,6 +20,7 @@ const cfile     = helper.configFile();
 const dbConfig  = db.getData();
 mongoose.Promise= global.Promise;
 
+
 const port = process.env.PORT || cfile.mainInfo.port;
 
 // Realizamos las conexiones a la base de datos e iniciamos expressS

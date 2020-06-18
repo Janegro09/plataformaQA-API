@@ -84,7 +84,6 @@ function register (routerObject) {
                         group: group
                     });
                     // Agrega la ruta si no existe
-                    console.log("data", dataTemp);
                     dataTemp.save().then(ok => {ok}).catch(e => {e});
                 }
             }
