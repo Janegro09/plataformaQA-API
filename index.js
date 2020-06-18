@@ -33,17 +33,38 @@ mongoose.connect(`mongodb://${dbConfig.mongodb.user}:${dbConfig.mongodb.password
     console.log("-------------------------------------------------- ");
     console.log("MAIN SERVER CONNECTION");
     console.log("");
-    app.listen(port, () => {
-        console.log(`Servidor corriendo correctamente en puerto: ${port}`);
-        console.log("-------------------------------------------------- ");
-        console.log("-------------------------------------------------- ");
-        console.log("PROJECT INFO");
-        console.log("");
-        console.log(`Comapany Name: ${cfile.projectInformation.company}`);
-        console.log(`Authors: `);
-        cfile.projectInformation.author.map((value) => {
-            console.log("-> ",value);
+        app.listen(port, () => {
+            console.log(`Servidor corriendo correctamente en puerto: ${port}`);
+            console.log("-------------------------------------------------- ");
+            console.log("-------------------------------------------------- ");
+            console.log("PROJECT INFO");
+            console.log("");
+            console.log(`Comapany Name: ${cfile.projectInformation.company}`);
+            console.log(`Authors: `);
+            cfile.projectInformation.author.map((value) => {
+                console.log("-> ",value);
+            })
+            console.log("-------------------------------------------------- ");
         })
-        console.log("-------------------------------------------------- ");
-    })
+
 }).catch(err => console.log(err));
+
+if(process.env.ENVRIORMENT != 'development'){
+    const https = require('https');
+    const fs = require('fs');
+    const puertoSSL = 8080;
+
+    var key = fs.readFileSync('/etc/ssl/wildcard.solucionesdigitalesteco.com.ar.key');
+    var cert = fs.readFileSync('/etc/ssl/_.solucionesdigitalesteco.com.ar.cer');
+    var options = {
+        key: key,
+        cert: cert
+    };
+
+    var server = https.createServer(options, app);
+
+    server.listen(puertoSSL, () => {
+        console.log("server HTTPS on port : " + port)
+    });
+}
+
