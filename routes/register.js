@@ -35,6 +35,7 @@ function register (routerObject) {
                 for(let i = 0; i < functions.length; i++){
                     if(functions[i].name == 'checkPermit') continue;
                     name = group ? functions[i].name + ' ' + group : functions[i].name;
+
                     // group = group || name;
                     
                     method = (functions[i].method).toUpperCase();
@@ -45,23 +46,37 @@ function register (routerObject) {
                     }
                     // No almacenamos las rutas que estan en config.json
                     let r = route.split('|');
+                    
+                    // cambiamos el nombre cuando tiene subsecciones (solo para modulos)
+                    let rutaName = r[1].split('/');
+                    if(rutaName.length > 2){
+                        // Evitamos rutas de la estructura
+                        if(rutaName[0] !== "files" && rutaName[0] !== "backoffice" && rutaName[0] !== "users" && rutaName[0] !== "roles" && rutaName[0] !== "groups" && rutaName[0] !== ""){
+                            if(rutaName[1].indexOf(':') === -1) {
+                                // Significa que no es un parametro
+                                name += " " + rutaName[1]; 
+                            }
+                        }
+                    }
+
+                    // Eliminamos las rutas que evitan permisos
                     if(r[1] == '/') {
                         continue;
                     }else{
                         if(r[1].charAt(0) == '/'){
                             r[1] = r[1].substr(1,r[1].length - 1);
                         }
-                        r[1] = r[1].split('/');
+                        r[1] = r[1].split('/'); 
                         if(cfile.routesNotToken.indexOf(r[1][0]) >= 0){
                             continue;
                         }
                     }
                     route = route.replace('|/','|');
-                    // Sacamos la / principal en caso que exista
+                    
+       
 
                     // Almacenamos todas las rutas existentes
                     routesExists.push(route);
-
                     
                     dataTemp = new PermissionSchema({
                         name: name,
@@ -69,6 +84,7 @@ function register (routerObject) {
                         group: group
                     });
                     // Agrega la ruta si no existe
+                    console.log("data", dataTemp);
                     dataTemp.save().then(ok => {ok}).catch(e => {e});
                 }
             }
