@@ -103,8 +103,34 @@ class Program {
         })
     }
 
-    async delete() {
+    static async unassignGroup(programId, groupId) {
+        // Consultamos si existe el registro
+        let c = await Schemas.groupsbyPrograms.find({programId: programId, groupId: groupId});
+        if(c.length === 0) throw new Error(`El grupo ${groupId}, no esta asignado al programa ${programId}`);
 
+        const idRegistro = c[0]._id;
+
+        // Eliminamos el registro
+        c = await Schemas.groupsbyPrograms.deleteOne({_id: idRegistro});
+        if(c.ok > 0) return true;
+        else return false;
+    }
+
+    static async delete(id) {
+        if(!id) throw new Error('ID Not defined');
+
+        // Buscamos si existe el grupo
+        let c = await Schemas.programs.find({_id: id}).where({deleted: false});
+        if(c.length === 0) throw new Error('Programa Inexistente');
+
+        // Consultamos si tiene grupos asignados
+        c = await Schemas.groupsbyPrograms.find({programId: id});
+        if(c.length > 0) throw new Error('No se puede eliminar un programa con grupos asignados');
+
+        // Modificamos el paramétro deleted
+        c = await Schemas.programsGroups.deleteOne({_id: id});
+        if(c.ok > 0) return true;
+        else return false;
     }
 
     async modify() {

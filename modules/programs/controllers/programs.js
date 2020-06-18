@@ -48,6 +48,28 @@ const controller = {
         })
     },
     delete: (req, res) => {
+        return programModel.delete(req.params.id).then(response => {
+            if(!response) return includes.views.error.message(res, "Error el eliminar el programa");
+            else {
+                includes.views.success.delete(res);
+            }
+        }, err => {
+            return includes.views.error.message(res, err.message);
+        })
+    },
+    unassignGroup: (req, res) => {
+        if(req.params.programId && req.params.groupId){
+            const programId = req.params.programId;
+            const groupId  = req.params.groupId;
+            return programModel.unassignGroup(programId, groupId).then(response => {
+                if(!response) return includes.views.error.message(res, "Error al desasignar grupo");
+                else return includes.views.success.update(res);
+            }, err => {
+                return includes.views.error.message(res, err.message);
+            })
+        }else{
+            return includes.views.error.message(res, "Error en los parametros enviados");
+        }
 
     }
 }
