@@ -34,17 +34,18 @@ mongoose.connect(`mongodb://${dbConfig.mongodb.user}:${dbConfig.mongodb.password
     console.log("-------------------------------------------------- ");
     console.log("MAIN SERVER CONNECTION");
     console.log("");
-    app.listen(port, () => {
-        console.log(`Servidor corriendo correctamente en puerto: ${port}`);
-        console.log("-------------------------------------------------- ");
-        console.log("-------------------------------------------------- ");
-        console.log("PROJECT INFO");
-        console.log("");
-        console.log(`Comapany Name: ${cfile.projectInformation.company}`);
-        console.log(`Authors: `);
-        cfile.projectInformation.author.map((value) => {
-            console.log("-> ",value);
+        app.listen(port, () => {
+            console.log(`Servidor HTTP corriendo correctamente en puerto: ${port}`);
+            console.log("-------------------------------------------------- ");
+            console.log("-------------------------------------------------- ");
+            console.log("PROJECT INFO");
+            console.log("");
+            console.log(`Comapany Name: ${cfile.projectInformation.company}`);
+            console.log(`Authors: `);
+            cfile.projectInformation.author.map((value) => {
+                console.log("-> ",value);
+            })
+            console.log("-------------------------------------------------- ");
         })
-        console.log("-------------------------------------------------- ");
-    })
 }).catch(err => console.log(err));
+
