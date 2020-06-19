@@ -10,18 +10,47 @@
  * History:
  * 1.0 - Version principal
  */
+/** ------------------------------------- Ejemplo de uso --------------------------------------------- */
+
+// const XLSXFile = require('./models/XLSXFiles');
+
+// const exampleFile = new XLSXFile.XLSXFile('Datos');
+
+// const exampleSheet = new XLSXFile.Sheet(exampleFile, "Numeros");
+
+// // Agrego columnas
+// exampleSheet.addHeaders(["Nombre", "Apellido", "Telefono", "Mail"])
+
+// // Agrego filas 
+// for(let i = 0; i < 100; i++) {
+//     exampleSheet.addRow({
+//         Nombre: "Ramiro",
+//         Apellido: "Macciuci",
+//         Telefono: 1121742416,
+//         Mail: "ramimacciuci@gmail.com"
+//     })
+// }
+
+// exampleSheet.createSheet();
+
+// exampleFile.save()
+
+/** --------------------------------------------------------------------------------------------------------- */
+
 
 const helper  = require('../controllers/helper');
 const fs      = require('fs');
+const excelNode = require('excel4node');
 const filesModel = require('../database/migrations/Files');
 const { set } = require('mongoose');
+const workbook = require('excel4node/distribution/lib/workbook');
 
 class XLSXFile {
     constructor(fileName, section = "perfilamiento"){
         if(fileName){
             this.fileName = fileName + ".xlsx";
         }
-        this.pathFile = `${global.baseUrl}/../files/${section}`;
+        this.pathFile = `${global.baseUrl}/../files/${section}/`;
         this.sheets = [];
     }
 
@@ -33,46 +62,47 @@ class XLSXFile {
         if(!helper.files.exists(this.pathFile, true)){
             fs.mkdirSync(this.pathFile, '0775');
         }
-        // let workBook = msexcel.createWorkbook(this.pathFile + '/', this.fileName);
+        let workBook = new excelNode.Workbook();
     
-        // // Creamos sheets
-        // const sheets = this.sheets;
-        // for(let i = 0; i < sheets.length; i++){
-        //     let actualSheet = sheets[i];
-        //     let colCounts = actualSheet.headers.length;
-        //     let rowCounts = actualSheet.rows.length;
+         // Creamos sheets
+        const sheets = this.sheets;
+        for(let i = 0; i < sheets.length; i++){
+            let actualSheet = sheets[i];
+            let colCounts = actualSheet.headers.length;
+            let rowCounts = actualSheet.rows.length;
+            let sheet = workBook.addWorksheet(actualSheet.name);
+            // let sheet = workBook.createSheet(actualSheet.name, colCounts, (rowCounts + 1));
+          
+            // Creamos el row header
+            let col = 1;
+            let row = 1;
+            for(let head = 0; head < colCounts; head++){
+                sheet.cell(row, col).string(actualSheet.headers[head])
+                col++
+            }
+            // Almacenamos todas las filas
+            row++
+            for(let r = 0; r < rowCounts; r++){
+                col = 1;
+                for(let c = 0; c < colCounts; c++){
+                    if(typeof actualSheet.rows[r][c] === 'number'){
+                        sheet.cell(row, col).number(actualSheet.rows[r][c])
+                    }else{
+                        sheet.cell(row, col).string(actualSheet.rows[r][c])
+                    }
+                    col++
+                }
+                row++
+            }
+        }
 
-        //     let sheet = workBook.createSheet(actualSheet.name, colCounts, (rowCounts + 1));
-            
-        //     // Creamos el row header
-        //     let col = 1;
-        //     let row = 1;
-        //     for(let head = 0; head < colCounts; head++){
-        //         sheet.set(col,row,actualSheet.headers[head]);
-        //         col++
-        //     }
-
-        //     // Almacenamos todas las filas
-        //     row++
-        //     for(let r = 0; r < rowCounts; r++){
-        //         col = 1;
-        //         for(let c = 0; c < colCounts; c++){
-        //             sheet.set(col,2,actualSheet.rows[r][c]);
-        //             col++
-        //         }
-        //         row++
-        //     }
-        // }
-
-        // console.log(workBook)
-        // workBook.save(function(ok){
-        //     if (!ok) {
-        //         console.log(ok);
-        //         workBook.cancel();
-        //     } else{
-        //         console.log('congratulations, your workbook created')
-        //     }
-        // });
+        workBook.write(this.pathFile + this.fileName, (err, stats) => {
+            if (err) {
+              return false;
+            } else {
+              return true; //Prints out an instance of a node.js fs.Stats object
+            }
+        })
     
     }
 }

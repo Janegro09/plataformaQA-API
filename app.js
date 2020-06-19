@@ -43,36 +43,6 @@ app.use(cors())
 app.use(fileUpload());
 
 /**
- * Probamos la creacion de excel file
- */
-const XLSXFile = require('./models/XLSXFiles');
-
-const exampleFile = new XLSXFile.XLSXFile('example');
-
-const exampleSheet = new XLSXFile.Sheet(exampleFile, "Sheet");
-
-// Agrego columnas
-exampleSheet.addHeaders(["col1", "col2", "col3", "col4"])
-
-// Agrego filas 
-exampleSheet.addRow({
-    col2: "datacol2",
-    col1: "dataCol1"
-})
-exampleSheet.addRow({
-    col3: "datacol3",
-    col1: "dataCol1"
-})
-exampleSheet.addRow({
-    col2: "datacol2",
-    col1: "dataCol1"
-})
-exampleSheet.createSheet();
-
-exampleFile.save()
-// console.log(exampleFile);
-
-/**
  * Checkeara token en todos los request menos en los especificados en config.json
  */
 app.use(Auth.checkToken);
