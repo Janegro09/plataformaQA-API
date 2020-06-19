@@ -18,7 +18,7 @@ const Users         = require('../models/users');
 const Auth          = require('../middlewares/authentication');
 const Roles         = require('../models/roles')
 const Groups         = require('../models/groups')
-const files         = require('../controllers/files');
+const filesModel = require('../database/migrations/Files');
 const Permit        = require('../models/permissions')
 const fetch         = require('node-fetch');
 const { request } = require('express');
@@ -47,15 +47,30 @@ var controller = {
 
         return views.customResponse(res,true,202,"",returnData)
     },
-    getPublicFile: (req, res) => {
-        let section = req.params.section;
-        let type = req.params.type;
-        let file   = req.params.file;
-        let url    = `../files/${section}/${type}/${file}`;
-        if(helper.files.exists(url)){
-           views.success.file(res,url);
-        }else{
-           views.success.file(res,'public/notFound.jpg');
+    getPublicFile: async (req, res) => {
+        let id = req.params.id;
+        if(id){
+            let url = "";
+            // Buscamos la imagen por ID
+            try {
+                let c = await filesModel.find({_id: id});
+                if(c.length == 0) {
+                    views.success.file(res,'public/notFound.jpg');
+                }
+                url = c[0].path;
+        
+                if(helper.files.exists(url)){
+                   views.success.file(res,url);
+                }else{
+                   await filesModel.deleteOne({_id: id});
+                   views.success.file(res,'public/notFound.jpg');
+                }
+
+            } catch {
+                views.success.file(res,'public/notFound.jpg');
+            }
+        }else {
+            views.success.file(res,'public/notFound.jpg');
         }
     },
     login: async (req, res) => {

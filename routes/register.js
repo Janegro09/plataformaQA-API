@@ -17,6 +17,7 @@ const helper        = require('../controllers/helper')
 const router        = express.Router();
 const cfile         = helper.configFile();
 const PermissionSchema  = require('../database/migrations/Permissions');
+const fs            = require('fs');
 
 
 function register (routerObject) {
@@ -89,7 +90,20 @@ function register (routerObject) {
             }
         }
     })
-    
+
+    // Agregamos los permisos para ver los archivos
+    // fs.readdir(global.baseUrl + '/../files/',(err, files) => {
+    //     files.forEach(element => {
+    //         let dataTemp = new PermissionSchema({
+    //             name: `View files of folder ${element}`,
+    //             route: `GET|files/${element}`,
+    //             group: "files"
+    //         })
+    //         routesExists.push(`GET|files/${element}`);
+    //         dataTemp.save().then(ok => {ok}).catch(e => {e});
+    //     });
+    //     deleteNotUsed(routesExists);
+    // })
     deleteNotUsed(routesExists);
 }
 

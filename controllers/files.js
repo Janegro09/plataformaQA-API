@@ -116,14 +116,14 @@ class uploadFile {
      * @param {Object} req 
      * @param {String} fileID 
      */
-    static async getFileURL(req, fileID) {
-        if(!req || !fileID) throw new Error('Error en los parametros')
+    static async getFileURL(fileID) {
+        if(!fileID) throw new Error('Error en los parametros')
         let URL = cfile.mainInfo.routes + '/files';
-        
+
         // Consultamos si existe el registro
         let c = await filesModel.find({_id: fileID});
-        if(c.lenght == 0) return false
-        
+        if(c.length == 0) return false
+
         let filePath = c[0].path;
         // Comprobamos que el archivo exista
         if(!helper.files.exists(filePath)) {

@@ -30,7 +30,7 @@ const permit            = require('../models/permissions');
 router.get(`/`,main.principalView);
 router.get(`${routesPath}/test`,main.test);
 router.get(`${routesPath}/frontUtilities`, main.frontUtilities);
-router.get(`${routesPath}/files/:section?/:type?/:file?`,main.getPublicFile);
+router.get(`${routesPath}/files/:id?`,main.getPublicFile);
 router.post(`${routesPath}/login`, main.login);
 router.post(`${routesPath}/backoffice/nomina`, permit.checkPermit ,backoffice.importNomina);
 
