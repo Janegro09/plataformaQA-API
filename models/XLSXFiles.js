@@ -13,14 +13,10 @@
 /** ------------------------------------- Ejemplo de uso --------------------------------------------- */
 
 // const XLSXFile = require('./models/XLSXFiles');
-
 // const exampleFile = new XLSXFile.XLSXFile('Datos');
-
 // const exampleSheet = new XLSXFile.Sheet(exampleFile, "Numeros");
-
 // // Agrego columnas
 // exampleSheet.addHeaders(["Nombre", "Apellido", "Telefono", "Mail"])
-
 // // Agrego filas 
 // for(let i = 0; i < 100; i++) {
 //     exampleSheet.addRow({
@@ -30,10 +26,10 @@
 //         Mail: "ramimacciuci@gmail.com"
 //     })
 // }
-
 // exampleSheet.createSheet();
-
-// exampleFile.save()
+// exampleFile.save().then(v => {
+//     console.log(v)
+// })
 
 /** --------------------------------------------------------------------------------------------------------- */
 
@@ -41,7 +37,7 @@
 const helper  = require('../controllers/helper');
 const fs      = require('fs');
 const excelNode = require('excel4node');
-const filesModel = require('../database/migrations/Files');
+const filesModel = require('../controllers/files');
 const { set } = require('mongoose');
 const workbook = require('excel4node/distribution/lib/workbook');
 
@@ -50,17 +46,25 @@ class XLSXFile {
         if(fileName){
             this.fileName = fileName + ".xlsx";
         }
-        this.pathFile = `${global.baseUrl}/../files/${section}/`;
+        this.section = section;
+        this.fileType = "xlsx"
+        this.pathFile = `${global.baseUrl}/../files/${section}/${this.fileType}/`;
         this.sheets = [];
     }
 
-    save() {
+    async save() {
         // Creamos la carpeta files si no existe
         if(!helper.files.exists(global.baseUrl + '/../files', true)){
             fs.mkdirSync(global.baseUrl + '/../files', '0775');
         }
+        if(!helper.files.exists(global.baseUrl + '/../files/' + this.section, true)){
+            fs.mkdirSync(this.pathFile, '0775');
+        }
         if(!helper.files.exists(this.pathFile, true)){
             fs.mkdirSync(this.pathFile, '0775');
+        }
+        if(helper.files.exists(this.pathFile + this.fileName,false)){
+            return false;
         }
         let workBook = new excelNode.Workbook();
     
@@ -96,13 +100,8 @@ class XLSXFile {
             }
         }
 
-        workBook.write(this.pathFile + this.fileName, (err, stats) => {
-            if (err) {
-              return false;
-            } else {
-              return true; //Prints out an instance of a node.js fs.Stats object
-            }
-        })
+        await workBook.write(this.pathFile + this.fileName);
+        return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
     
     }
 }

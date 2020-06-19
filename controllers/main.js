@@ -18,6 +18,7 @@ const Users         = require('../models/users');
 const Auth          = require('../middlewares/authentication');
 const Roles         = require('../models/roles')
 const Groups         = require('../models/groups')
+const files         = require('../controllers/files');
 const Permit        = require('../models/permissions')
 const fetch         = require('node-fetch');
 const { request } = require('express');
@@ -31,6 +32,11 @@ var controller = {
         return res.status(200).send(ini);
     },
     test: (req, res) => {
+        files.getFileURL(req, '5eecfd79f5bcdf5913decda5').then(v => {
+            console.log(v)
+        }, err => {
+            console.log(err)
+        })
         return views.success.test(res);
     },
     frontUtilities: async (req, res) => {

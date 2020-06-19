@@ -17,6 +17,7 @@
 const helper = require('./helper');
 const fs     = require('fs');
 const filesModel = require('../database/migrations/Files');
+const cfile     = helper.configFile();
 
 class uploadFile {
     constructor(req){
@@ -75,6 +76,74 @@ class uploadFile {
                 return false;
             }
 
+        }
+    }
+
+    /**
+     * Funcion para guardar el archivo y almacenar su ubicacion en la base de datos
+     * @param {String} section 
+     * @param {String} type 
+     * @param {String} fileName 
+     */
+    static async getIdSaveFile(section, type, fileName) {
+        if(!section || !type || !fileName) return false;
+        let tempData = {
+            path: `${global.baseUrl}/../files/${section}/${type}/${fileName}`,
+            type: type,
+            name: fileName
+        }
+
+        try{
+            let saveFile = new filesModel(tempData)
+            await saveFile.save()
+            tempData.id = saveFile._id;
+            return tempData;
+        } catch {
+            return false;
+        }
+    }
+
+    /**
+     * Traemos la url de un archivo 
+     * example:       
+     * 
+     *  files.getFileURL(req, '5eecfd79f5bcdf5913decda5').then(v => {
+            console.log(v)
+        }, err => {
+            console.log(err)
+        })
+
+     * @param {Object} req 
+     * @param {String} fileID 
+     */
+    static async getFileURL(req, fileID) {
+        if(!req || !fileID) throw new Error('Error en los parametros')
+        let URL = req.get('host') + cfile.mainInfo.routes + '/files';
+
+        console.log(URL);
+        return true;
+        
+        // Consultamos si existe el registro
+        let c = await filesModel.find({_id: fileID});
+        if(c.lenght == 0) return false
+        
+        let filePath = c[0].path;
+        // Comprobamos que el archivo exista
+        if(!helper.files.exists(filePath)) {
+            // Eliminamos el registro
+            await filesModel.deleteOne({_id: fileID});
+            return false;
+        }else{
+            filePath = filePath.split('/');
+
+            // Buscamos la carpeta files
+            let filesFolderIndex = filePath.indexOf('files') + 1;
+            for(let i = filesFolderIndex; i < filePath.length; i++){
+                if(filePath[i]){
+                    URL += '/' + filePath[i];
+                }
+            }
+            return URL;
         }
     }
 

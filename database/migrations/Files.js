@@ -16,7 +16,7 @@ const mongoose = require('mongoose');
 const Schema   = mongoose.Schema;
 
 var Files = new Schema({
-    url: {
+    path: {
         type: String,
         required: true
     },
