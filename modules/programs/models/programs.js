@@ -174,6 +174,7 @@ class Program {
             usuariosPermitidos = await includes.users.model.getUsersperGroup(UsuarioLogeado);
             if(usuariosPermitidos[0] !== 'all' && usuariosPermitidos.length > 0) {
                 if(usuariosPermitidos.indexOf(req.authUser[0].idDB) === -1) {
+                    // Agregamos el usuario que consulta para agregar los prog
                     usuariosPermitidos.push(req.authUser[0].idDB)
                 }
                 // Buscamos los grupos de programa de cada usuario
