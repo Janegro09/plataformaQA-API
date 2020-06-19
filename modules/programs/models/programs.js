@@ -173,6 +173,9 @@ class Program {
             UsuarioLogeado = req.authUser[0].id;
             usuariosPermitidos = await includes.users.model.getUsersperGroup(UsuarioLogeado);
             if(usuariosPermitidos[0] !== 'all' && usuariosPermitidos.length > 0) {
+                if(usuariosPermitidos.indexOf(req.authUser[0].idDB) === -1) {
+                    usuariosPermitidos.push(req.authUser[0].idDB)
+                }
                 // Buscamos los grupos de programa de cada usuario
                 for(let x = 0; x < usuariosPermitidos.length; x++) {
                     let tempData = await programsGroupsModel.getUserGroups(usuariosPermitidos[x]);
