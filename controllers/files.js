@@ -118,7 +118,7 @@ class uploadFile {
      */
     static async getFileURL(req, fileID) {
         if(!req || !fileID) throw new Error('Error en los parametros')
-        let URL = req.get('host') + cfile.mainInfo.routes + '/files';
+        let URL = cfile.mainInfo.routes + '/files';
 
         console.log(URL);
         return true;

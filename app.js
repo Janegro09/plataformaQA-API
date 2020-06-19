@@ -42,6 +42,24 @@ try {
 app.use(cors())
 app.use(fileUpload());
 
+const XLSXFile = require('./models/XLSXFiles');
+const exampleFile = new XLSXFile.XLSXFile('Datos');
+const exampleSheet = new XLSXFile.Sheet(exampleFile, "Numeros");
+//Agrego columnas
+exampleSheet.addHeaders(["Nombre", "Apellido", "Telefono", "Mail"])
+//Agrego filas 
+for(let i = 0; i < 100; i++) {
+    exampleSheet.addRow({
+        Nombre: "Ramiro",
+        Apellido: "Macciuci",
+        Telefono: 1121742416,
+        Mail: "ramimacciuci@gmail.com"
+    })
+}
+exampleSheet.createSheet();
+exampleFile.save().then(v => {
+    console.log(v)
+})
 
 /**
  * Checkeara token en todos los request menos en los especificados en config.json
