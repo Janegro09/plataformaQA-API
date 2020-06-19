@@ -78,10 +78,6 @@ class XLSXFile {
 }
 
 class Sheet extends XLSXFile {
-    // constructor(){
-    //     // this.rows = [];
-    //     // this.headers = [];
-    // }
     constructor(parent, name) {
         if(!name || !parent) throw new Error('Error en los parametros');
         super(parent)
