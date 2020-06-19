@@ -32,11 +32,6 @@ var controller = {
         return res.status(200).send(ini);
     },
     test: (req, res) => {
-        files.getFileURL(req, '5eecfd79f5bcdf5913decda5').then(v => {
-            console.log(v)
-        }, err => {
-            console.log(err)
-        })
         return views.success.test(res);
     },
     frontUtilities: async (req, res) => {
