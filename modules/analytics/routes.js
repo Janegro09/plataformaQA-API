@@ -15,6 +15,20 @@
 const includes      = require('../includes');
 let router          = includes.express.Router();
 
+// Controladores
+const controllerPerfilamiento = require('./controllers/perfilamiento');
+
+// Perfilamiento Routes
+router.get('/file/:id/columns', controllerPerfilamiento.getColumns);
+router.post('/file',controllerPerfilamiento.new);
+router.get('/file', controllerPerfilamiento.get);
+router.route('/file/:id')
+                    .get(controllerPerfilamiento.download)
+                    .delete(controllerPerfilamiento.delete)
+
+// router.get('/file/:id', controllerPerfilamiento.download);
+
+
 // Programs groups
 // const baseProgramsGroups = "/groups";
 // router.post(`${baseProgramsGroups}/new`, includes.permit.checkPermit , controllerGroups.create);
