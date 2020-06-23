@@ -28,6 +28,7 @@ const Roles         = require('./Roles');
 const Groups        = require('./groups');
 const groupsPerUser = require('./groupsperuser');
 const userLogin     = require('./usersLogin');
+const tempurls      = require('./tempURLs');
 
 
 var migrations = function() {
@@ -38,6 +39,7 @@ var migrations = function() {
     Groups();
     groupsPerUser();
     userLogin();
+    tempurls();
 }
 
 module.exports = migrations;

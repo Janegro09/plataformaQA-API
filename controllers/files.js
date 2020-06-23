@@ -17,6 +17,7 @@
 const helper = require('./helper');
 const fs     = require('fs');
 const filesModel = require('../database/migrations/Files');
+const tempURLs   = require('../database/migrations/tempURLs');
 const cfile     = helper.configFile();
 
 class uploadFile {
@@ -125,44 +126,11 @@ class uploadFile {
     }
 
     /**
-     * Traemos la url de un archivo 
-     * example:       
-     * 
-     *  files.getFileURL(req, '5eecfd79f5bcdf5913decda5').then(v => {
-            console.log(v)
-        }, err => {
-            console.log(err)
-        })
-
-     * @param {Object} req 
+     * Funcion para obtener una URL Temporal
      * @param {String} fileID 
      */
     static async getFileURL(fileID) {
-        if(!fileID) throw new Error('Error en los parametros')
-        let URL = cfile.mainInfo.routes + '/files';
-
-        // Consultamos si existe el registro
-        let c = await filesModel.find({_id: fileID});
-        if(c.length == 0) return false
-
-        let filePath = c[0].path;
-        // Comprobamos que el archivo exista
-        if(!helper.files.exists(filePath)) {
-            // Eliminamos el registro
-            await filesModel.deleteOne({_id: fileID});
-            return false;
-        }else{
-            filePath = filePath.split('/');
-
-            // Buscamos la carpeta files
-            let filesFolderIndex = filePath.indexOf('files') + 1;
-            for(let i = filesFolderIndex; i < filePath.length; i++){
-                if(filePath[i]){
-                    URL += '/' + filePath[i];
-                }
-            }
-            return URL;
-        }
+        // Buscamos si existe el archivo
     }
 
     /**
