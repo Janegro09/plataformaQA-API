@@ -30,15 +30,26 @@ const PerfilamientoFile = {
         this.programtoAssign = program;
         this.dividirBase();
 
-        console.log(this.filesToCreate)
+        console.log(this.filesToCreate.length);
+
+        this.filesToCreate.map(v => {
+            if(v.data.length < 10){
+                console.log(v.name);
+            }
+        })
+
+
+        // console.log(this.filesToCreate)
 
     },
     dividirBase() {
-        let filesCreate = []
         if(this.baseConsolidada.length === 0) return false;
         for(let x = 0; x < this.baseConsolidada.length; x++){
             let date = this.getDatetoExcel(this.baseConsolidada[x]['MES']);
-            let FileToPush = `${this.baseConsolidada[x]['ENTIDAD']} ${this.baseConsolidada[x]['PROVEEDOR']} ${date}`
+            if(this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL'] == "" || this.baseConsolidada[x]['INFORME'] == ''){
+                continue;
+            }
+            let FileToPush = `${this.baseConsolidada[x]['INFORME']} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
             let tempData = {};
             for(let h in this.baseConsolidada[x]){
                 tempData[h] = this.baseConsolidada[x][h];
