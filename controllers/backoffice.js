@@ -17,6 +17,7 @@ const files         = require('./files');
 const csvtojson     = require('csvtojson');
 const views         = require('../views');
 const Permit        = require('../models/permissions')
+const logSchema     = require('../database/migrations/logNomina');
 
 const models = {
     users: require('../models/users'),
@@ -102,8 +103,9 @@ const controller = {
      * Metodo para importar todos los usuarios desde la nomina 
      * @param {Object} req Objeto req completo para extraer el archivo .csv
      */
-    import: async (c, archivo, req) => {
+    import: async (c, archivo = false, req = false) => {
         let tempData, user, group, agregados = 0, fallaron = 0;
+
         for(let i = 0; i < c.length; i++){
             if(!c[i]['Legajo'] && !c[i]['Mail']) continue;
             // No agregamos los usuarios pertenecientes a 365
@@ -118,16 +120,26 @@ const controller = {
             else agregados++;;
         }
 
-        let mailContain = "";
-        mailContain     += `<h3>Actualizacion de nomina en ${helper.configFile().projectInformation.project}</h3>`;
-        mailContain     += `<br><p>Se agregaron o modificaron: <strong>${agregados} usuarios</strong></p>`;
-        mailContain     += `<br><p>Fallaron: <strong>${fallaron} usuarios</strong></p>`;
-        let mail = new helper.sender([req.authUser[0].email],`Actualizacion de nomina en ${helper.configFile().projectInformation.project}`,mailContain);
-        mail.send().then(ok => console.log(ok), err => console.log(err));
-        
-        // Enviamos el mail con la notificacion de finalizacion
+        if(req && archivo){
+            // Enviamos el mail con la notificacion de finalizacion
+            let mailContain = "";
+            mailContain     += `<h3>Actualizacion de nomina en ${helper.configFile().projectInformation.project}</h3>`;
+            mailContain     += `<br><p>Se agregaron o modificaron: <strong>${agregados} usuarios</strong></p>`;
+            mailContain     += `<br><p>Fallaron: <strong>${fallaron} usuarios</strong></p>`;
+            let mail = new helper.sender([req.authUser[0].email],`Actualizacion de nomina en ${helper.configFile().projectInformation.project}`,mailContain);
+            mail.send().then(ok => console.log(ok), err => console.log(err));
 
-        archivo.delete();
+            archivo.delete();
+        }
+        
+        // Registramos en el log
+        let log = new logSchema({
+            method: req && archivo ? "Manual" : "Script Automatico",
+            uAgregados: agregados,
+            uFallados: fallaron
+        })
+        log.save().then(ok => {ok}).catch(err => {err})
+
     }
 }
 
@@ -148,6 +160,7 @@ class UserNomina {
         // Convertimos el nombre a nombre y apellido
         this.usuario = helper.users.convertNametoFullName(this.obj['Nombre']);
 
+
         // Convertimos el cuil a DNI
         let i = helper.users.convertCUILtoDNI(this.obj['CUIL']);
         for(let x in i){
@@ -156,6 +169,7 @@ class UserNomina {
 
         // Definimos el ID
         this.usuario.id = i.dni;
+
 
         // Definimos los parametros estaticos
         this.usuario.legajo             = "u" + this.obj['Legajo'];

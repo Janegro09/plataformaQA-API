@@ -13,8 +13,15 @@
 
 const fetch         = require('node-fetch');
 const FormData      = require('form-data');
-const { json } = require('express');
-
+const nominaImport  = require('./controllers/backoffice');
+const csvtojson     = require('csvtojson');
+;
+const mongoose  = require('mongoose');
+const helper    = require('./controllers/helper');
+const db        = require('./controllers/db');
+const cfile     = helper.configFile();
+const dbConfig  = db.getData();
+mongoose.Promise= global.Promise;
 
 
 let nominaRequest = {
@@ -29,7 +36,6 @@ let nominaRequest = {
 
 
 module.exports = async function() {
-
     let formData = new FormData();
     formData.append('grant_type', 'client_credentials');
     formData.append('client_id', '9ca91751-9bd3-4ecc-9af6-bed1baa67c5c@e0779def-eb91-4242-ae6a-f3962b1a1b5a');
@@ -49,12 +55,25 @@ module.exports = async function() {
     // Almacenamos el token
     nominaRequest.options.headers.Authorization += request.access_token;
 
-    console.log(nominaRequest.options);
-
     // Realizamos el request de la nomina
     request = await fetch(nominaRequest.url, nominaRequest.options);
     request = await request.text();
-    console.log(request);
 
+    csvtojson({})
+    .fromString(request)
+    .then((csvRow)=>{ 
+        
+        mongoose.connect(`mongodb://${dbConfig.mongodb.user}:${dbConfig.mongodb.password}@${dbConfig.mongodb.host}:${dbConfig.mongodb.port}/${dbConfig.mongodb.database}`,{ useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true }).then(() => {
+            console.log("-------------------------------------------------- ");
+            console.log("DATABASES CONNECTIONS");
+            console.log("");
+            console.log(`Conexion a MongoDB realizada correctamente mediante puerto: ${dbConfig.mongodb.port}`);
+            nominaImport.import(csvRow).then(v => {
+                process.exit();
+                console.log(v)
+            })
+        }).catch(err => console.log(err))
+
+    })
 
 }();
