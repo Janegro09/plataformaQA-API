@@ -16,6 +16,8 @@ const includes = require('../../includes');
 // Schemas
 const helper = require('../helper');
 
+const programsModel = require('../../programs/models/programs');
+
 
 const PerfilamientoFile = {
     /**
@@ -94,7 +96,7 @@ const PerfilamientoFile = {
             else return false;
         }
     },
-    createFile(fileData) {
+    async createFile(fileData) {
         // Creamos un archivo de perfilamiento
         let file = new includes.XLSX.XLSXFile(fileData.name, 'analytics');
         
@@ -105,11 +107,11 @@ const PerfilamientoFile = {
         // Agregamos los usuarios
         for(let x = 0; x < fileData.data.length; x++) {
             // Verificamos si el usuario existe en nuestra base
-            includes.users.schema.find({id: fileData.data[x].DNI}).then(v => {
-                if(v.length > 0){
-                    users.addRow(fileData.data[x]);
-                }
-            }) 
+            let tempQuery = await includes.users.schema.find({id: fileData.data[x].DNI})
+
+            if(tempQuery.length > 0) {
+                users.addRow(fileData.data[x]);
+            }
         }
         users.createSheet();
 
@@ -143,6 +145,10 @@ const PerfilamientoFile = {
         perfilamiento.createSheet();
 
         file.save().then(v => {
+            // Asignamos el programa al archivo 
+            if(this.programtoAssign){
+                programsModel.assignProgramtoPerfilamiento(v.id, this.programtoAssign).then(v => {v})
+            }
             this.filesIds.push(v.id);
         })
     }

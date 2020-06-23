@@ -18,7 +18,8 @@ const helper = require('../helper');
 const Schemas = {
     programs: require('../migrations/programs.table'),
     groupsbyPrograms: require('../migrations/programsByGroups.table'),
-    programsGroups: require('../migrations/programsGroups.table')
+    programsGroups: require('../migrations/programsGroups.table'),
+    programsbyPerfilamientos: require('../migrations/programsbyPerfilamientos')
 }
 const programsGroupsModel = require('./programsGroups');
 
@@ -271,6 +272,30 @@ class Program {
 
         return dataReturn;
 
+    }
+
+    /**
+     * Funcion para asignar programas a perfilamiento
+     * @param {String} filePerfilamientoId 
+     * @param {String} programId
+     */
+    static async assignProgramtoPerfilamiento(filePerfilamientoId, programId){
+        if(!filePerfilamientoId || !programId) return false;
+        
+        // Buscamos si existe el programa a asignar
+        let c = await Schemas.programs.find({_id: programId});
+        if(c.length === 0) return false;
+
+        // Consultamos si existe el archivo
+
+        // Eliminamos los programas asignados
+        c = await Schemas.programsbyPerfilamientos.deleteMany({PerfilamientoFileId: filePerfilamientoId});
+
+        c = new Schemas.programsbyPerfilamientos({
+            programId: programId,
+            PerfilamientoFileId: filePerfilamientoId           
+        })
+        c.save().then(ok => {ok}, e => {e})
     }
 }
 

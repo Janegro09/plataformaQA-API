@@ -88,6 +88,17 @@ class uploadFile {
         }
     }
 
+    static async checkExist(fileId) {
+        if(!fileId) return false;
+
+        let c = filesModel.find({_id: fileId});
+        if(c.length > 0) {
+            return true;
+        }else {
+            return false;
+        }
+    }
+
     /**
      * Funcion para guardar el archivo y almacenar su ubicacion en la base de datos
      * @param {String} section 
