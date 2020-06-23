@@ -28,6 +28,9 @@ var Files = new Schema({
         type: String,
         required: true
     },
+    section: {
+        type: String
+    },
     updatedAt: {
         type: Date,
         default: Date.now

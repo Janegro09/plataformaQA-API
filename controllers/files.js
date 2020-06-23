@@ -99,7 +99,8 @@ class uploadFile {
         let tempData = {
             path: `${global.baseUrl}/../files/${section}/${type}/${fileName}`,
             type: type,
-            name: fileName
+            name: fileName,
+            section: section
         }
 
         try{

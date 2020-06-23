@@ -13,14 +13,16 @@
 
 
 // Tables 
-const groupsByUsers     = require('./groupsByUsers.table');
-const programs          = require('./programs.table');
-const programsByGroups  = require('./programsByGroups.table');
-const programsGroups    = require('./programsGroups.table');
+const groupsByUsers             = require('./groupsByUsers.table');
+const programs                  = require('./programs.table');
+const programsByGroups          = require('./programsByGroups.table');
+const programsGroups            = require('./programsGroups.table');
+const programsByPerfilamientos  = require('./programsbyPerfilamientos');
 
 module.exports = function() {
     groupsByUsers();
     programs();
     programsByGroups();
     programsGroups();
+    programsByPerfilamientos();
 }();

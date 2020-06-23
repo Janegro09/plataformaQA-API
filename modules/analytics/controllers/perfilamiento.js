@@ -65,7 +65,7 @@ const controller = {
             
             archivo.delete();
             // Creamos los archivos separandolos por entidad, perfilamiento actual y proveedor
-            await PerfilamientoFile.dividirBaseConsolidada(data, program);
+            PerfilamientoFile.dividirBaseConsolidada(data, program);
 
             return includes.views.customResponse(res, true, 200, "Se estan creando los archivos, en intantes podra verlos");
         } catch (e) {

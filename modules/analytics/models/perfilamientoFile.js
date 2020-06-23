@@ -104,7 +104,12 @@ const PerfilamientoFile = {
         users.addHeaders(headers);
         // Agregamos los usuarios
         for(let x = 0; x < fileData.data.length; x++) {
-            users.addRow(fileData.data[x]);
+            // Verificamos si el usuario existe en nuestra base
+            includes.users.schema.find({id: fileData.data[x].DNI}).then(v => {
+                if(v.length > 0){
+                    users.addRow(fileData.data[x]);
+                }
+            }) 
         }
         users.createSheet();
 
