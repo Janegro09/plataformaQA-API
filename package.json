@@ -17,6 +17,7 @@
     "excel4node": "^1.7.2",
     "express": "^4.17.1",
     "express-fileupload": "^1.1.7-alpha.3",
+    "form-data": "^3.0.0",
     "jsonwebtoken": "^8.5.1",
     "mongoose": "^5.9.10",
     "mysql": "^2.18.1",
