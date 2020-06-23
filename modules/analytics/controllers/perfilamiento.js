@@ -62,12 +62,12 @@ const controller = {
                 }
             })
             if(!requiredHeaders) throw new Error('El archivo no tiene las columnas requeridas')
-
-            // Creamos los archivos separandolos por entidad, perfilamiento actual y proveedor
-            PerfilamientoFile.dividirBaseConsolidada(data, program);
             
             archivo.delete();
-            return includes.views.customResponse(res, true, 200, "Se comenzó a dividir la base consolidada, en instantes podra visualizar los archivos");
+            // Creamos los archivos separandolos por entidad, perfilamiento actual y proveedor
+            await PerfilamientoFile.dividirBaseConsolidada(data, program);
+
+            return includes.views.customResponse(res, true, 200, "Se estan creando los archivos, en intantes podra verlos");
         } catch (e) {
             return includes.views.error.message(res, e.message);
         }

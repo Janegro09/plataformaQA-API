@@ -176,10 +176,13 @@ class Sheet extends XLSXFile {
         for(let x in data){
             let c
             if(c = this.getColData(x)){
+                if(!data[x]){
+                    data[x] = '0';
+                }
                 if(typeof data[x] === 'string' || typeof data[x] === 'number'){
                     dataOrdenada[c.id] = data[x]
                 }else{
-                    throw new Error('Datos no aceptados. Columna: ' + x + ". Tipo de dato erroneo: " + typeof data[x] );
+                    throw new Error('Datos no aceptados. Columna: ' + x + ". Tipo de dato erroneo: " + data[x] );
                 }
             }
         }

@@ -170,6 +170,13 @@ class UserNomina {
         // Definimos el ID
         this.usuario.id = i.dni;
 
+        /**
+         * A los usuarios que tengan canal ```PRESENCIAL``` y pertenezcan a la empresa TECO entonces el grupo sera Equipo Especifico
+         */
+        if(this.obj['Canal'] == 'PRESENCIAL' && this.obj['Empresa'] == 'TECO'){
+            this.obj['Empresa'] = this.obj['Equipo Especifico'];
+        }
+
 
         // Definimos los parametros estaticos
         this.usuario.legajo             = "u" + this.obj['Legajo'];

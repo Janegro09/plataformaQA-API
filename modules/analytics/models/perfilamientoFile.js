@@ -24,23 +24,21 @@ const PerfilamientoFile = {
     baseConsolidada: [],
     programtoAssign: false,
     filesToCreate: [],
-    dividirBaseConsolidada(files, program) {
+    filesIds: [],
+    async dividirBaseConsolidada(files, program) {
         // Dividimos el array en varias bases
         this.baseConsolidada = files;
         this.programtoAssign = program;
         this.dividirBase();
 
-        console.log(this.filesToCreate.length);
+        // Creamos los archivos
+        // console.log(this.filesToCreate.length);
 
-        this.filesToCreate.map(v => {
-            if(v.data.length < 10){
-                console.log(v.name);
-            }
-        })
+        for(let x = 0; x < this.filesToCreate.length; x++){
+            this.createFile(this.filesToCreate[x]);
+        }
 
-
-        // console.log(this.filesToCreate)
-
+        return this.filesIds.length;
     },
     dividirBase() {
         if(this.baseConsolidada.length === 0) return false;
@@ -95,6 +93,53 @@ const PerfilamientoFile = {
             if(exists) return true;
             else return false;
         }
+    },
+    createFile(fileData) {
+        // Creamos un archivo de perfilamiento
+        let file = new includes.XLSX.XLSXFile(fileData.name, 'analytics');
+        
+        // Sheet 1 (Usuarios)
+        let users = new includes.XLSX.Sheet(file, fileData.name);
+        let headers = Object.keys(fileData.data[0]);
+        users.addHeaders(headers);
+        // Agregamos los usuarios
+        for(let x = 0; x < fileData.data.length; x++) {
+            users.addRow(fileData.data[x]);
+        }
+        users.createSheet();
+
+        // Sheet 2 (Cuartiles)
+        let cuartiles = new includes.XLSX.Sheet(file, "Cuartiles");
+        cuartiles.addHeaders([
+            "Nombre del Cuartil",
+            "Q1 | Cant",
+            "Q1 | VMin",
+            "Q1 | VMax",
+            "Q2 | Cant",
+            "Q2 | VMin",
+            "Q2 | VMax",
+            "Q3 | Cant",
+            "Q3 | VMin",
+            "Q3 | VMax",
+            "Q4 | Cant",
+            "Q4 | VMin",
+            "Q4 | VMax",
+        ])
+        cuartiles.createSheet();
+
+        // Sheet 3 (Grupos de perfilamiento)
+        let perfilamiento = new includes.XLSX.Sheet(file, "Grupos de perfilamiento");
+        perfilamiento.addHeaders([
+            "Nombre del grupo",
+            "Cant de agentes",
+            "% Total",
+            "Cluster"
+        ])
+        perfilamiento.createSheet();
+
+        file.save().then(v => {
+            this.filesIds.push(v.id);
+        })
     }
 }
 
