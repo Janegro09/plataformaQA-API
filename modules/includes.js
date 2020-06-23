@@ -19,6 +19,7 @@ const includes = {
     express: require('express'),
     permit: require('../models/permissions'),
     views: require('../views'),
+    XLSX: require('../models/XLSXFiles'),
     files: require('../controllers/files')
 
 }
