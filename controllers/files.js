@@ -37,23 +37,32 @@ class uploadFile {
         let folder = '../files/';
         if(!helper.files.exists(`${folder}${this.url}`,true)){
             // Creamos la carpeta 
-            fs.mkdirSync(`${folder}${this.url}`);
+            fs.mkdirSync(`${folder}${this.url}`, "0755");
         }
         let typeFile, file, saveFile, fileData;
         for(let x in this.file){
             file = this.file[x]
             typeFile = (file.mimetype.split('/'))
             if(file.size > 31425728) return false; // Valida si el archivo es mayor a 3MB
+            // Folder name
+            switch(typeFile[1]) {
+                case "vnd.openxmlformats-officedocument.spreadsheetml.sheet":
+                    typeFile[0] = "xlsx";
+                    typeFile[1] = "xlsx";
+                    break
+                
+            } 
+
             if(!helper.files.exists(`${folder}${this.url}/${typeFile[0]}`,true)){
                 try{
-                    fs.mkdirSync(`${folder}${this.url}/${typeFile[0]}`);
+                    fs.mkdirSync(`${folder}${this.url}/${typeFile[0]}`, '0755');
                 }catch {
                     return false;
                 }
             }
-            let saveFile = `${folder}${this.url}/${typeFile[0]}/`;
+            let saveFile = `${global.baseUrl}/${folder}${this.url}/${typeFile[0]}/`;
             fileData = {
-                url: `${this.url}/${typeFile[0]}/`,
+                path: saveFile,
                 type: file.mimetype,
                 name: ""
             }
@@ -62,7 +71,7 @@ class uploadFile {
                 fileData.name += Math.random().toString(36).replace(/[^a-z]+/g, '');
             }
             fileData.name += `.${typeFile[1]}`;
-            fileData.url += fileData.name;
+            fileData.path += fileData.name;
             saveFile += fileData.name;
             // // Validaciones de seguridad para imagen
             try{
@@ -151,7 +160,7 @@ class uploadFile {
         let id = this.uploadFile.id;
         return new Promise((res, rej) => {
             filesModel.findById(id).then((v) => {
-                helper.files.delete('../files/' + v.url);
+                helper.files.delete(v.path);
                 filesModel.deleteOne({_id: id}).then((r) => {
                     if(r.deletedCount > 0) res(true);
                     else res(false)

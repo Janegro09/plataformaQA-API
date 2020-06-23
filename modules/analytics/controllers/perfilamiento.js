@@ -14,7 +14,28 @@ const includes = require('../../includes');
 
 const controller = {
     async new(req, res) {
-        console.log('okaaa');
+        if(!req.files) return includes.views.error.code(res, 'ERR_09'); 
+        if(!req.files.file) return includes.views.error.code(res, 'ERR_09'); 
+        const file = req.files.file;
+
+        if(file.mimetype != "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet") return includes.views.error.message(res, "Formato de archivo invalido")
+
+        const required = [
+            "DNI",
+            "MES",
+            "PROVEEDOR",
+            "ADM",
+            "ENTIDAD"
+        ];
+
+        const archivo = new includes.files(req);
+        let c = await archivo.save();
+
+        console.log(c);
+
+        // console.log(c);
+        archivo.delete();
+
     },
     async get(req, res) {
 

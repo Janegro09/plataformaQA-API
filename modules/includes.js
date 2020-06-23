@@ -18,7 +18,9 @@ const includes = {
     },
     express: require('express'),
     permit: require('../models/permissions'),
-    views: require('../views')
+    views: require('../views'),
+    files: require('../controllers/files')
+
 }
 
 module.exports = includes;

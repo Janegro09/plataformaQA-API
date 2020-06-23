@@ -34,15 +34,16 @@
 /** --------------------------------------------------------------------------------------------------------- */
 
 
-const helper  = require('../controllers/helper');
-const fs      = require('fs');
-const excelNode = require('excel4node');
-const filesModel = require('../controllers/files');
-const { set } = require('mongoose');
-const workbook = require('excel4node/distribution/lib/workbook');
+const helper        = require('../controllers/helper');
+const fs            = require('fs');
+const excelNode     = require('excel4node');
+const filesModel    = require('../controllers/files');
+const nodexlsx      = require('node-xlsx');
+const { set }       = require('mongoose');
+const workbook      = require('excel4node/distribution/lib/workbook');
 
 class XLSXFile {
-    constructor(fileName, section = "perfilamiento"){
+    constructor(fileName, section = "analytics"){
         if(fileName){
             this.fileName = fileName + ".xlsx";
         }
@@ -103,6 +104,10 @@ class XLSXFile {
         await workBook.write(this.pathFile + this.fileName);
         return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
     
+    }
+
+    static async getData(file) {
+
     }
 }
 
