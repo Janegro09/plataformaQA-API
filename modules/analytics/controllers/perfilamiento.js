@@ -14,7 +14,7 @@ const includes = require('../../includes');
 
 const controller = {
     async new(req, res) {
-
+        console.log('okaaa');
     },
     async get(req, res) {
 
@@ -26,7 +26,7 @@ const controller = {
 
     },
     async getColumns(req, res) {
-        
+
     }
 }
 
