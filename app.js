@@ -42,9 +42,8 @@ if(process.env.ENVRIORMENT == 'development'){
     app.use(cors())
 }else {
     const whiteListURLS = cfile.whiteListCors;
-    let corsOptionsDelegate = function (req, callback) {
+    let crs = function (req, callback) {
         var corsOptions;
-        console.log(req.header('Origin'))
         if (whiteListURLS.indexOf(req.header('Origin')) !== -1) {
           corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
         } else {
@@ -52,10 +51,7 @@ if(process.env.ENVRIORMENT == 'development'){
         }
         callback(null, corsOptions) // callback expects two parameters: error and options
     }
-    app.use(function(req, res, next) {
-        cors(corsOptionsDelegate);
-        next();
-    })
+    app.use(cors(crs))
 }
 
 app.use(fileUpload());
