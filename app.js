@@ -20,7 +20,8 @@ const dotenv        = require('dotenv').config();
 const fileUpload    = require('express-fileupload');
 const Auth          = require('./middlewares/authentication');
 const cors          = require('cors');
-
+const helper        = require('./controllers/helper');
+const cfile         = helper.configFile();
 
 const app           = express();
 app.set('view engine','pug');
@@ -37,7 +38,25 @@ try {
     console.log(e);
 }
 
-app.use(cors())
+if(process.env.ENVRIORMENT != 'development'){
+    app.use(cors())
+}else {
+    const whiteListURLS = cfile.whiteListCors;
+    let corsOptionsDelegate = function (req, callback) {
+        var corsOptions;
+        if (whiteListURLS.indexOf(req.header('Origin')) !== -1) {
+          corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
+        } else {
+          corsOptions = { origin: false } // disable CORS for this request
+        }
+        callback(null, corsOptions) // callback expects two parameters: error and options
+    }
+    app.use(function(req, res, next) {
+        cors(corsOptionsDelegate);
+        next();
+    })
+}
+
 app.use(fileUpload());
 
 /**
