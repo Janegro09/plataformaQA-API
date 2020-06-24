@@ -38,12 +38,13 @@ try {
     console.log(e);
 }
 
-if(process.env.ENVRIORMENT != 'development'){
+if(process.env.ENVRIORMENT == 'development'){
     app.use(cors())
 }else {
     const whiteListURLS = cfile.whiteListCors;
     let corsOptionsDelegate = function (req, callback) {
         var corsOptions;
+        console.log(req.header('Origin'))
         if (whiteListURLS.indexOf(req.header('Origin')) !== -1) {
           corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
         } else {
