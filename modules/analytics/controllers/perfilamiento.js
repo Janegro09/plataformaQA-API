@@ -104,7 +104,12 @@ const controller = {
         })
     },
     async getColumns(req, res) {
-
+        if(!req.params.id) return includes.views.error.code(res, 'ERR_09');
+        PerfilamientoFile.getColumns(req.params.id).then(v => {
+            console.log(v)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     }
 }
 

@@ -1,5 +1,5 @@
 /**
- * @fileoverview Modulo Programs
+ * @fileoverview Modulo analytics
  * 
  * @version 1.0
  * 
@@ -171,6 +171,9 @@ const PerfilamientoFile = {
         }
 
         return returnData;
+    },
+    async getColumns(id) {
+        console.log(id);
     }
 }
 
