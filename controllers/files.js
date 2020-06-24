@@ -129,8 +129,45 @@ class uploadFile {
      * Funcion para obtener una URL Temporal
      * @param {String} fileID 
      */
-    static async getFileURL(fileID) {
+    static async getTempURL(fileID) {
+        if(!fileID) return false;
+        
         // Buscamos si existe el archivo
+        let c = await filesModel.find({_id: fileID});
+        if(c.length === 0) return false;
+        else {
+            let path = c[0].path;
+            if(!helper.files.exists(path)){
+                // Eliminamos el registro
+                c = await filesModel.deleteOne({_id: fileID});
+                return false;
+            }
+        }
+        // Creamos URL Temporal
+        c = new tempURLs({
+            fileId: fileID
+        })
+        let query = await c.save();
+        
+        return c._id
+    }
+
+    /**
+     * Esta funcion devuelve el id del archivo y elimina el registro
+     */
+    static async getFileID(tempId) {
+        if(!tempId) return false;
+        let idReturn = false;
+        
+        // buscamos la url temporal
+        let c = await tempURLs.find({_id: tempId});
+        if(c.length === 0) return false;
+
+        idReturn = c[0].fileId;
+
+        // Eliminamos la url temporal ya que solo tiene validez de 1 uso
+        c = await tempURLs.deleteOne({_id: c[0]._id});
+        return idReturn;
     }
 
     /**

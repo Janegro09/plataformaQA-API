@@ -17,7 +17,8 @@ const views         = require('../views');
 const Users         = require('../models/users');
 const Auth          = require('../middlewares/authentication');
 const Roles         = require('../models/roles')
-const Groups         = require('../models/groups')
+const Groups        = require('../models/groups')
+const Files         = require('../controllers/files');
 const filesModel = require('../database/migrations/Files');
 const Permit        = require('../models/permissions')
 const fetch         = require('node-fetch');
@@ -50,22 +51,20 @@ var controller = {
     getPublicFile: async (req, res) => {
         let id = req.params.id;
         if(id){
-            let url = "";
-            // Buscamos la imagen por ID
             try {
-                let c = await filesModel.find({_id: id});
+                // Buscamos el archivo correspondiente a la url temporal
+                let idFile = await Files.getFileID(id);
+                let c = await filesModel.find({_id: idFile});
                 if(c.length == 0) {
                     views.success.file(res,'public/notFound.jpg');
                 }
                 url = c[0].path;
-        
                 if(helper.files.exists(url)){
                    views.success.file(res,url);
                 }else{
                    await filesModel.deleteOne({_id: id});
                    views.success.file(res,'public/notFound.jpg');
                 }
-
             } catch {
                 views.success.file(res,'public/notFound.jpg');
             }
