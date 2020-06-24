@@ -12,6 +12,7 @@
  */
 
 const includes = require('../../includes');
+const xlsx     = require('node-xlsx');
 
 // Schemas
 const helper = require('../helper');
@@ -20,6 +21,8 @@ const XLSXdatabase = {
     fileData: [],
     async getFile(idFile) {
         // Traemos un archivo de analytics
+        if(!idFile) return false;
+
     }
 }
 

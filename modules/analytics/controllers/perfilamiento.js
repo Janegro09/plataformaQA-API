@@ -51,7 +51,7 @@ const controller = {
             let c = await archivo.save();
             // leemos el archivo, consultamos que esten las columnas requeridas y creamos n cantidad de archivos segun lo que separemos
             let data = await includes.XLSX.XLSXFile.getData(c);
-
+            data = data[0].data.rows;
             // Validamos que existan todas las columnas
             let requiredHeaders = true;
             headers = Object.keys(data[0]);

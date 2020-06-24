@@ -38,7 +38,7 @@ const helper        = require('../controllers/helper');
 const fs            = require('fs');
 const excelNode     = require('excel4node');
 const filesModel    = require('../controllers/files');
-const xlsx      = require('node-xlsx');
+const xlsx          = require('node-xlsx');
 const { set }       = require('mongoose');
 const workbook      = require('excel4node/distribution/lib/workbook');
 
@@ -113,20 +113,31 @@ class XLSXFile {
         if(!helper.files.exists(fileObject.path)) throw new Error('Archivo inexistente');
 
         const file = await xlsx.parse(fs.readFileSync(fileObject.path));
-
-        // Convertimos la data a json
-        let returnData = [];
-        const data = file[0].data
-
-        const headers = data[0];
-
-        for(let row = 1; row < data.length; row++) {
-            let tempData = {};
-            for(let h = 0; h < headers.length; h++){
-                tempData[headers[h]] = data[row][h]
+        let returnData = []
+        for(let s = 0; s < file.length; s++){
+            // Convertimos la data a json
+            let sheet = {
+                name: file[s].name,
+                data: {
+                    headers: [],
+                    rows: []
+                }
+            };
+            const data = file[s].data
+    
+            const headers = data[0];
+            sheet.data.headers = headers;
+    
+            for(let row = 1; row < data.length; row++) {
+                let tempData = {};
+                for(let h = 0; h < headers.length; h++){
+                    tempData[headers[h]] = data[row][h]
+                }
+                sheet.data.rows.push(tempData);
             }
-            returnData.push(tempData);
+            returnData.push(sheet);
         }
+
         return returnData
     }
 }

@@ -17,7 +17,7 @@ const includes = require('../../includes');
 const helper = require('../helper');
 
 const programsModel = require('../../programs/models/programs');
-
+const XLSXdatabase  = require('./XLSXdatabase');
 
 const PerfilamientoFile = {
     /**
@@ -173,7 +173,26 @@ const PerfilamientoFile = {
         return returnData;
     },
     async getColumns(id) {
-        console.log(id);
+        if(!id) throw new Error('ID No especificado')
+
+        // Chequeamos si existe el archivo
+        let c = await includes.files.checkExist(id);
+        if(!c) throw new Error('Archivo inexistente');
+
+        c = await includes.XLSX.XLSXFile.getData(c);
+        console.log(c)
+        let headers = []
+
+        let columnsHide = ["id", "DNI", "LEGAJO", "APELLIDO Y NOMBRE", "SUPERVISOR", "RESPONSABLE", "GERENTE TERCERO", "GERENTE2", "CANAL", "CANALIDAD", "PROVEEDOR", "FECHA INGRESO", "MES", "INFORME", "GRUPO PA", "ENTIDAD", "PERFILAMIENTO_MES_ANTERIOR", "PERFILAMIENTO_MES_ACTUAL", "DETALLE_PA"]
+
+        // console.log(c[0])
+        // for(let h in c[0]){
+        //     // console.log(h)
+        // }
+
+        return true;
+        // includes.XLSX.XLSXFile.getData()
+        // console.log(id);
     }
 }
 

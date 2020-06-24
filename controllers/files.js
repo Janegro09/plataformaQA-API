@@ -99,9 +99,9 @@ class uploadFile {
     static async checkExist(fileId) {
         if(!fileId) return false;
 
-        let c = filesModel.find({_id: fileId});
+        let c = await filesModel.find({_id: fileId});
         if(c.length > 0) {
-            return true;
+            return c[0];
         }else {
             return false;
         }
