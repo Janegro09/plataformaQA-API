@@ -16,6 +16,7 @@ const programsSchema = require('../../programs/migrations/programs.table');
 
 // Models
 const PerfilamientoFile = require('../models/perfilamientoFile');
+const programModel      = require('../../programs/models/programs');
 
 const controller = {
     async new(req, res) {
@@ -43,7 +44,8 @@ const controller = {
             "MES",
             "PROVEEDOR",
             "PERFILAMIENTO_MES_ACTUAL",
-            "ENTIDAD"
+            "ENTIDAD",
+            "INFORME"
         ];
 
         try {
@@ -106,7 +108,17 @@ const controller = {
     async getColumns(req, res) {
         if(!req.params.id) return includes.views.error.code(res, 'ERR_09');
         PerfilamientoFile.getColumns(req.params.id).then(v => {
-            console.log(v)
+            if(v.length === 0) return includes.views.error.message(res, "Sin columnas para perfilar");
+            else return includes.views.customResponse(res, true, 200, "", v)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
+    },
+    async assignProgram(req, res) {
+        if(!req.params.id || !req.body.program) return includes.views.error.code(res, 'ERR_09');
+        programModel.assignProgramtoPerfilamiento(req.params.id, req.body.program).then(v => {
+            if(!v) return includes.views.error.message(res, "Programa inexistente");
+            else return includes.views.success.create(res)
         }).catch(e => {
             return includes.views.error.message(res, e.message);
         })

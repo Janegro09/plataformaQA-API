@@ -21,6 +21,7 @@ const controllerPerfilamiento = require('./controllers/perfilamiento');
 // Perfilamiento Routes
 router.get('/file/:id/columns', controllerPerfilamiento.getColumns);
 router.post('/file',controllerPerfilamiento.new);
+router.put('/file/:id', controllerPerfilamiento.assignProgram)
 router.get('/file', controllerPerfilamiento.get);
 router.get('/file/:id/download', controllerPerfilamiento.download);
 router.delete('/file/:id', controllerPerfilamiento.delete);

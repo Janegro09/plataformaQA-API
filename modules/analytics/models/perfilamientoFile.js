@@ -33,9 +33,6 @@ const PerfilamientoFile = {
         this.programtoAssign = program;
         this.dividirBase();
 
-        // Creamos los archivos
-        // console.log(this.filesToCreate.length);
-
         for(let x = 0; x < this.filesToCreate.length; x++){
             this.createFile(this.filesToCreate[x]);
         }
@@ -46,10 +43,10 @@ const PerfilamientoFile = {
         if(this.baseConsolidada.length === 0) return false;
         for(let x = 0; x < this.baseConsolidada.length; x++){
             let date = this.getDatetoExcel(this.baseConsolidada[x]['MES']);
-            if(this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL'] == "" || this.baseConsolidada[x]['INFORME'] == ''){
+            if(!this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL'] || !this.baseConsolidada[x]['INFORME'] || !this.baseConsolidada[x]['ENTIDAD'] || !this.baseConsolidada[x]['PROVEEDOR']){
                 continue;
             }
-            let FileToPush = `${this.baseConsolidada[x]['INFORME']} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
+            let FileToPush = `${this.baseConsolidada[x]['INFORME']} ${this.baseConsolidada[x]['ENTIDAD'] == 'No Aplica' || ''} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
             let tempData = {};
             for(let h in this.baseConsolidada[x]){
                 tempData[h] = this.baseConsolidada[x][h];
@@ -160,12 +157,16 @@ const PerfilamientoFile = {
 
         // Buscamos los archivos
         let c = await includes.files.getAllFiles({section: 'analytics'});
+
         
         for(let x = 0; x < c.length; x++){
+            // Consultamos el programa asignado
+            let programa = await programsModel.getProgramtoPerfilamiento(c[x]._id);
             let tempData = {
                 id: c[x]._id,
                 name: c[x].name,
-                date: c[x].updatedAt
+                date: c[x].updatedAt,
+                program: programa
             }
             returnData.push(tempData);
         }
@@ -180,19 +181,36 @@ const PerfilamientoFile = {
         if(!c) throw new Error('Archivo inexistente');
 
         c = await includes.XLSX.XLSXFile.getData(c);
-        console.log(c)
-        let headers = []
+        if(c.length === 0) throw new Error('Archivo Vacio');
+        let headers = c[0].data.headers;
+        let rows    = c[0].data.rows;
 
         let columnsHide = ["id", "DNI", "LEGAJO", "APELLIDO Y NOMBRE", "SUPERVISOR", "RESPONSABLE", "GERENTE TERCERO", "GERENTE2", "CANAL", "CANALIDAD", "PROVEEDOR", "FECHA INGRESO", "MES", "INFORME", "GRUPO PA", "ENTIDAD", "PERFILAMIENTO_MES_ANTERIOR", "PERFILAMIENTO_MES_ACTUAL", "DETALLE_PA"]
 
-        // console.log(c[0])
-        // for(let h in c[0]){
-        //     // console.log(h)
-        // }
+        let returnData = []
+        // sacamos las colummas que no mostraremos
+        for(let x = 0; x < headers.length; x++){
+            if(columnsHide.indexOf(headers[x]) >= 0) continue;
+            let tempData = {
+                columnName: headers[x],
+                VMax: 0,
+                VMin: (1000000 * 1000000)
+            }
+            for(let d = 0; d < rows.length; d++){
+                let value = rows[d][tempData.columnName];
+                value = parseFloat(value);
+                if(value > tempData.VMax){
+                    tempData.VMax = value;
+                }
+                if(value < tempData.VMin){
+                    tempData.VMin = value;
+                }
+            }
 
-        return true;
-        // includes.XLSX.XLSXFile.getData()
-        // console.log(id);
+            returnData.push(tempData)
+        }
+
+        return returnData;
     }
 }
 

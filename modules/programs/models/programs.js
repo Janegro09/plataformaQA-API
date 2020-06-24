@@ -296,6 +296,24 @@ class Program {
             PerfilamientoFileId: filePerfilamientoId           
         })
         c.save().then(ok => {ok}, e => {e})
+        return true;
+    }
+
+    static async getProgramtoPerfilamiento(fileId) {
+        if(!fileId) return false;
+        
+        // Buscamos si tiene asignados programas
+        let c = await Schemas.programsbyPerfilamientos.find({PerfilamientoFileId: fileId});
+        if(c.length === 0) return false;
+
+        // Busucamos el programa asignado
+        c = await Schemas.programs.find({_id: c[0].programId});
+        if(c.length === 0) return false;
+
+        return {
+            id: c[0]._id,
+            name: c[0].name
+        }
     }
 }
 
