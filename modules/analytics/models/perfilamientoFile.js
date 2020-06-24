@@ -151,6 +151,26 @@ const PerfilamientoFile = {
             }
             this.filesIds.push(v.id);
         })
+    },
+    /**
+     * Devuelve los archivos existentes de perfilamientos ordenados por fecha
+     */
+    async getFiles() {
+        let returnData = [];
+
+        // Buscamos los archivos
+        let c = await includes.files.getAllFiles({section: 'analytics'});
+        
+        for(let x = 0; x < c.length; x++){
+            let tempData = {
+                id: c[x]._id,
+                name: c[x].name,
+                date: c[x].updatedAt
+            }
+            returnData.push(tempData);
+        }
+
+        return returnData;
     }
 }
 

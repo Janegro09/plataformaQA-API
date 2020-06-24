@@ -15,7 +15,6 @@ const includes = require('../../includes');
 const programsSchema = require('../../programs/migrations/programs.table');
 
 // Models
-const perfilamientoFile = require('../models/perfilamientoFile');
 const PerfilamientoFile = require('../models/perfilamientoFile');
 
 const controller = {
@@ -73,13 +72,36 @@ const controller = {
         }
     },
     async get(req, res) {
-
+        PerfilamientoFile.getFiles().then(v => {
+            if(v.length === 0) return includes.views.error.message(res, "No existen archivos");
+            return includes.views.customResponse(res, true, 200, "", v);
+        }, e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     async download(req, res) {
-
+        if(!req.params.id) return includes.views.error.code(res, 'ERR_09'); 
+        // Asignamos una url temporal a ese archivo
+        includes.files.getTempURL(req.params.id).then(v => {
+            if(!v) return includes.views.error.message(res, "Archivo inexistente");
+            return includes.views.customResponse(res, true, 200, "URL temporal", {
+                file: req.params.id,
+                idTemp: v
+            })
+            console.log(v);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     async delete(req, res) {
-
+        if(!req.params.id) return includes.views.error.code(res, 'ERR_09'); 
+        let deleteFile = new includes.files(req.params.id);
+        deleteFile.delete().then(v => {
+            if(!v) return includes.views.error.message(res, "Archivo inexistente");
+            else return includes.views.success.delete(res);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     async getColumns(req, res) {
 

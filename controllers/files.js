@@ -22,9 +22,16 @@ const cfile     = helper.configFile();
 
 class uploadFile {
     constructor(req){
-        this.url = req.originalUrl;
-        this.url = this.url.split('/')[3];
-        this.file = req.files;
+        if(typeof req == 'string'){
+            // Estamos enviando un id
+            this.uploadFile = {
+                id: req
+            }
+        }else {
+            this.url = req.originalUrl;
+            this.url = this.url.split('/')[3];
+            this.file = req.files;
+        }
     }
 
     /**
@@ -168,6 +175,16 @@ class uploadFile {
         // Eliminamos la url temporal ya que solo tiene validez de 1 uso
         c = await tempURLs.deleteOne({_id: c[0]._id});
         return idReturn;
+    }
+
+    /**
+     * Funcion que devuelve los registros de la base de datos ordenados por fecha en orden DESC
+     * @param {Object} where 
+     */
+    static async getAllFiles(where = {}) {
+        let c = await filesModel.find(where).sort({updatedAt: 'desc'});
+
+        return c;
     }
 
     /**
