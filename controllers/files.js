@@ -101,7 +101,7 @@ class uploadFile {
     }
 
     /**
-     * Funcion para guardar el archivo y almacenar su ubicacion en la base de datos
+     * Funcion para crear un registro de un archivo que se guardo en otra parte de la API, como por ejemplo cuando se crea un archivo XLSX
      * @param {String} section 
      * @param {String} type 
      * @param {String} fileName 
