@@ -45,7 +45,7 @@ const workbook      = require('excel4node/distribution/lib/workbook');
 class XLSXFile {
     constructor(fileName, section = "analytics"){
         if(fileName){
-            this.fileName = fileName + ".xlsx";
+            this.fileName = fileName;
         }
         this.section = section;
         this.fileType = "xlsx"
@@ -63,9 +63,6 @@ class XLSXFile {
         }
         if(!helper.files.exists(this.pathFile, true)){
             fs.mkdirSync(this.pathFile, '0775');
-        }
-        if(helper.files.exists(this.pathFile + this.fileName,false)){
-            return false;
         }
         let workBook = new excelNode.Workbook();
     
@@ -100,9 +97,14 @@ class XLSXFile {
                 row++
             }
         }
-
-        await workBook.write(this.pathFile + this.fileName);
-        return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
+        if(helper.files.exists(this.pathFile + this.fileName,false)){
+            await helper.files.delete(this.pathFile + this.fileName);
+            await workBook.write(this.pathFile + this.fileName);
+            return true
+        }else{
+            await workBook.write(this.pathFile + this.fileName);
+            return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
+        }
     
     }
 

@@ -28,6 +28,7 @@ const PerfilamientoFile = {
     filesToCreate: [],
     filesIds: [],
     async dividirBaseConsolidada(files, program) {
+        this.init()
         // Dividimos el array en varias bases
         this.baseConsolidada = files;
         this.programtoAssign = program;
@@ -38,6 +39,12 @@ const PerfilamientoFile = {
         }
 
         return this.filesIds.length;
+    },
+    init() {
+        this.baseConsolidada = [];
+        this.programtoAssign = false;
+        this.filesToCreate = [];
+        this.filesIds = [];
     },
     dividirBase() {
         if(this.baseConsolidada.length === 0) return false;
@@ -95,7 +102,7 @@ const PerfilamientoFile = {
     },
     async createFile(fileData) {
         // Creamos un archivo de perfilamiento
-        let file = new includes.XLSX.XLSXFile(fileData.name, 'analytics');
+        let file = new includes.XLSX.XLSXFile(fileData.name + ".xlsx", 'analytics');
         
         // Sheet 1 (Usuarios)
         let users = new includes.XLSX.Sheet(file, fileData.name);
