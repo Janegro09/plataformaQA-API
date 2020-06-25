@@ -113,21 +113,22 @@ const Cuartiles = {
         for(let o = 0; o < this.cuartiles.length; o++){
             let cuartil = this.cuartiles[o];
             if(cuartil.order == 'ASC'){
+                // Solo invertimos los VMax y VMin
                 tempData = {
                     'Nombre del Cuartil': {
                         value: cuartil.name,
                         style: {}
                     },
-                    "Q1 | Cant": {value: cuartil.Q4.cant, style: {}},
+                    "Q1 | Cant": {value: cuartil.Q1.cant, style: {}},
                     "Q1 | VMin": {value: cuartil.Q4.VMin, style: {}},
                     "Q1 | VMax": {value: cuartil.Q4.VMax, style: {}},
-                    "Q2 | Cant": {value: cuartil.Q3.cant, style: {}},
+                    "Q2 | Cant": {value: cuartil.Q2.cant, style: {}},
                     "Q2 | VMin": {value: cuartil.Q3.VMin, style: {}},
                     "Q2 | VMax": {value: cuartil.Q3.VMax, style: {}},
-                    "Q3 | Cant": {value: cuartil.Q2.cant, style: {}},
+                    "Q3 | Cant": {value: cuartil.Q3.cant, style: {}},
                     "Q3 | VMin": {value: cuartil.Q2.VMin, style: {}},
                     "Q3 | VMax": {value: cuartil.Q2.VMax, style: {}},
-                    "Q4 | Cant": {value: cuartil.Q1.cant, style: {}},
+                    "Q4 | Cant": {value: cuartil.Q4.cant, style: {}},
                     "Q4 | VMin": {value: cuartil.Q1.VMin, style: {}},
                     "Q4 | VMax": {value: cuartil.Q1.VMax, style: {}}
                 }
@@ -299,20 +300,47 @@ const Cuartiles = {
      */
     assignuserToCuartil(column, value){
         let dataReturn = "";
+        let temp = "";
         if(column && value){
             // Buscamos el cuartil
             for(let c = 0; c < this.cuartiles.length; c++){
-                let cuartil = this.cuartiles[c];
+                var cuartil = this.cuartiles[c];
                 if(cuartil.name == column){
                     for(let q in cuartil){
                         if(q.indexOf('Q') >= 0){
                             if(q != 'Q4' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax){
-                                dataReturn = q;
-                                cuartil[q].cant++;
+                                temp = q;
                             }else if(q == 'Q4' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
-                                dataReturn = q;
-                                cuartil[q].cant++;
+                                temp = q;
+                                
                             }
+
+                            if(temp){
+                                if(cuartil.order == 'ASC'){
+                                    switch(q){
+                                        case "Q1":
+                                                q = "Q4";
+                                            break;
+                                        case "Q2":
+                                                q = "Q3";
+                                            break;
+                                        case "Q3":
+                                                q = "Q2";
+                                            break;
+                                        case "Q4":
+                                                q = "Q1";
+                                            break;
+                                    }
+                                    dataReturn = q;
+                                }else{
+                                    dataReturn = temp;
+                                }
+                                cuartil[q].cant++;
+                                temp = "";
+                            }
+                            
+
+
                         }
                     }
                 }

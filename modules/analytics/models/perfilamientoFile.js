@@ -53,7 +53,7 @@ const PerfilamientoFile = {
             if(!this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL'] || !this.baseConsolidada[x]['INFORME'] || !this.baseConsolidada[x]['ENTIDAD'] || !this.baseConsolidada[x]['PROVEEDOR']){
                 continue;
             }
-            let FileToPush = `${this.baseConsolidada[x]['INFORME']} ${this.baseConsolidada[x]['ENTIDAD'] == 'No Aplica'? '' : this.baseConsolidada[x]['ENTIDAD']} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
+            let FileToPush = `${this.baseConsolidada[x]['ENTIDAD'] == 'No Aplica'? '' : this.baseConsolidada[x]['ENTIDAD']} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
             let tempData = {};
             for(let h in this.baseConsolidada[x]){
                 tempData[h] = {
@@ -201,6 +201,7 @@ const PerfilamientoFile = {
         // sacamos las colummas que no mostraremos
         for(let x = 0; x < headers.length; x++){
             if(columnsHide.indexOf(headers[x]) >= 0) continue;
+            if(headers[x].indexOf('#Q') >= 0) continue;
             let tempData = {
                 columnName: headers[x],
                 VMax: 0,
