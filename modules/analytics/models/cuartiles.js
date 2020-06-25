@@ -193,9 +193,15 @@ const Cuartiles = {
                         }
                         
                         // Buscamos el valor de la columna y le asignamos un cuartil
-                        userData[header] = this.assignuserToCuartil(columna,userData[columna]);
+                        userData[header] = {
+                            value: this.assignuserToCuartil(columna,userData[columna]),
+                            style: {}
+                        }
                     }else {
-                        userData[header] = user[header];
+                        userData[header] = {
+                            value: user[header],
+                            style: {}
+                        }
                     }
                 }
                 tempData.data.rows.push(userData);

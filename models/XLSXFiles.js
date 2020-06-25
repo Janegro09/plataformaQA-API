@@ -87,10 +87,21 @@ class XLSXFile {
             for(let r = 0; r < rowCounts; r++){
                 col = 1;
                 for(let c = 0; c < colCounts; c++){
-                    if(typeof actualSheet.rows[r][c] === 'number'){
-                        sheet.cell(row, col).number(actualSheet.rows[r][c])
+                     let value = 0;
+                     let style = {};
+                    // Si no es un objeto es porque es el ID
+                    if(typeof actualSheet.rows[r][c] != 'object'){
+                        value = actualSheet.rows[r][c]
                     }else{
-                        sheet.cell(row, col).string(actualSheet.rows[r][c])
+                        value = actualSheet.rows[r][c].value
+                    }
+                    if(actualSheet.rows[r][c].style){
+                        style = actualSheet.rows[r][c].style
+                    }
+                    if(typeof value === 'number'){
+                        sheet.cell(row, col).number(value).style(style)
+                    }else{
+                        sheet.cell(row, col).string(value).style(style)
                     }
                     col++
                 }
@@ -189,10 +200,10 @@ class Sheet extends XLSXFile {
         for(let x in data){
             let c
             if(c = this.getColData(x)){
-                if(!data[x]){
-                    data[x] = '0';
+                if(!data[x].value){
+                    data[x].value = '0';
                 }
-                if(typeof data[x] === 'string' || typeof data[x] === 'number'){
+                if(typeof data[x].value === 'string' || typeof data[x].value === 'number'){
                     dataOrdenada[c.id] = data[x]
                 }else{
                     throw new Error('Datos no aceptados. Columna: ' + x + ". Tipo de dato erroneo: " + data[x] );

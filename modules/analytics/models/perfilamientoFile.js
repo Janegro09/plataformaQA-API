@@ -53,10 +53,13 @@ const PerfilamientoFile = {
             if(!this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL'] || !this.baseConsolidada[x]['INFORME'] || !this.baseConsolidada[x]['ENTIDAD'] || !this.baseConsolidada[x]['PROVEEDOR']){
                 continue;
             }
-            let FileToPush = `${this.baseConsolidada[x]['INFORME']} ${this.baseConsolidada[x]['ENTIDAD'] == 'No Aplica' || ''} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
+            let FileToPush = `${this.baseConsolidada[x]['INFORME']} ${this.baseConsolidada[x]['ENTIDAD'] == 'No Aplica'? '' : this.baseConsolidada[x]['ENTIDAD']} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
             let tempData = {};
             for(let h in this.baseConsolidada[x]){
-                tempData[h] = this.baseConsolidada[x][h];
+                tempData[h] = {
+                    value: this.baseConsolidada[x][h],
+                    style: {}
+                }
             }
             if(this.fileExist(FileToPush)){
                 // Buscamos el objeto
@@ -111,7 +114,7 @@ const PerfilamientoFile = {
         // Agregamos los usuarios
         for(let x = 0; x < fileData.data.length; x++) {
             // Verificamos si el usuario existe en nuestra base
-            let tempQuery = await includes.users.schema.find({id: fileData.data[x].DNI})
+            let tempQuery = await includes.users.schema.find({id: fileData.data[x].DNI.value})
 
             if(tempQuery.length > 0) {
                 users.addRow(fileData.data[x]);
