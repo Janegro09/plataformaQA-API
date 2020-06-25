@@ -19,6 +19,12 @@ const helper = require('../helper');
 const XLSXdatabase  = require('./XLSXdatabase');
 const perfilamientoFile = require('./perfilamientoFile');
 
+// Cuartiles COlors
+const CQ1 = "00ff00";
+const CQ2 = "ffcc00";
+const CQ3 = "ff9900";
+const CQ4 = "ff0000";
+
 const Cuartiles = {
     file: "",
     oldData: [],
@@ -84,7 +90,7 @@ const Cuartiles = {
             let hoja = this.newData[sh];
             let temp = new includes.XLSX.Sheet(file, hoja.name);
             temp.addHeaders(hoja.data.headers);
-            for(let x = 0; x < hoja.data.rows.length; x++) {        
+            for(let x = 0; x < hoja.data.rows.length; x++) {     
                 temp.addRow(hoja.data.rows[x]);
             }
             temp.createSheet();
@@ -106,38 +112,40 @@ const Cuartiles = {
         let returnData = [];
         for(let o = 0; o < this.cuartiles.length; o++){
             let cuartil = this.cuartiles[o];
-            console.log(cuartil.order)
             if(cuartil.order == 'ASC'){
                 tempData = {
-                    'Nombre del Cuartil': cuartil.name,
-                    "Q1 | Cant": cuartil.Q4.cant,
-                    "Q1 | VMin": cuartil.Q4.VMin,
-                    "Q1 | VMax": cuartil.Q4.VMax,
-                    "Q2 | Cant": cuartil.Q3.cant,
-                    "Q2 | VMin": cuartil.Q3.VMin,
-                    "Q2 | VMax": cuartil.Q3.VMax,
-                    "Q3 | Cant": cuartil.Q2.cant,
-                    "Q3 | VMin": cuartil.Q2.VMin,
-                    "Q3 | VMax": cuartil.Q2.VMax,
-                    "Q4 | Cant": cuartil.Q1.cant,
-                    "Q4 | VMin": cuartil.Q1.VMin,
-                    "Q4 | VMax": cuartil.Q1.VMax
+                    'Nombre del Cuartil': {
+                        value: cuartil.name,
+                        style: {}
+                    },
+                    "Q1 | Cant": {value: cuartil.Q4.cant, style: {}},
+                    "Q1 | VMin": {value: cuartil.Q4.VMin, style: {}},
+                    "Q1 | VMax": {value: cuartil.Q4.VMax, style: {}},
+                    "Q2 | Cant": {value: cuartil.Q3.cant, style: {}},
+                    "Q2 | VMin": {value: cuartil.Q3.VMin, style: {}},
+                    "Q2 | VMax": {value: cuartil.Q3.VMax, style: {}},
+                    "Q3 | Cant": {value: cuartil.Q2.cant, style: {}},
+                    "Q3 | VMin": {value: cuartil.Q2.VMin, style: {}},
+                    "Q3 | VMax": {value: cuartil.Q2.VMax, style: {}},
+                    "Q4 | Cant": {value: cuartil.Q1.cant, style: {}},
+                    "Q4 | VMin": {value: cuartil.Q1.VMin, style: {}},
+                    "Q4 | VMax": {value: cuartil.Q1.VMax, style: {}}
                 }
             }else{
                 tempData = {
-                    'Nombre del Cuartil': cuartil.name,
-                    "Q1 | Cant": cuartil.Q1.cant,
-                    "Q1 | VMin": cuartil.Q1.VMin,
-                    "Q1 | VMax": cuartil.Q1.VMax,
-                    "Q2 | Cant": cuartil.Q2.cant,
-                    "Q2 | VMin": cuartil.Q2.VMin,
-                    "Q2 | VMax": cuartil.Q2.VMax,
-                    "Q3 | Cant": cuartil.Q3.cant,
-                    "Q3 | VMin": cuartil.Q3.VMin,
-                    "Q3 | VMax": cuartil.Q3.VMax,
-                    "Q4 | Cant": cuartil.Q4.cant,
-                    "Q4 | VMin": cuartil.Q4.VMin,
-                    "Q4 | VMax": cuartil.Q4.VMax
+                    'Nombre del Cuartil': {value: cuartil.name, style: {}},
+                    "Q1 | Cant": {value: cuartil.Q1.cant, style: {}},
+                    "Q1 | VMin": {value: cuartil.Q1.VMin, style: {}},
+                    "Q1 | VMax": {value: cuartil.Q1.VMax, style: {}},
+                    "Q2 | Cant": {value: cuartil.Q2.cant, style: {}},
+                    "Q2 | VMin": {value: cuartil.Q2.VMin, style: {}},
+                    "Q2 | VMax": {value: cuartil.Q2.VMax, style: {}},
+                    "Q3 | Cant": {value: cuartil.Q3.cant, style: {}},
+                    "Q3 | VMin": {value: cuartil.Q3.VMin, style: {}},
+                    "Q3 | VMax": {value: cuartil.Q3.VMax, style: {}},
+                    "Q4 | Cant": {value: cuartil.Q4.cant, style: {}},
+                    "Q4 | VMin": {value: cuartil.Q4.VMin, style: {}},
+                    "Q4 | VMax": {value: cuartil.Q4.VMax, style: {}}
                 }
             }
             returnData.push(tempData);
@@ -158,11 +166,11 @@ const Cuartiles = {
             let crearCuartil = false;
             for(let i = 0; i < this.oldData[0].data.headers.length; i++){
                 if(crearCuartil){
-                    tempData.data.headers.push(`#Quartil ${crearCuartil}`);
+                    tempData.data.headers.push(`#Quartil ${crearCuartil}`)
                     crearCuartil = false;
                     i = i--; // Restamos la iteracion para no perder columnas
                 } else{
-                    let header = this.oldData[0].data.headers[i];
+                    let header = this.oldData[0].data.headers[i]
                     if(header.indexOf('#Quartil') >= 0) continue;
                     if(header == 'id') continue;
                     // Chequeamos si la columna se llama igual que algun cuartil
@@ -203,7 +211,10 @@ const Cuartiles = {
                             style: {}
                         }
                     }
+                    
                 }
+                // Assign style to columns with Q1 Q2 Q3 Q4
+                userData = this.assignStyle(userData);
                 tempData.data.rows.push(userData);
             }
             this.newData.push(tempData)
@@ -231,6 +242,58 @@ const Cuartiles = {
             this.newData.push(tempData);
         }
     },
+    assignStyle(value) {
+        // console.log(value)
+        let eraseCuartilName = (headerName) => {
+            if(headerName.indexOf('#Quartil') >= 0){
+                // Consultamos el nombre del cuartil
+                let cuartil = headerName.split(' ');
+                let columna = "";
+                for(let col = 1; col < cuartil.length; col++){
+                    columna += cuartil[col];
+                }
+                return columna;
+            }
+            return false;            
+        }
+
+        for(let header in value){
+            let color = "";
+            switch(value[header].value){
+                case 'Q1': // Green
+                        color = CQ1 
+                    break;
+                case 'Q2': // Yellow
+                        color = CQ2   
+                    break;
+                case 'Q3': // Orange
+                        color = CQ3 
+                    break;
+                case 'Q4': // Red
+                        color = CQ4  
+                    break;
+            }
+            if(color){
+                let parentColumn = eraseCuartilName(header);
+                value[header].style = {
+                    fill: {
+                        type: 'pattern',
+                        patternType: 'solid',
+                        fgColor: color
+                    }
+                }   
+                value[parentColumn].style = {
+                    fill: {
+                        type: 'pattern',
+                        patternType: 'solid',
+                        fgColor: color
+                    }
+                }   
+                color = "";
+            }
+        }
+        return value;
+    },
     /**
      * Esta funcion devuelve al cuartil que pertenece ese valor y suma al cant en el objeto cuartiles
      */
@@ -243,10 +306,10 @@ const Cuartiles = {
                 if(cuartil.name == column){
                     for(let q in cuartil){
                         if(q.indexOf('Q') >= 0){
-                            if(q != 'Q4' && value >= cuartil[q].VMin && value < cuartil[q].VMax){
+                            if(q != 'Q4' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax){
                                 dataReturn = q;
                                 cuartil[q].cant++;
-                            }else if(q == 'Q4' && value >= cuartil[q].VMin && value <= cuartil[q].VMax){
+                            }else if(q == 'Q4' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
                                 dataReturn = q;
                                 cuartil[q].cant++;
                             }

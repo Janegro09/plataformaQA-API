@@ -79,7 +79,9 @@ class XLSXFile {
             let col = 1;
             let row = 1;
             for(let head = 0; head < colCounts; head++){
-                sheet.cell(row, col).string(actualSheet.headers[head])
+                let style = {};
+                let h = actualSheet.headers[head]
+                sheet.cell(row, col).string(h).style(style)
                 col++
             }
             // Almacenamos todas las filas
@@ -200,7 +202,7 @@ class Sheet extends XLSXFile {
         for(let x in data){
             let c
             if(c = this.getColData(x)){
-                if(!data[x].value){
+                if(data[x].value === undefined){
                     data[x].value = '0';
                 }
                 if(typeof data[x].value === 'string' || typeof data[x].value === 'number'){
