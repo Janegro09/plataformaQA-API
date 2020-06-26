@@ -170,7 +170,7 @@ const Cuartiles = {
                 if(crearCuartil){
                     tempData.data.headers.push(`#Quartil ${crearCuartil}`)
                     crearCuartil = false;
-                    i = i--; // Restamos la iteracion para no perder columnas
+                    i--; // Restamos la iteracion para no perder columnas
                 } else{
                     let header = this.oldData[0].data.headers[i]
                     if(header.indexOf('#Quartil') >= 0) continue;
@@ -383,7 +383,6 @@ const Cuartiles = {
             let tempData = {
                 id: c.id,
                 name: c['Nombre del Cuartil'],
-                order: order,
                 Q1: {
                     VMin: order === 'DESC' ? c['Q1 | VMin'] : c['Q4 | VMin'],
                     VMax: order === 'DESC' ? c['Q1 | VMax'] : c['Q4 | VMax']
@@ -403,6 +402,8 @@ const Cuartiles = {
             }
             if(getUsers){
                 tempData.users = this.getUsersperCuartil(c['Nombre del Cuartil']);
+            }else{
+                tempData.order = order
             }
             returnData.push(tempData)
         }       
