@@ -27,7 +27,21 @@ const controller = {
         }) 
     },
     async get(req, res) {
-
+        if(!req.params.fileId) return includes.views.error.code(res, 'ERR_09');
+        let getUsers = false;
+        if(req.query.getUsers){
+            getUsers = req.query.getUsers == 'true' ? true : false;
+        }
+        model.getCuartiles(req.params.fileId, getUsers).then(v => {
+            let message = "Modificacion de cuartiles"
+            if(getUsers){
+                message = "Obtencion de cuartiles para armado de grupos de cuartiles"
+            }
+            if(!v) return includes.views.error.message(res, "Error al obtener cuartiles");
+            else return includes.views.customResponse(res, true, 200, message, v);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     }
 }
 

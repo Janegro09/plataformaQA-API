@@ -34,6 +34,7 @@ const Cuartiles = {
         this.init();
         if(!fileId, data.length === 0) throw new Error('Error en los parametros')
         let c = await includes.files.checkExist(fileId);
+        if(!c) throw new Error('Archivo inexistente')
         this.file = c;
         
         c = await includes.XLSX.XLSXFile.getData(this.file);
@@ -347,6 +348,92 @@ const Cuartiles = {
             }
         }
         return dataReturn;
+    },
+    async getCuartiles(fileId, getUsers = false){
+        this.init()
+        if(!fileId) throw new Error('ID de cuartil no especificado');
+        // Buscamos el archivo
+        let returnData = [];
+        let c = await includes.files.checkExist(fileId);
+        if(!c) throw new Error("Archivo inexistente")
+        this.file = c;
+
+        c = await includes.XLSX.XLSXFile.getData(this.file);
+        this.oldData = c;
+
+        let cuartiles = [];
+        this.oldData.map(v => {
+            if(v.name == 'Cuartiles'){
+                cuartiles = v.data.rows;
+            }
+        })
+
+
+
+        for(let x = 0; x < cuartiles.length; x++){
+            let c = cuartiles[x];
+
+            let order = 'DESC';
+            // Obtenemos el orden pero si quiere obtener usuarios significa que esta armando los grupos de cuartiles y necesitamos mandarle los datos de grupos reales y no invertidos ya que solamente sirven para interpretacion de los grupos del desarrollador
+            if((c['Q4 | VMax'] < c['Q1 | VMin']) && !getUsers){
+                // Si se ordena es porque esta solicitando los cuartiles para modificarlos
+                order = 'ASC'
+            }
+
+            let tempData = {
+                id: c.id,
+                name: c['Nombre del Cuartil'],
+                order: order,
+                Q1: {
+                    VMin: order === 'DESC' ? c['Q1 | VMin'] : c['Q4 | VMin'],
+                    VMax: order === 'DESC' ? c['Q1 | VMax'] : c['Q4 | VMax']
+                },
+                Q2: {
+                    VMin: order === 'DESC' ? c['Q2 | VMin'] : c['Q3 | VMin'],
+                    VMax: order === 'DESC' ? c['Q2 | VMax'] : c['Q3 | VMax']
+                },
+                Q3: {
+                    VMin: order === 'DESC' ? c['Q3 | VMin'] : c['Q2 | VMin'],
+                    VMax: order === 'DESC' ? c['Q3 | VMax'] : c['Q2 | VMax']
+                },
+                Q4: {
+                    VMin: order === 'DESC' ? c['Q4 | VMin'] : c['Q1 | VMin'],
+                    VMax: order === 'DESC' ? c['Q4 | VMax'] : c['Q1 | VMax']
+                }
+            }
+            if(getUsers){
+                tempData.users = this.getUsersperCuartil(c['Nombre del Cuartil']);
+            }
+            returnData.push(tempData)
+        }       
+
+        return returnData;
+    },
+    getUsersperCuartil(cuartilName){
+        let users = [];
+        cuartilName = `#Quartil ${cuartilName}`
+        this.oldData.map(v => {
+            if(v.name != 'Cuartiles' && v.name != 'Grupos de perfilamiento'){
+                users = v.data.rows;
+            }
+        })
+        if(users.length === 0) return false;
+
+        let returnData = {
+            Q1: [],
+            Q2: [],
+            Q3: [],
+            Q4: []
+        }
+        // buscamos los DNIs de los usuarios que pertenecen a ese cuartil
+        for(let c = 0; c < users.length; c++){
+            let dni = users[c].DNI
+            if(users[c][cuartilName]){
+                let value = users[c][cuartilName]
+                returnData[value].push(dni);      
+            }
+        }
+        return returnData;
     }
 }
 
