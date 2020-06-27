@@ -1,13 +1,13 @@
 {
   "name": "plataformaqa",
   "version": "1.0.0",
-  "description": "API utilizada para la plataforma QA - Telecom Argentina",
+  "description": "APIRest utilizada para plataforma QA - Telecom Argentina",
   "main": "index.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
-  "author": "",
+  "author": "Soluciones Digitales | Telecom Argentina S.A.",
   "license": "MIT",
   "dependencies": {
     "body-parser": "^1.19.0",

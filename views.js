@@ -1,5 +1,5 @@
 /**
- * @fileoverview Estructura de respuesta
+ * @fileoverview Estructura de respuesta principal
  * 
  * @version 1.0
  * 
@@ -45,11 +45,13 @@ var controller = {
         }
         return res.status(code).send(retData);
     },
+
     /**
      * Respuestas por default en operaciones con errores o success false
      */
     error: {
         /**
+         * Esta, buscara el codigo especificado en el archivo errorCodes.json
          * @param {Object}  res res 
          * @param {String}  codeId ID Codigo buscado en /databases/json/errorCode.json STX: ERR_01
          */
@@ -64,7 +66,9 @@ var controller = {
                 }
             }
         },
+        
         /**
+         * Esta devolvera un error con el mensaje especificado en MSG
          * @param {Object} res res 
          * @param {String} msg Mensaje de error 
          */

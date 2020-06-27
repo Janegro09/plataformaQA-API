@@ -12,7 +12,6 @@
  */
 
 // Incluimos controladores, modelos, schemas y modulos
-
 const express       = require('express');
 const bodyParser    = require('body-parser');
 const migrations    = require('./database/migrations/migrations');
@@ -23,9 +22,9 @@ const cors          = require('cors');
 const helper        = require('./controllers/helper');
 const cfile         = helper.configFile();
 
-global.baseUrl     = require('path').resolve();
+global.baseUrl      = require('path').resolve(); // almacenamos la ruta absoluta
 
-const app           = express();
+const app = express();
 app.set('view engine','pug');
 
 // Start Middlewares
@@ -40,10 +39,12 @@ try {
     console.log(e);
 }
 
+// Definimos los cors segun el envriorment
 if(process.env.ENVRIORMENT == 'development'){
-    app.use(cors())
+    app.use(cors()) // Permitimos todos los request sin importar providencia
 }else {
-    const whiteListURLS = cfile.whiteListCors;
+    const whiteListURLS = cfile.whiteListCors; // Lista de URLs permitidas en producción, especificadas en el archivo de configuracion.
+
     let crs = function (req, callback) {
         var corsOptions;
         if (whiteListURLS.indexOf(req.header('Origin')) !== -1) {
@@ -56,18 +57,21 @@ if(process.env.ENVRIORMENT == 'development'){
     app.use(cors(crs))
 }
 
-app.use(fileUpload());
+app.use(fileUpload()); // Permito la posibilidad de enviar archivos por formularios, si la desactivo, los formularios dejaran de ser form-data y sera xxx-form-data/urlencoded
 
 /**
  * Checkeara token en todos los request menos en los especificados en config.json
  */
 app.use(Auth.checkToken);
+
 app.use(bodyParser.json());
-migrations();
-app.use(require('./middlewares/headers'));
+
+migrations(); // Crea las migraciones
+
+app.use(require('./middlewares/headers')); // Inicia el middleware de headers
 // End Middlewares
 
 // Routes
-app.use(require('./routes/index'));
+app.use(require('./routes/index')); // Rutas principales
 
 module.exports = app;

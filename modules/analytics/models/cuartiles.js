@@ -353,21 +353,26 @@ const Cuartiles = {
         this.init()
         if(!fileId) throw new Error('ID de cuartil no especificado');
         // Buscamos el archivo
-        let returnData = [];
+        let returnData = {
+                cuartiles: []
+            };
         let c = await includes.files.checkExist(fileId);
         if(!c) throw new Error("Archivo inexistente")
         this.file = c;
 
         c = await includes.XLSX.XLSXFile.getData(this.file);
         this.oldData = c;
-
+        let usuarios = [];
         let cuartiles = [];
         this.oldData.map(v => {
             if(v.name == 'Cuartiles'){
                 cuartiles = v.data.rows;
+            }else if(v.name != 'Grupos de perfilamiento'){
+                usuarios = v.data.rows;
             }
         })
 
+        if(getUsers) returnData.usuariosTotal = [];
 
 
         for(let x = 0; x < cuartiles.length; x++){
@@ -402,10 +407,13 @@ const Cuartiles = {
             }
             if(getUsers){
                 tempData.users = this.getUsersperCuartil(c['Nombre del Cuartil']);
+                usuarios.map(v => {
+                    returnData.usuariosTotal.push(v.DNI);
+                })
             }else{
                 tempData.order = order
             }
-            returnData.push(tempData)
+            returnData.cuartiles.push(tempData)
         }       
 
         return returnData;
