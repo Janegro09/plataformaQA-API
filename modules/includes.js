@@ -1,5 +1,5 @@
 /**
- * @fileoverview Almacenamos todos los includes necesarios para un modulo en una constante, y los modulos por defecto importan esta
+ * @fileoverview Modulo de conexion entre los modulos y el sistema base
  * 
  * @version 1.0
  * 
