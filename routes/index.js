@@ -21,11 +21,11 @@ const app = express();
 const register      = require('./register.js');
 
 
-app.use('/', require('./main'));
-app.use(`${routesPath}/users`,require('./users'));
-app.use(`${routesPath}/roles`,require('./roles'));
-app.use(`${routesPath}/groups`,require('./groups'));
-app.use(`${routesPath}/permissions`,require('./permissions'));
+app.use('/', require('./main')); // custom routes
+app.use(`${routesPath}/users`,require('./users')); // Users routes
+app.use(`${routesPath}/roles`,require('./roles')); // Roles routes
+app.use(`${routesPath}/groups`,require('./groups')); // Users groups routes
+app.use(`${routesPath}/permissions`,require('./permissions')); // Permissions routes
 
 // Incluimos las rutas de los modulos
 const modules = global.modules;
@@ -33,6 +33,6 @@ for(let x = 0; x < modules.length; x++){
     app.use(`${routesPath}/${modules[x].name}`, modules[x].requires.routes)
 }
 
-register(app)
+register(app) // Creamos cada ruta como un permiso, si esta especificada como not token en config.json entonces no la crea
 
 module.exports = app;
