@@ -54,7 +54,6 @@ const cuartilesGroups = {
                 if(!this.searchornewColumn(cuartilEspecifico.cuartil)) continue;
                 console.log(cuartilEspecifico)
             }
-            this.searchornewColumn('ATENDIDAS');
             console.log(tempData);
             // let tempData
         }
