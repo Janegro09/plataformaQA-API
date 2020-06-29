@@ -17,6 +17,7 @@ const programsSchema = require('../../programs/migrations/programs.table');
 // Models
 const PerfilamientoFile = require('../models/perfilamientoFile');
 const programModel      = require('../../programs/models/programs');
+const cuartilesgroupsModel = require('../models/cuartilesGroups');
 
 const controller = {
     async new(req, res) {
@@ -122,6 +123,20 @@ const controller = {
         }).catch(e => {
             return includes.views.error.message(res, e.message);
         })
+    },
+    async newGroup(req, res) {
+        if(!req.params.fileId || !req.body) return includes.views.error.code(res, 'ERR_09');
+        if(req.body.length === 0) return includes.views.error.message(res, 'Error en los parametros enviados')
+        cuartilesgroupsModel.cuartilesGroups(req.params.fileId, req.body).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al crear grupos");
+            else return includes.views.success.create(res)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+
+        })
+    },
+    async getGroups(req, res) {
+
     }
 }
 

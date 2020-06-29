@@ -27,7 +27,12 @@ router.get('/file', controllerPerfilamiento.get);
 router.get('/file/:id/download', controllerPerfilamiento.download);
 router.delete('/file/:id', controllerPerfilamiento.delete);
 
+// Cuartiles routes
 router.post('/file/:fileId/cuartiles', controllerCuartiles.new)
 router.get('/file/:fileId/cuartiles', controllerCuartiles.get);
+
+// Grupos de perfilamientos
+router.post('/file/:fileId/perfilamiento', controllerPerfilamiento.newGroup);
+router.get('/file/:fileId/perfilamiento', controllerPerfilamiento.getGroups);
 
 module.exports = router;

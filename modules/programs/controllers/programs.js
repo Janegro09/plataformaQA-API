@@ -51,7 +51,7 @@ const controller = {
         return programModel.delete(req.params.id).then(response => {
             if(!response) return includes.views.error.message(res, "Error el eliminar el programa");
             else {
-                includes.views.success.delete(res);
+                return includes.views.success.delete(res);
             }
         }, err => {
             return includes.views.error.message(res, err.message);

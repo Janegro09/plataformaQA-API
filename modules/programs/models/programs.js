@@ -129,7 +129,7 @@ class Program {
         if(c.length > 0) throw new Error('No se puede eliminar un programa con grupos asignados');
 
         // Modificamos el paramétro deleted
-        c = await Schemas.programsGroups.deleteOne({_id: id});
+        c = await Schemas.programs.deleteOne({_id: id});
         if(c.ok > 0) return true;
         else return false;
     }

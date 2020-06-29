@@ -418,10 +418,12 @@ const Cuartiles = {
 
         return returnData;
     },
-    getUsersperCuartil(cuartilName){
+    getUsersperCuartil(cuartilName, oldData = false){
         let users = [];
         cuartilName = `#Quartil ${cuartilName}`
-        this.oldData.map(v => {
+        // Ponemos el condicional para usar la funcion en el modelo de grupos de cuartiles
+        let datos = oldData ? oldData : this.oldData;
+        datos.map(v => {
             if(v.name != 'Cuartiles' && v.name != 'Grupos de perfilamiento'){
                 users = v.data.rows;
             }
