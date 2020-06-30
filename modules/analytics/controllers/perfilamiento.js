@@ -136,7 +136,14 @@ const controller = {
         })
     },
     async getGroups(req, res) {
+        if(!req.params.fileId) return includes.views.error.code(res, 'ERR_09');
+        cuartilesgroupsModel.getPerfilamientos(req.params.fileId).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al traer los perfilamientos");
+            else return includes.views.customResponse(res, true, 200, "Perfilamientos", v);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
 
+        })
     }
 }
 

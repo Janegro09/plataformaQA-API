@@ -147,7 +147,8 @@ const PerfilamientoFile = {
             "Nombre del grupo",
             "Cant de agentes",
             "% Total",
-            "Cluster"
+            "Cluster",
+            "assignAllUsers"
         ])
         perfilamiento.createSheet();
 

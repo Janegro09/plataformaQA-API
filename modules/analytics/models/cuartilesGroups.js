@@ -40,14 +40,14 @@ const cuartilesGroups = {
             // Chequeamos las columnas requeridas
             let actual = data[gc]
             if(!actual.name || actual.cuartilAssign.length === 0 || !actual.cluster) throw new Error('Error en los parametros enviados');
-
+            let assignAllUsers = actual.AssignAllUsers;
             let tempData = {
                 'Nombre del grupo': {value: actual.name, style: ""},
                 'Cant de agentes': {value: 0, style: ""},
-                'Cluster': {value: this.checkCluster(actual.cluster), style: ""}
+                'Cluster': {value: this.checkCluster(actual.cluster), style: ""},
+                'assignAllUsers': {value: assignAllUsers ? 'SI' : 'NO', style: ""}
             }
 
-            let assignAllUsers = actual.AssignAllUsers;
             // Asignamos los cuartiles a los grupos
             for(let c = 0; c < actual.cuartilAssign.length; c++){
                 let cuartilEspecifico = actual.cuartilAssign[c];
@@ -268,6 +268,54 @@ const cuartilesGroups = {
             }
             this.newData.push(tempData)
         }
+    },
+    async getPerfilamientos(fileId) {
+        if(!fileId) throw new Error('ID de cuartil no especificado');
+        this.init()
+        let c = await includes.files.checkExist(fileId);
+        if(!c) throw new Error("Archivo inexistente")
+        this.file = c;
+
+        c = await includes.XLSX.XLSXFile.getData(this.file);
+        this.oldData = c;
+        let returnData = []
+
+        let groupsCuartiles = []
+        this.oldData.map(v => {
+            if(v.name === 'Grupos de perfilamiento'){
+                groupsCuartiles = v.data.rows;
+            }
+        })
+
+        for(let x = 0; x < groupsCuartiles.length; x++){
+            let grupo = groupsCuartiles[x];
+            let tempData = {
+                name: grupo['Nombre del grupo'],
+                AssignAllUsers: grupo.assignAllUsers === 'SI' ? true : false,
+                cluster: grupo.Cluster,
+                agentes: {
+                    count: grupo['Cant de agentes'],
+                    '%_Total': grupo['% Total']
+                },
+                cuartilAssign: []
+            }
+            for(let h in grupo){
+                // Evitamos las columnas por defecto, se entiende que las que no estan aca son cuartiles
+                if(h == 'id' || h == 'Nombre del grupo' || h == 'assignAllUsers' || h == 'Cluster' || h == '% Total' || h == 'Cant de agentes') continue;
+
+                let value = grupo[h].split(' + ');
+                for(let v = 0; v < value.length; v++){
+                    let nivelCuartil = parseInt(value[v].substr(1,1)) // Quitamos la Q inicial
+                    tempData.cuartilAssign.push({
+                        cuartil: h,
+                        Q: nivelCuartil
+                    })
+                }
+            }
+            returnData.push(tempData)
+        }
+
+        return returnData;
     }
 }
 
