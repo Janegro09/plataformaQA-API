@@ -42,9 +42,9 @@ const cuartilesGroups = {
             if(!actual.name || actual.cuartilAssign.length === 0 || !actual.cluster) throw new Error('Error en los parametros enviados');
 
             let tempData = {
-                'Nombre del grupo': actual.name,
-                'Cant de agentes': 0,
-                'Cluster': this.checkCluster(actual.cluster)
+                'Nombre del grupo': {value: actual.name, style: ""},
+                'Cant de agentes': {value: 0, style: ""},
+                'Cluster': {value: this.checkCluster(actual.cluster), style: ""}
             }
 
             let assignAllUsers = actual.AssignAllUsers;
@@ -55,29 +55,33 @@ const cuartilesGroups = {
                 if(!this.searchornewColumn(cuartilEspecifico.cuartil)) continue;
                 let users = this.usersToCuartil(cuartilEspecifico);
                 if(!tempData[cuartilEspecifico.cuartil]){
-                    tempData[cuartilEspecifico.cuartil] = `Q${cuartilEspecifico.Q}`;
-                }else if(tempData[cuartilEspecifico.cuartil].length){
-                    tempData[cuartilEspecifico.cuartil] += ` + Q${cuartilEspecifico.Q}`;
+                    tempData[cuartilEspecifico.cuartil] =  {value: `Q${cuartilEspecifico.Q}`, style: ""};
+                }else if(tempData[cuartilEspecifico.cuartil].value.length){
+                    tempData[cuartilEspecifico.cuartil].value += ` + Q${cuartilEspecifico.Q}`;
                 }
 
                 // Asignar usuarios al array de usuarios asignados y si el usuario ya existe no podra reasignarse
                 for(let l = 0; l < users.length; l++){
                     if(this.assignedUsers.indexOf(users[l]) === -1 && !assignAllUsers){
-                        tempData['Cant de agentes']++;
-                        this.assignGCtoUser(users[l], tempData['Nombre del grupo']);
+                        tempData['Cant de agentes'].value++;
+                        this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value);
                         this.assignedUsers.push(users[l]) // Asignamos los usuarios al array
                     }else if(assignAllUsers){
-                        tempData['Cant de agentes']++;
-                        this.assignGCtoUser(users[l], tempData['Nombre del grupo']);
+                        tempData['Cant de agentes'].value++;
+                        this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value);
                     }
                 }
             }
 
             // Sacamos el porcentaje del total
-            let porcentaje  = (100 * tempData['Cant de agentes']) / this.totalUsers.length;
+            let porcentaje  = (100 * tempData['Cant de agentes'].value) / this.totalUsers.length;
             porcentaje      = parseFloat(porcentaje.toFixed(2))
-            tempData['% Total'] = porcentaje
+            tempData['% Total'] = {
+                value: porcentaje,
+                style: ""
+            }
 
+            // Asignamos la data en la hoja de grupos de perfilamiento
             this.newData.map(v => {
                 // Buscamos si existe en la hoja de cuartiles 
                 if(v.name === 'Grupos de perfilamiento'){
@@ -86,8 +90,26 @@ const cuartilesGroups = {
                 }
             })
         }
-        // Asignamos la data en la hoja de grupos de perfilamiento
-        console.log(this.newData)
+
+        // Creamos el archivo
+        return this.updateXLSX();
+    },
+    async updateXLSX(){
+        // Creamos un archivo de perfilamiento
+        let file = new includes.XLSX.XLSXFile(this.file.name, 'analytics');
+
+        for(let sh = 0; sh < this.newData.length; sh++){
+            let hoja = this.newData[sh];
+            let temp = new includes.XLSX.Sheet(file, hoja.name);
+            temp.addHeaders(hoja.data.headers);
+            for(let x = 0; x < hoja.data.rows.length; x++) {     
+                temp.addRow(hoja.data.rows[x]);
+            }
+            temp.createSheet();
+        }
+        return file.save(this.file.path).then(v => {
+            return v
+        })
     },
     assignGCtoUser(userId, groupName){
         this.newData.map(v => {
@@ -101,11 +123,11 @@ const cuartilesGroups = {
                 let users = v.data.rows;
                 for(let u = 0; u < users.length; u++){
                     let user = users[u];
-                    if(user.DNI == userId) {
-                        if(user['Grupos de cuartiles Asignados']){
-                            user['Grupos de cuartiles Asignados'] += groupName;
-                        }else{
-                            user['Grupos de cuartiles Asignados'] = groupName
+                    if(user.DNI.value !== undefined && user.DNI.value == userId) {
+                        if(user['Grupos de cuartiles Asignados'] !== undefined && user['Grupos de cuartiles Asignados'].value !== undefined){
+                            user['Grupos de cuartiles Asignados'].value += ` + ${groupName}`;
+                        }else if(!user['Grupos de cuartiles Asignados']){
+                            user['Grupos de cuartiles Asignados'] = {value: groupName, style: ""}
                         }
                     }
                 }
