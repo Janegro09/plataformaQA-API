@@ -335,6 +335,7 @@ class Users {
     static async get(id = 0, allData = true, req = false){
         let where = {};
         let returnData = [], roleTotal = false;
+        let specificData = false;
         /**
          * Solo listamos los usuarios que estan asignados a los mismos grupos que el usuario que consulta, salvo que sea con rol Administrator o Develop
          */
@@ -347,9 +348,13 @@ class Users {
             }else if(usuariosPermitidos[0] !== 'all' || usuariosPermitidos.length === 0 || !usuariosPermitidos){
                 return false;
             }
-        }
 
-        let specificData = req.query.specificdata && req.query.specificdata !== undefined ? true : false
+            // Consultamos si traer data especifica
+            if(req.query !== undefined && req.query.specificdata === 'true'){
+                specificData = true;
+            }
+        }
+        
         
         where.userDelete = false;
 

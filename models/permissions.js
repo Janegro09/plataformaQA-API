@@ -32,6 +32,7 @@ let Permit = {
         // Generamos el string de la ruta
         let url = req.originalUrl;
         url = url.split('/')[3];
+        url = url.split('?')[0]; // Quitamos parametros que vienen por query
         if(cfile.routesNotToken.indexOf(url) === -1) {
             let consulta = String(await Permit.get(req));
             if(consulta === 'Usuario_Cambio_Clave'){
@@ -66,6 +67,7 @@ let Permit = {
     get: async function(req) {
         // Generamos el string de la ruta
         let url = req.originalUrl;
+        url = url.split('?')[0]
         let urlBase = "";
         url = url.split('/');
         let section = url[3];
