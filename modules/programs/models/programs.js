@@ -96,6 +96,8 @@ class Program {
             section: this.section,
             createdBy: this.createdBy
         })
+        this.id = c._id;
+        await this.assigngroup();
         return c.save().then(response => {
             if(response) return true;
             else return false

@@ -98,6 +98,7 @@ class Partitures {
                     // Creamos un registro por cada usuario
                     for(let q = 0; q < this.users.length; q++){
                         let user = this.users[q];
+                        user = await includes.users.model.getUseridDB(user)
                         let b = new stepsSchema({
                             userId: user,
                             instanceId: c._id,
@@ -161,6 +162,125 @@ class Partitures {
         }
 
         return false;
+    }
+
+    static async get(reqObject){
+        const {id, userId, stepId} = reqObject;
+        let ReturnData = [];
+        let where = {};
+        let wherePartiture = "";
+        let whereInstance = "";
+        let whereStep = "";
+        let users = [];
+        let instances = [];
+        if(id && userId && stepId){
+            // Retornamos informacion sobre un paso especifico
+            where = {_id: id};
+            wherePartiture = {partitureId: id, userId: userId};
+            whereInstance = {partitureId: id}
+            whereStep = {userId: userId, _id: stepId}
+        }else if(id && userId){
+            // Retornamos una partitura especifica de un usuario
+            where = {_id: id};
+            wherePartiture = {partitureId: id, userId: userId};
+            whereInstance = {partitureId: id}
+            whereStep = {userId: userId}
+        }else if(id){
+            // Retornamos una partitura
+            where = {_id: id};
+            wherePartiture = {partitureId: id};
+        }
+
+        try {
+            // Traemos los usuarios
+            if(wherePartiture){
+                let u = await infobyPartitureSchema.find().where(wherePartiture);
+                for(let x = 0; x < u.length; x++){
+                    let temp = await includes.users.schema.find({_id: u[x].userId}).where({userDelete: false});
+                    if(temp.length === 0) continue;
+                    let user = {
+                        idDB: temp[0]._id,
+                        id: temp[0].id,
+                        dni: temp[0].dni,
+                        name: temp[0].name,
+                        lastName: temp[0].lastName,
+                        canal: temp[0].canal,
+                        reponsable: temp[0].responsable,
+                        lider: temp[0].lider,
+                        jefeCoordinador: temp[0].jefeCoordinador,
+                        edificioLaboral: temp[0].edificioLaboral,
+                        G1: temp[0].nameG1,
+                        G2: temp[0].nameG2,
+                        partitureStatus: u[x].status
+                    }
+        
+                    users.push(user);
+                }
+            }
+
+            // Treamos las instancias
+            if(whereInstance){
+                let ins = await instancesSchema.find().where(whereInstance);
+                for(let i = 0; i < ins.length; i++){
+                    let instance = ins[i];
+                    let tempData = {
+                        id: instance._id,
+                        name: instance.name,
+                        steps: []
+                    }
+                    
+                    // Buscamos los steps
+                    whereStep.instanceId = tempData.id
+                    let steps = await stepsSchema.find().where(whereStep);
+                    for(let s = 0; s < steps.length; s++){
+                        let st = steps[s];
+                        tempData.steps.push({
+                            id: st._id,
+                            completed: st.completed,
+                            name: st.name,
+                            requestedMonitorings: st.requestedMonitorings,
+                            assignedMonitorings: st.assignedMonitorings,
+                            responsibleComments: st.responsibleComments,
+                            managerComments: st.managerComments,
+                            coordinatorOnSiteComments: st.coordinatorOnSiteComments,
+                            accountAdministratorComments: st.accountAdministratorComments
+                        })                    
+                    }
+
+                    if(tempData.steps.length > 0){
+                        instances.push(tempData)
+                    }
+                }
+            }
+
+            // Traemos todas las partituras
+            let c = await partituresSchema.find().where(where);
+            if(c.length === 0) throw new Error('No existen registros en nuestra base de datos');
+
+            for(let i = 0; i < c.length; c++){
+                let partiture = c[i]
+                let tempData = {
+                    id: partiture._id,
+                    name: partiture.name,
+                    fileId: partiture.fileId,
+                    perfilamientos: partiture.perfilamientos,
+                    dates: {
+                        createdAt: partiture.createdAt
+                    },
+                    users: users,
+                    instances: instances
+                }
+                ReturnData.push(tempData)
+            }
+            return ReturnData;
+        } catch (e) {
+            throw e
+        }
+
+    }
+
+    static async delete(partitureId){
+        
     }
 }
 
