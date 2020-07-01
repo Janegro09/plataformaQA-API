@@ -289,7 +289,7 @@ const cuartilesGroups = {
         })
         return returnData
     },
-    async getPerfilamientos(fileId) {
+    async getPerfilamientos(fileId, getUsers = false) {
         if(!fileId) throw new Error('ID de cuartil no especificado');
         this.init()
         let c = await includes.files.checkExist(fileId);
@@ -317,9 +317,13 @@ const cuartilesGroups = {
                     count: grupo['Cant de agentes'],
                     '%_Total': grupo['% Total']
                 },
-                cuartilAssign: [],
-                usersAssign: await this.getUsersbyGC(grupo['Nombre del grupo'])
+                cuartilAssign: []
             }
+
+            if(getUsers){
+                tempData.usersAssign = await this.getUsersbyGC(grupo['Nombre del grupo'])
+            }
+
             for(let h in grupo){
                 // Evitamos las columnas por defecto, se entiende que las que no estan aca son cuartiles
                 if(h == 'id' || h == 'Nombre del grupo' || h == 'assignAllUsers' || h == 'Cluster' || h == '% Total' || h == 'Cant de agentes') continue;
