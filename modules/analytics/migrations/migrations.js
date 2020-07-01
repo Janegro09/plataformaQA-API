@@ -13,7 +13,16 @@
 
 
 // Tables 
-
+const instancesOfPartitures         = require('./instancesOfPartitures.table');
+const partituresModels              = require('./parituresModels.table');
+const partitures                    = require('./partitures.table');
+const partituresInfoByUsers         = require('./partituresInfoByUsers.table');
+const stepsOfInstances              = require('./stepsOfInstances.table');
 
 module.exports = function() {
+    instancesOfPartitures();
+    partituresModels();
+    partitures();
+    partituresInfoByUsers();
+    stepsOfInstances();
 }();
