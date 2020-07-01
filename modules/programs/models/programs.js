@@ -236,7 +236,7 @@ class Program {
                 name: response[i].name,
                 status: response[i].status,
                 createdBy: response[i].createdBy,
-                programParent: response[i].programParent,
+                programParent: response[i].parentProgram,
                 section: response[i].section,
                 description: response[i].description,
                 dates: {
@@ -247,9 +247,6 @@ class Program {
             }
             if(id) {
                 // Hacemos los request para traer toda la info
-                if(tempData.programParent) {
-                    // Buscamos el padre
-                }
                 tempData.assignedGroups  = await Program.getgroupsbyPrograms(response[i]._id);
             }
 
