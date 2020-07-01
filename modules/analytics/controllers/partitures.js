@@ -61,6 +61,72 @@ const controller = {
         })
     },
     async update(req, res){
+        if(!req.params.id || !req.params.userId || !req.body) return includes.views.error.message(res, 'Error en los parametros enviados.');
+        let message = "Modify steps to user"
+        let modifyData = [];
+        let tempData;
+        let data = {
+            id: req.params.id,
+            userId: req.params.userId,
+            body: req.body
+        }
+        if(req.params.stepId){
+            message = "Modify step info"
+            data.stepId = req.params.stepId;
+
+            let tempModData = {}
+            // Verificamos que esten las steps
+            for(let i in data.body){
+                if(i === 'completed') continue; // Ignoramos columnas
+                if(data.body[i]){
+                    tempModData[i] = data.body[i]
+                }
+            }
+
+            tempData = {
+                id: data.id,
+                userId: data.userId,
+                stepId: data.stepId,
+                modify: tempModData
+            }
+            modifyData.push(tempData);
+
+        }else {
+            if(data.body.length === 0) return includes.views.error.message(res, 'Body vacio.');
+            // Editamos los status
+            tempData = {
+                id: data.id,
+                userId: data.userId,
+                stepId: "",
+                modify: {}
+            }
+            data.body.map(v => {
+                tempData.stepId = v.stepId;
+                tempData.modify.completed = v.completed
+            })
+
+            modifyData.push(tempData);
+        }
+        
+        // Verificamos el body
+        partituresModel.modifySteps(modifyData).then(v => {
+                if(!v) return includes.views.error.message(res, 'Error al modificar los steps')
+                else return includes.views.success.update(res)
+            }).catch(e => {
+                return includes.views.error.message(res, e.message);
+            })
+
+        // const object = {
+        //     id: req.params.id,
+        //     userId: req.params.userId
+        //     body: req.body
+        // }
+        // partituresModel.modify(req.params.id).then(v => {
+        //     if(!v) return includes.views.error.message(res, 'Error al eliminar la partitura')
+        //     else return includes.views.success.delete(res)
+        // }).catch(e => {
+        //     return includes.views.error.message(res, e.message);
+        // })
 
     }
 }

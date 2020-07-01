@@ -25,6 +25,7 @@ const partituresSchema = require('../migrations/partitures.table');
 const instancesSchema  = require('../migrations/instancesOfPartitures.table');
 const stepsSchema      = require('../migrations/stepsOfInstances.table');
 const infobyPartitureSchema  = require('../migrations/partituresInfoByUsers.table');
+const partituresInfoByUsersTable = require('../migrations/partituresInfoByUsers.table');
 
 class Partitures {
     constructor(reqObject) {
@@ -280,7 +281,56 @@ class Partitures {
     }
 
     static async delete(partitureId){
+        if(!partitureId) throw new Error('ID no especificado')
+
+        // Buscamos si existe una partitura con ese id
+        let partiture = await partituresSchema.find({_id: partitureId});
+        if(partiture.length === 0) throw new Error('Partitura inexistente')
         
+        try {
+            // eliminamos todos los registros 
+            // partitures
+            await partituresSchema.deleteMany({_id: partitureId});
+
+            // instances
+            let c = await instancesSchema.find({partitureId: partitureId}); // obtenemos el id
+            if(c.length === 0) throw new Error('No existen instancias para esta partitura');
+            c.map(v => {
+                // stepsofinstances
+                stepsSchema.deleteMany({instanceId: v._id}).then(v => {
+                    v
+                })
+            })
+            await instancesSchema.deleteMany({partitureId: partitureId});
+            
+            // partitures info by users
+            await partituresInfoByUsersTable.deleteMany({partitureId: partitureId})
+
+            return true;
+
+        }catch(e) {
+            throw e
+        }
+
+    }
+    static async modifySteps(arrayModifications){
+        if(arrayModifications.length === 0) throw new Error('Error en los parametros enviados')
+        let error = false;
+        for(let i = 0; i < arrayModifications.length; i++){
+            const {id, userId, stepId, modify} = arrayModifications[i];
+
+            // Chequeamos que exista ese step
+            let c = await stepsSchema.find({_id: stepId, userId: userId});
+            if(c.length === 0) return false;
+
+            c = await stepsSchema.updateOne({_id: stepId, userId: userId}, modify)
+            if(c.ok === 0)  {
+                error = true;
+            }
+        }
+
+        if(error) return false;
+        else return true;
     }
 }
 

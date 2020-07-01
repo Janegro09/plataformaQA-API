@@ -18,6 +18,7 @@ const programsSchema = require('../../programs/migrations/programs.table');
 const PerfilamientoFile = require('../models/perfilamientoFile');
 const programModel      = require('../../programs/models/programs');
 const cuartilesgroupsModel = require('../models/cuartilesGroups');
+const partituresSchema     = require('../migrations/partitures.table');
 
 const controller = {
     async new(req, res) {
@@ -99,6 +100,9 @@ const controller = {
     async delete(req, res) {
         if(!req.params.id) return includes.views.error.code(res, 'ERR_09'); 
         let deleteFile = new includes.files(req.params.id);
+        // Consultamos is tiene partituras asignadas
+        let partiture = await partituresSchema.find({fileId: req.params.id});
+        if(partiture.length > 0) return includes.views.error.message(res, 'No puede eliminar un perfilamiento con partituras asignadas')
         deleteFile.delete().then(v => {
             if(!v) return includes.views.error.message(res, "Archivo inexistente");
             else return includes.views.success.delete(res);
