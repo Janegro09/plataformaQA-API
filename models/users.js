@@ -348,6 +348,8 @@ class Users {
                 return false;
             }
         }
+
+        let specificData = req.query.specificdata && req.query.specificdata !== undefined ? true : false
         
         where.userDelete = false;
 
@@ -368,76 +370,87 @@ class Users {
         if(respuesta.length == 0) return false;
         let img, userObject, role = "", group = "";
         for(let y = 0; y < respuesta.length; y++){
-            if(id != 0){
-                if(respuesta[y].imagen){
-                    img = await files.findById(respuesta[y].imagen);
-                    respuesta[y].imagen = global.completeUrl + helper.configFile().mainInfo.routes + '/files/' + img.url;
+            // Solo mostramos data especifica
+            if(!specificData){
+                if(id != 0){
+                    if(respuesta[y].imagen){
+                        img = await files.findById(respuesta[y].imagen);
+                        respuesta[y].imagen = global.completeUrl + helper.configFile().mainInfo.routes + '/files/' + img.url;
+                    }
+                    role    = await Roles.get(respuesta[y].role,roleTotal);
+                    group   = await Groups.getUserGroupsName(respuesta[y]._id);
                 }
-                role    = await Roles.get(respuesta[y].role,roleTotal);
-                group   = await Groups.getUserGroupsName(respuesta[y]._id);
-            }
-            var {
-                fechaIngresoLinea,
-                cuil,
-                legajo,
-                sexo,
-                status,
-                fechaBaja,
-                motivoBaja,
-                propiedad,
-                canal,
-                negocio,
-                edificioLaboral,
-                gerencia1,
-                nameG1,
-                gerencia2,
-                nameG2,
-                equipoEspecifico,
-                puntoVenta,
-                turno,
-
-            } = respuesta[y];
-            userObject = {
-                idDB: respuesta[y]._id,
-                id: respuesta[y].id,
-                name: respuesta[y].name,
-                lastName: respuesta[y].lastName,
-                dni: respuesta[y].dni,
-                fechaIngresoLinea :                     fechaIngresoLinea,
-                cuil: cuil,
-                legajo : legajo,
-                sexo : sexo,
-                status : status,
-                fechaBaja : fechaBaja,
-                motivoBaja : motivoBaja,
-                propiedad : propiedad,
-                canal : canal,
-                negocio : negocio,
-                edificioLaboral : edificioLaboral,
-                gerencia1 : gerencia1,
-                nameG1 : nameG1,
-                gerencia2 : gerencia2,
-                nameG2 : nameG2,
-                equipoEspecifico : equipoEspecifico,
-                puntoVenta : puntoVenta,
-                turno : turno,
-                group: group,
-                role: role[0],
-                razonSocial: respuesta[y].razonSocial,
-                jefeCoordinador: respuesta[y].jefeCoordinador,
-                responsable: respuesta[y].responsable,
-                supervisor: respuesta[y].supervisor,
-                lider: respuesta[y].lider,
-                provincia: respuesta[y].provincia,
-                region: respuesta[y].region,
-                subregion: respuesta[y].subregion,
-                email: respuesta[y].email,
-                phone: respuesta[y].phone == null ? false : respuesta[y].phone,
-                userActive: respuesta[y].userActive,
-                imagen: respuesta[y].imagen == "" ? false : img,
-                dates: {
-                    created: helper.dates.mySqltoDate(respuesta[y].createdAt),
-                    updated: helper.dates.mySqltoDate(respuesta[y].updatedAt)
+            
+                var {
+                    fechaIngresoLinea,
+                    cuil,
+                    legajo,
+                    sexo,
+                    status,
+                    fechaBaja,
+                    motivoBaja,
+                    propiedad,
+                    canal,
+                    negocio,
+                    edificioLaboral,
+                    gerencia1,
+                    nameG1,
+                    gerencia2,
+                    nameG2,
+                    equipoEspecifico,
+                    puntoVenta,
+                    turno,
+    
+                } = respuesta[y];
+                userObject = {
+                    idDB: respuesta[y]._id,
+                    id: respuesta[y].id,
+                    name: respuesta[y].name,
+                    lastName: respuesta[y].lastName,
+                    dni: respuesta[y].dni,
+                    fechaIngresoLinea :                     fechaIngresoLinea,
+                    cuil: cuil,
+                    legajo : legajo,
+                    sexo : sexo,
+                    status : status,
+                    fechaBaja : fechaBaja,
+                    motivoBaja : motivoBaja,
+                    propiedad : propiedad,
+                    canal : canal,
+                    negocio : negocio,
+                    edificioLaboral : edificioLaboral,
+                    gerencia1 : gerencia1,
+                    nameG1 : nameG1,
+                    gerencia2 : gerencia2,
+                    nameG2 : nameG2,
+                    equipoEspecifico : equipoEspecifico,
+                    puntoVenta : puntoVenta,
+                    turno : turno,
+                    group: group,
+                    role: role[0],
+                    razonSocial: respuesta[y].razonSocial,
+                    jefeCoordinador: respuesta[y].jefeCoordinador,
+                    responsable: respuesta[y].responsable,
+                    supervisor: respuesta[y].supervisor,
+                    lider: respuesta[y].lider,
+                    provincia: respuesta[y].provincia,
+                    region: respuesta[y].region,
+                    subregion: respuesta[y].subregion,
+                    email: respuesta[y].email,
+                    phone: respuesta[y].phone == null ? false : respuesta[y].phone,
+                    userActive: respuesta[y].userActive,
+                    imagen: respuesta[y].imagen == "" ? false : img,
+                    dates: {
+                        created: helper.dates.mySqltoDate(respuesta[y].createdAt),
+                        updated: helper.dates.mySqltoDate(respuesta[y].updatedAt)
+                    }
+                }
+            }else {
+                userObject = {
+                    idDB: respuesta[y]._id,
+                    id: respuesta[y].id,
+                    name: respuesta[y].name,
+                    lastName: respuesta[y].lastName
                 }
             }
             returnData.push(userObject)
