@@ -269,6 +269,26 @@ const cuartilesGroups = {
             this.newData.push(tempData)
         }
     },
+    async getUsersbyGC(group){
+        let returnData = [];
+
+        this.oldData.map(v => {
+            if(v.name !== 'Grupos de perfilamiento' && v.name !== 'Cuartiles'){
+                for(let u = 0; u < v.data.rows.length; u++){
+                    let actualUser = v.data.rows[u];
+
+                    let groups = actualUser['Grupos de cuartiles Asignados'].split(' + '); // Separamos los grupos en caso que tenga mas de uno
+                    
+                    groups.map(e => {
+                        if(e === group){
+                            returnData.push(actualUser.DNI);
+                        }
+                    })
+                }
+            }
+        })
+        return returnData
+    },
     async getPerfilamientos(fileId) {
         if(!fileId) throw new Error('ID de cuartil no especificado');
         this.init()
@@ -297,7 +317,8 @@ const cuartilesGroups = {
                     count: grupo['Cant de agentes'],
                     '%_Total': grupo['% Total']
                 },
-                cuartilAssign: []
+                cuartilAssign: [],
+                usersAssign: await this.getUsersbyGC(grupo['Nombre del grupo'])
             }
             for(let h in grupo){
                 // Evitamos las columnas por defecto, se entiende que las que no estan aca son cuartiles
