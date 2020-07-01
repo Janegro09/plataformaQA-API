@@ -16,9 +16,12 @@ const includes      = require('../includes');
 let router          = includes.express.Router();
 
 // Controladores
-const controllerPerfilamiento = require('./controllers/perfilamiento');
-const controllerCuartiles     = require('./controllers/cuartiles');
+const controllerPerfilamiento       = require('./controllers/perfilamiento');
+const controllerCuartiles           = require('./controllers/cuartiles');
+const controllerPartitures          = require('./controllers/partitures');
+const controllerPartituresModels    = require('./controllers/partituresModels');
 
+// ------------------------------------------ PERFILAMIENTO ---------------------------------------------------------
 // Perfilamiento Routes
 router.get('/file/:id/columns', controllerPerfilamiento.getColumns);
 router.post('/file',controllerPerfilamiento.new);
@@ -34,5 +37,21 @@ router.get('/file/:fileId/cuartiles', controllerCuartiles.get);
 // Grupos de perfilamientos
 router.post('/file/:fileId/perfilamiento', controllerPerfilamiento.newGroup);
 router.get('/file/:fileId/perfilamiento', controllerPerfilamiento.getGroups);
+
+
+// ------------------------------------------ PARTITURAS -----------------------------------------------------------
+
+// Partitures
+router.post('/partitures/new', controllerPartitures.new);
+router.get('/partitures/:id?/:userId?/:stepId?', controllerPartitures.get);
+router.delete('/partitures/:id', controllerPartitures.delete);
+router.put('/partitures/:id?/:userId?/:stepId?', controllerPartitures.update);
+
+// Partitures Models
+router.post('/partituresModels/new', controllerPartituresModels.new)
+router.put('/partituresModels/:id', controllerPartituresModels.update);
+router.get('/partituresModels/:id?', controllerPartituresModels.get);
+router.delete('/partituresModels/:id', controllerPartituresModels.delete);
+
 
 module.exports = router;
