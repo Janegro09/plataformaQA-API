@@ -290,7 +290,7 @@ const cuartilesGroups = {
         return returnData
     },
     async getPerfilamientos(fileId, getUsers = false) {
-        if(!fileId) throw new Error('ID de cuartil no especificado');
+        if(!fileId) throw new Error('ID del archivo no especificado');
         this.init()
         let c = await includes.files.checkExist(fileId);
         if(!c) throw new Error("Archivo inexistente")

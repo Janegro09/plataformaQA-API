@@ -12,9 +12,26 @@
  */
 const includes = require('../../includes');
 
+const partituresModel = require('../models/partitures');
+
 const controller = {
     async new(req, res){
+        if(!req.body) return includes.views.error.message(res, 'Error en los parametros enviados');
 
+        // Verificamos que esten los datos necesarios
+        const requiredFields = ["fileId", "perfilamientosAsignados", "instances"]
+
+        for(let r = 0; r < requiredFields.length; r++){
+            if(!req.body[requiredFields[r]]) return includes.views.error.message(res, 'Error en los parametros enviados, por favor lea la documentacion')
+        }
+
+        let partiture = new partituresModel(req.body);
+        partiture.create().then(v => {
+            if(!v) return includes.views.error.message(res, 'Error al crear la partitura')
+            else return includes.views.success.create(res)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     async get(req, res){
 
@@ -23,7 +40,7 @@ const controller = {
 
     },
     async update(req, res){
-        
+
     }
 }
 

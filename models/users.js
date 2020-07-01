@@ -512,6 +512,16 @@ class Users {
             NofAttempts: 0
         }).then(v => {v})
     }
+
+    static async getUseridDB(id){
+        let idReturn = id;
+        // Buscamos el id
+        let c = await userSchema.find({id: id});
+        if(c.length > 0){
+            idReturn = c[0]._id;
+        }
+        return idReturn;
+    }
 }
 
 module.exports = Users;
