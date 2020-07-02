@@ -31,13 +31,35 @@ const controller = {
         })
     },
     async get(req, res){
-
+        partituresModels.get(req.params.id).then(v => {
+            if(!v) return includes.views.error.message(res, 'Error al mostrar modelos de partituras');
+            else return includes.views.customResponse(res, true, 200, "", v);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     async delete(req, res) {
-
+        if(!req.params.id) return includes.views.error.message(res, 'Error en los parametros enviados')
+        partituresModels.delete(req.params.id).then(v => {
+            if(!v) return includes.views.error.message(res, 'Error al eliminar el modelo de partituras');
+            else return includes.views.success.delete(res)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     async update(req, res){
+        if(!req.params.id) return includes.views.error.message(res, 'Error en los parametros enviados')
         
+        if(!req.body.name || req.body.instances.length === 0) return includes.views.error.message(res, 'Parametros erroneos en el body, lea la documentacion.')
+
+        let c = new partituresModels(req.body);
+
+        c.create(req.params.id).then(v => {
+            if(!v) return includes.views.error.message(res, 'Error al modificar el modelo de partituras');
+            else return includes.views.success.update(res)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     }
 }
 
