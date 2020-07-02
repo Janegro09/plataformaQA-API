@@ -71,18 +71,26 @@ let Permit = {
         let urlBase = "";
         url = url.split('/');
         let section = url[3];
-        let paramsCount = 0;
+        let paramsInformation = {};
         for(let count in req.params) {
             if(req.params[count] !== undefined) {
-                paramsCount++
+                paramsInformation[count] = req.params[count]
             }
         }
+        for(let x = 3; x < url.length; x++){
+            let u = url[x];
+            // Verificamos que el valor no este dentro de parametros
+            for(let c in paramsInformation) {
+                const param = paramsInformation[c];
+                if(param === u){
+                    u = `:${c}`
+                }
+            }
 
-        for(let x = 3; x < (url.length - paramsCount); x++){
             if(urlBase === ""){
-                urlBase = url[x];
+                urlBase = u;
             }else{
-                urlBase += `/${url[x]}`;
+                urlBase += `/${u}`;
             }
         }
         if(urlBase[urlBase.length - 1] == '/'){
@@ -97,11 +105,14 @@ let Permit = {
                 return "Usuario_Cambio_Clave";
             }
         }
-
-        let route = req.method + "|" + urlBase;
-        for(let params in req.params){
-            route += `/:${params}`;
+        // Asignamos los parametros no asignados al final
+        for(let p in req.params){
+            if(req.params[p] === undefined){
+                urlBase += `/:${p}`
+            }
         }
+        let route = req.method + "|" + urlBase;
+
         // Consultamos si existe registrada esa ruta en la base de datos
         let consulta = await PermissionSchema.find({route: route});
         if(!consulta.length) return false;

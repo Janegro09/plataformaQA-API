@@ -32,7 +32,7 @@ const controller = {
     },
     async get(req, res){
         partituresModels.get(req.params.id).then(v => {
-            if(!v) return includes.views.error.message(res, 'Error al mostrar modelos de partituras');
+            if(v.length === 0) return includes.views.error.message(res, 'No existen registros en nuestra base de datos');
             else return includes.views.customResponse(res, true, 200, "", v);
         }).catch(e => {
             return includes.views.error.message(res, e.message);
