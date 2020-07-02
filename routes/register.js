@@ -73,8 +73,6 @@ function register (routerObject) {
                         }
                     }
                     route = route.replace('|/','|');
-                    
-       
 
                     // Almacenamos todas las rutas existentes
                     routesExists.push(route);
