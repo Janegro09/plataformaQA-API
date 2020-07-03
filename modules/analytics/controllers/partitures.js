@@ -13,6 +13,8 @@
 const includes = require('../../includes');
 
 const partituresModel = require('../models/partitures');
+const uploadFile = require('../../../controllers/files');
+const { download } = require('./perfilamiento');
 
 const controller = {
     async new(req, res){
@@ -44,7 +46,7 @@ const controller = {
         }else{
             message = "All partitures"
         }
-        partituresModel.get(req.params).then(v => {
+        partituresModel.get(req).then(v => {
             if(!v) return includes.views.error.message(res, 'Error al mostrar registros')
             else return includes.views.customResponse(res, true, 200, message, v)
         }).catch(e => {
@@ -127,6 +129,9 @@ const controller = {
         // }).catch(e => {
         //     return includes.views.error.message(res, e.message);
         // })
+
+    },
+    async deleteFile(req, res) {
 
     }
 }

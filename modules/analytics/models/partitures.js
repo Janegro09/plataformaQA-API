@@ -27,6 +27,8 @@ const stepsSchema      = require('../migrations/stepsOfInstances.table');
 const infobyPartitureSchema  = require('../migrations/partituresInfoByUsers.table');
 const partituresInfoByUsersTable = require('../migrations/partituresInfoByUsers.table');
 
+const programsModel = require('../../programs/models/programs');
+
 class Partitures {
     constructor(reqObject) {
         this.file                       = reqObject.fileId || false;
@@ -165,8 +167,8 @@ class Partitures {
         return false;
     }
 
-    static async get(reqObject){
-        const {id, userId, stepId} = reqObject;
+    static async get(req){
+        const {id, userId, stepId} = req.params;
         let ReturnData = [];
         let where = {};
         let wherePartiture = "";
@@ -174,6 +176,28 @@ class Partitures {
         let whereStep = "";
         let users = [];
         let instances = [];
+        let archivosPermitidos = [];
+        let viewAllPartitures = false;
+
+        // Solo traemos las partituras disponibles por programa segun usuario
+        if(req){
+            // comprobamos si es administrador
+            let user = await includes.users.model.getUsersperGroup(req.authUser[0].id);
+            if(user.indexOf('all') >= 0){
+                viewAllPartitures = true;
+            }
+            let programasPermitidos = await programsModel.get(req);
+            for(let i = 0; i < programasPermitidos.length; i++){
+                const programa = programasPermitidos[i].id;
+                let files = await programsModel.getFileswithPrograms(programa);
+                files.map(v => {
+                    if(archivosPermitidos.indexOf(v) === -1){
+                        archivosPermitidos.push(v);
+                    }
+                })
+            }
+        }
+
         if(id && userId && stepId){
             // Retornamos informacion sobre un paso especifico
             where = {_id: id};
@@ -260,6 +284,7 @@ class Partitures {
 
             for(let i = 0; i < c.length; c++){
                 let partiture = c[i]
+                if(!viewAllPartitures && archivosPermitidos.indexOf(partiture.fileId) === -1) continue;
                 let tempData = {
                     id: partiture._id,
                     name: partiture.name,

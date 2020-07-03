@@ -56,20 +56,20 @@ var controller = {
                 let idFile = await Files.getFileID(id);
                 let c = await filesModel.find({_id: idFile});
                 if(c.length == 0) {
-                    views.success.file(res,'public/notFound.jpg');
+                    views.success.file.download(res,'public/notFound.jpg');
                 }
                 url = c[0].path;
                 if(helper.files.exists(url)){
-                   views.success.file(res,url);
+                   views.success.file.download(res,url);
                 }else{
                    await filesModel.deleteOne({_id: id});
-                   views.success.file(res,'public/notFound.jpg');
+                   views.success.file.download(res,'public/notFound.jpg');
                 }
             } catch {
-                views.success.file(res,'public/notFound.jpg');
+                views.success.file.download(res,'public/notFound.jpg');
             }
         }else {
-            views.success.file(res,'public/notFound.jpg');
+            views.success.file.download(res,'public/notFound.jpg');
         }
     },
     login: async (req, res) => {

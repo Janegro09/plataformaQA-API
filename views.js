@@ -81,7 +81,10 @@ var controller = {
      * Respuestas por default en operaciones sin errores o success true
      */
     success: {
-        file: (res, file) => res.sendFile(path.resolve(file)),
+        file: {
+            download: (res, file) => res.download(path.resolve(file)),
+            sendFile: (res, file) => res.sendFile(path.resolve(file))
+        },
         frontUtilities: (res, data) => controller.customResponse(res, true, 200, "Utilidades para desarrolladores.",data),
         test: (res) => controller.customResponse(res, true,200, "La API responde correctamente al test"),
         delete: (res) => controller.customResponse(res, true, 200, "Registro eliminado correctamente"),

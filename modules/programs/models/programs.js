@@ -22,6 +22,7 @@ const Schemas = {
     programsbyPerfilamientos: require('../migrations/programsbyPerfilamientos')
 }
 const programsGroupsModel = require('./programsGroups');
+const programsbyPerfilamientos = require('../migrations/programsbyPerfilamientos');
 
 class Program {
     constructor(program){
@@ -154,6 +155,17 @@ class Program {
         c = await Schemas.programs.updateOne({_id: this.id}, tempData);
         if(c.ok > 0) return true;
         else throw new Error('Error al actualizar el programa')
+    }
+
+    static async getFileswithPrograms(programId){
+        let returnData = [];
+        if(!programId) return returnData;
+
+        let c = await programsbyPerfilamientos.find({programId: programId});
+        for(let i = 0; i < c.length; i++){
+            returnData.push(c[i].PerfilamientoFileId)
+        }
+        return returnData
     }
 
     static async get(id = 0) {

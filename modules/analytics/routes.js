@@ -47,11 +47,15 @@ router.get('/partitures/:id?/:userId?/:stepId?',includes.permit.checkPermit, con
 router.delete('/partitures/:id',includes.permit.checkPermit, controllerPartitures.delete);
 router.put('/partitures/:id?/:userId?/:stepId?',includes.permit.checkPermit, controllerPartitures.update);
 
+// Audio files
+router.delete('/partitures/:id/:fileId', controllerPartitures.deleteFile);
+
 // Partitures Models
 router.post('/partituresModels/new',includes.permit.checkPermit, controllerPartituresModels.new)
 router.put('/partituresModels/:id',includes.permit.checkPermit, controllerPartituresModels.update);
 router.get('/partituresModels/:id?',includes.permit.checkPermit, controllerPartituresModels.get);
 router.delete('/partituresModels/:id',includes.permit.checkPermit, controllerPartituresModels.delete);
+
 
 
 module.exports = router;
