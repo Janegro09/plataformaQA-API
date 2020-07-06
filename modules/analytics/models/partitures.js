@@ -27,8 +27,10 @@ const stepsSchema      = require('../migrations/stepsOfInstances.table');
 const infobyPartitureSchema  = require('../migrations/partituresInfoByUsers.table');
 const partituresInfoByUsersTable = require('../migrations/partituresInfoByUsers.table');
 const partituresFilesSchema     = require('../migrations/filesByPartitures.table');
+const perfilamientoFile         = require('./perfilamientoFile');
 
 const programsModel = require('../../programs/models/programs');
+const { update } = require('../controllers/partitures');
 
 class Partitures {
     constructor(reqObject) {
@@ -179,7 +181,7 @@ class Partitures {
         let instances = [];
         let archivosPermitidos = [];
         let viewAllPartitures = false;
-
+        let partitureInfoByUser = false;
         // Solo traemos las partituras disponibles por programa segun usuario
         if(req){
             // comprobamos si es administrador
@@ -211,19 +213,31 @@ class Partitures {
             wherePartiture = {partitureId: id, userId: userId};
             whereInstance = {partitureId: id}
             whereStep = {userId: userId}
+            partitureInfoByUser = true;
         }else if(id){
             // Retornamos una partitura
             where = {_id: id};
             wherePartiture = {partitureId: id};
         }
+        
 
         try {
+            // Traemos todas las partituras o la partitura especifica segun where
+            let partitures = await partituresSchema.find().where(where);
+            if(partitures.length === 0) throw new Error('No existen registros en nuestra base de datos');
+            const FileId = partitures[0].fileId;
+
             // Traemos los usuarios
             if(wherePartiture){
                 let u = await infobyPartitureSchema.find().where(wherePartiture);
                 for(let x = 0; x < u.length; x++){
                     let temp = await includes.users.schema.find({_id: u[x].userId}).where({userDelete: false});
                     if(temp.length === 0) continue;
+                    let rowFromPartiture = "";
+                    if(partitureInfoByUser){
+                        // Traemos la informacion agregada de la partitura
+                        rowFromPartiture = await perfilamientoFile.getUserInfo(temp[0].id, FileId);
+                    }
                     let user = {
                         idDB: temp[0]._id,
                         id: temp[0].id,
@@ -237,7 +251,8 @@ class Partitures {
                         edificioLaboral: temp[0].edificioLaboral,
                         G1: temp[0].nameG1,
                         G2: temp[0].nameG2,
-                        partitureStatus: u[x].status
+                        partitureStatus: u[x].status,
+                        rowFromPartiture
                     }
         
                     users.push(user);
@@ -260,6 +275,7 @@ class Partitures {
                     let steps = await stepsSchema.find().where(whereStep);
                     for(let s = 0; s < steps.length; s++){
                         let st = steps[s];
+
                         // Buscamos archivos para ese step
                         let file = await partituresFilesSchema.find({stepId: st._id, userId: userId})
                         file = file.length === 0 ? false : file;
@@ -283,13 +299,8 @@ class Partitures {
                 }
             }
 
-            // Traemos todas las partituras
-            let c = await partituresSchema.find().where(where);
-            if(c.length === 0) throw new Error('No existen registros en nuestra base de datos');
-
-
-            for(let i = 0; i < c.length; c++){
-                let partiture = c[i]
+            for(let i = 0; i < partitures.length; i++){
+                let partiture = partitures[i]
                 if(!viewAllPartitures && archivosPermitidos.indexOf(partiture.fileId) === -1) continue;
                     let tempData = {
                         id: partiture._id,
@@ -404,6 +415,31 @@ class Partitures {
             }
         }
         return true;
+    }
+
+    static async changePartitureStatus(partitureId, userId, status){
+        if(!partitureId || !userId || !status) throw new Error('Error en los parametros enviados')
+
+        // Buscamos la partitura y el usuario
+        let userRequest = await partituresInfoByUsersTable.find({partitureId: partitureId, userId: userId});
+        if(userRequest.length === 0) throw new Error(`El usuario ${userId}, no esta asignado a la partitura ${partitureId}`);
+        
+        // Si el estado es finished entonces no modificamos nada
+        if(userRequest[0].status !== 'finished'){
+            const aceptedStatus = [
+                'finished',
+                'run',
+                'pending'
+            ]
+            if(!aceptedStatus.includes(status)) throw new Error('Solo se aceptan los estados que aparecen en la documentación de la API. Por favor, revisela!')
+    
+            let updateRequest = await partituresInfoByUsersTable.updateOne({partitureId: partitureId}, {status: status});
+            if(updateRequest.ok > 0) return true;
+            else return false;
+        }else{
+            return true;
+        }
+        
     }
 }
 

@@ -123,7 +123,6 @@ class XLSXFile {
 
     static async getData(fileObject) {
         if(!fileObject) throw new Error('Objeto del archivo no definido - XLSXFiles')
-
         // Consultamos si existe el archivo 
         if(!helper.files.exists(fileObject.path)) throw new Error('Archivo inexistente');
 
