@@ -26,6 +26,7 @@ const instancesSchema  = require('../migrations/instancesOfPartitures.table');
 const stepsSchema      = require('../migrations/stepsOfInstances.table');
 const infobyPartitureSchema  = require('../migrations/partituresInfoByUsers.table');
 const partituresInfoByUsersTable = require('../migrations/partituresInfoByUsers.table');
+const partituresFilesSchema     = require('../migrations/filesByPartitures.table');
 
 const programsModel = require('../../programs/models/programs');
 
@@ -185,19 +186,19 @@ class Partitures {
             let user = await includes.users.model.getUsersperGroup(req.authUser[0].id);
             if(user.indexOf('all') >= 0){
                 viewAllPartitures = true;
-            }
-            let programasPermitidos = await programsModel.get(req);
-            for(let i = 0; i < programasPermitidos.length; i++){
-                const programa = programasPermitidos[i].id;
-                let files = await programsModel.getFileswithPrograms(programa);
-                files.map(v => {
-                    if(archivosPermitidos.indexOf(v) === -1){
-                        archivosPermitidos.push(v);
-                    }
-                })
+            }else {
+                let programasPermitidos = await programsModel.get(req);
+                for(let i = 0; i < programasPermitidos.length; i++){
+                    const programa = programasPermitidos[i].id;
+                    let files = await programsModel.getFileswithPrograms(programa);
+                    files.map(v => {
+                        if(archivosPermitidos.indexOf(v) === -1){
+                            archivosPermitidos.push(v);
+                        }
+                    })
+                }                
             }
         }
-
         if(id && userId && stepId){
             // Retornamos informacion sobre un paso especifico
             where = {_id: id};
@@ -259,6 +260,9 @@ class Partitures {
                     let steps = await stepsSchema.find().where(whereStep);
                     for(let s = 0; s < steps.length; s++){
                         let st = steps[s];
+                        // Buscamos archivos para ese step
+                        let file = await partituresFilesSchema.find({stepId: st._id, userId: userId})
+                        file = file.length === 0 ? false : file;
                         tempData.steps.push({
                             id: st._id,
                             completed: st.completed,
@@ -268,7 +272,8 @@ class Partitures {
                             responsibleComments: st.responsibleComments,
                             managerComments: st.managerComments,
                             coordinatorOnSiteComments: st.coordinatorOnSiteComments,
-                            accountAdministratorComments: st.accountAdministratorComments
+                            accountAdministratorComments: st.accountAdministratorComments,
+                            audioFiles: file
                         })                    
                     }
 
@@ -282,19 +287,20 @@ class Partitures {
             let c = await partituresSchema.find().where(where);
             if(c.length === 0) throw new Error('No existen registros en nuestra base de datos');
 
+
             for(let i = 0; i < c.length; c++){
                 let partiture = c[i]
                 if(!viewAllPartitures && archivosPermitidos.indexOf(partiture.fileId) === -1) continue;
-                let tempData = {
-                    id: partiture._id,
-                    name: partiture.name,
-                    fileId: partiture.fileId,
-                    perfilamientos: partiture.perfilamientos,
-                    dates: {
-                        createdAt: partiture.createdAt
-                    },
-                    users: users,
-                    instances: instances
+                    let tempData = {
+                        id: partiture._id,
+                        name: partiture.name,
+                        fileId: partiture.fileId,
+                        perfilamientos: partiture.perfilamientos,
+                        dates: {
+                            createdAt: partiture.createdAt
+                        },
+                        users: users,
+                        instances: instances
                 }
                 ReturnData.push(tempData)
             }
@@ -331,6 +337,13 @@ class Partitures {
             // partitures info by users
             await partituresInfoByUsersTable.deleteMany({partitureId: partitureId})
 
+            // Eliminamos todos los archivos 
+            let filesToDelete = [];
+            let files = await partituresFilesSchema.find({partitureId: partitureId});
+            files.map(file => {
+                filesToDelete.push(file._id);
+            })
+            await this.deleteAudioFiles(filesToDelete);
             return true;
 
         }catch(e) {
@@ -342,20 +355,55 @@ class Partitures {
         if(arrayModifications.length === 0) throw new Error('Error en los parametros enviados')
         let error = false;
         for(let i = 0; i < arrayModifications.length; i++){
-            const {id, userId, stepId, modify} = arrayModifications[i];
+            const {id, userId, stepId, modify, audioFile} = arrayModifications[i];
 
             // Chequeamos que exista ese step
             let c = await stepsSchema.find({_id: stepId, userId: userId});
             if(c.length === 0) return false;
 
+            // Almacenamos el audio
+            let f;
+            if(audioFile !== undefined){
+                f = new partituresFilesSchema({
+                    partitureId: id,
+                    fileId: audioFile,
+                    stepId: stepId,
+                    userId: userId
+                })
+                f = await f.save();
+                if(!f) return false;
+            }
+
             c = await stepsSchema.updateOne({_id: stepId, userId: userId}, modify)
-            if(c.ok === 0)  {
+            if(c.ok === 0 && !f)  {
                 error = true;
             }
         }
 
         if(error) return false;
         else return true;
+    }
+
+    static async deleteAudioFiles(arrayIds){
+        if(!arrayIds) return false;
+        for(let i = 0; i < arrayIds.length; i++){
+            const id = arrayIds[i]
+
+            // Consultamos el nombre del archivo
+            let c = await partituresFilesSchema.find({fileId: id});
+            if(c.length === 0) throw new Error('Registro inexistente')
+
+            let deleteFile = new includes.files(id);
+            deleteFile = await deleteFile.delete();
+            if(!deleteFile) throw new Error('Error al eliminar el archivo')
+
+            c = await partituresFilesSchema.deleteOne({_id: id});
+
+            if(c.deletedCount === 0) {
+                throw new Error('Error al eliminar el registro')
+            }
+        }
+        return true;
     }
 }
 

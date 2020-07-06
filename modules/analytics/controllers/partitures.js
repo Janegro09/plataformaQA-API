@@ -13,8 +13,6 @@
 const includes = require('../../includes');
 
 const partituresModel = require('../models/partitures');
-const uploadFile = require('../../../controllers/files');
-const { download } = require('./perfilamiento');
 
 const controller = {
     async new(req, res){
@@ -91,6 +89,18 @@ const controller = {
                 stepId: data.stepId,
                 modify: tempModData
             }
+
+
+            // Guardamos el archivo enviado
+            if(req.files !== undefined && req.files.audioFile !== undefined){
+                const file = req.files.audioFile;
+                let f = new includes.files(req);
+                f = await f.save();
+                if(f){
+                    tempData.audioFile = f.id;
+                }
+            }
+
             modifyData.push(tempData);
 
         }else {
@@ -109,6 +119,8 @@ const controller = {
 
             modifyData.push(tempData);
         }
+
+
         
         // Verificamos el body
         partituresModel.modifySteps(modifyData).then(v => {
@@ -118,20 +130,16 @@ const controller = {
                 return includes.views.error.message(res, e.message);
             })
 
-        // const object = {
-        //     id: req.params.id,
-        //     userId: req.params.userId
-        //     body: req.body
-        // }
-        // partituresModel.modify(req.params.id).then(v => {
-        //     if(!v) return includes.views.error.message(res, 'Error al eliminar la partitura')
-        //     else return includes.views.success.delete(res)
-        // }).catch(e => {
-        //     return includes.views.error.message(res, e.message);
-        // })
-
     },
     async deleteFile(req, res) {
+        if(!req.params.id || !req.params.fileId) return includes.views.error.message(res, 'Error en los parametros enviados.')
+        partituresModel.deleteAudioFiles([req.params.fileId]).then(v => {
+            if(!v) return includes.views.error.message(res, 'Archivo inexistente')
+            else return includes.views.success.delete(res)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
+
 
     }
 }

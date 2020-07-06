@@ -42,7 +42,7 @@ class uploadFile {
      * ../files/users/text/xmskjn9832hu42ui4hiu2j432k42.csv
      */
     async save() {
-        let folder = '../files/';
+        let folder = global.baseUrl + '/../files/';
         if(!helper.files.exists(`${folder}${this.url}`,true)){
             // Creamos la carpeta 
             fs.mkdirSync(`${folder}${this.url}`, "0755");
@@ -51,15 +51,20 @@ class uploadFile {
         for(let x in this.file){
             file = this.file[x]
             typeFile = (file.mimetype.split('/'))
-            if(file.size > 31425728) return false; // Valida si el archivo es mayor a 3MB
+            // if(file.size > 31425728) return false; // Valida si el archivo es mayor a 3MB
             // Folder name
             switch(typeFile[1]) {
                 case "vnd.openxmlformats-officedocument.spreadsheetml.sheet":
                     typeFile[0] = "xlsx";
                     typeFile[1] = "xlsx";
-                    break
-                
+                    break;     
+                case "wave": 
+                    typeFile[1] = 'wav'; // Cambiamos el archivo para que no sea .wave 
+                    break;
+                default:
+                    break;       
             } 
+
 
             if(!helper.files.exists(`${folder}${this.url}/${typeFile[0]}`,true)){
                 try{
@@ -68,7 +73,7 @@ class uploadFile {
                     return false;
                 }
             }
-            let saveFile = `${global.baseUrl}/${folder}${this.url}/${typeFile[0]}/`;
+            let saveFile = `${folder}${this.url}/${typeFile[0]}/`;
             fileData = {
                 path: saveFile,
                 type: file.mimetype,

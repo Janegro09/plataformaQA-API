@@ -50,7 +50,8 @@ var stepsOfInstances = new Schema({
     },
     accountAdministratorComments: {
         type: String
-    }
+    },
+    audioFile: String
 });
 
 module.exports = mongoose.model('stepsOfInstances',stepsOfInstances);

@@ -34,7 +34,8 @@ var Files = new Schema({
     updatedAt: {
         type: Date,
         default: Date.now
-    }
+    },
+    idIndex: String
 });
 
 module.exports = mongoose.model('Files',Files);
