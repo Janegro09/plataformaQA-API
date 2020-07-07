@@ -219,6 +219,9 @@ const PerfilamientoFile = {
                 }
             }
 
+            tempData.VMax = parseFloat(tempData.VMax.toFixed(4))
+            tempData.VMin = parseFloat(tempData.VMin.toFixed(4))
+
             if(tempData.VMin >= tempData.VMax) continue;
 
             returnData.push(tempData)
