@@ -211,6 +211,7 @@ const PerfilamientoFile = {
             for(let d = 0; d < rows.length; d++){
                 let value = rows[d][tempData.columnName];
                 value = parseFloat(value);
+                value = value.toFixed(2);
                 if(value > tempData.VMax){
                     tempData.VMax = value;
                 }
@@ -218,6 +219,8 @@ const PerfilamientoFile = {
                     tempData.VMin = value;
                 }
             }
+
+            if(tempData.VMin >= tempData.VMax) continue;
 
             returnData.push(tempData)
         }
