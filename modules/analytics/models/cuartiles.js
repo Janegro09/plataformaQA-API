@@ -441,7 +441,9 @@ const Cuartiles = {
             let dni = users[c].DNI
             if(users[c][cuartilName]){
                 let value = users[c][cuartilName]
-                returnData[value].push(dni);      
+                if(!returnData[value].includes(dni)){
+                    returnData[value].push(dni);      
+                }
             }
         }
         return returnData;
