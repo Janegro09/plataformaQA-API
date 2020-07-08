@@ -408,7 +408,9 @@ const Cuartiles = {
             if(getUsers){
                 tempData.users = this.getUsersperCuartil(c['Nombre del Cuartil']);
                 usuarios.map(v => {
-                    returnData.usuariosTotal.push(v.DNI);
+                    if(!returnData.usuariosTotal.includes(v.dni)){
+                        returnData.usuariosTotal.push(v.DNI);
+                    }
                 })
             }else{
                 tempData.order = order
@@ -441,9 +443,8 @@ const Cuartiles = {
             let dni = users[c].DNI
             if(users[c][cuartilName]){
                 let value = users[c][cuartilName]
-                if(!returnData[value].includes(dni)){
-                    returnData[value].push(dni);      
-                }
+
+                returnData[value].push(dni);      
             }
         }
         return returnData;
