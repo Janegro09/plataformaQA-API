@@ -408,7 +408,7 @@ const Cuartiles = {
             if(getUsers){
                 tempData.users = this.getUsersperCuartil(c['Nombre del Cuartil']);
                 usuarios.map(v => {
-                    if(!returnData.usuariosTotal.includes(v.dni)){
+                    if(!returnData.usuariosTotal.includes(v.DNI)){
                         returnData.usuariosTotal.push(v.DNI);
                     }
                 })
