@@ -331,10 +331,12 @@ const cuartilesGroups = {
                 let value = grupo[h].split(' + ');
                 for(let v = 0; v < value.length; v++){
                     let nivelCuartil = parseInt(value[v].substr(1,1)) // Quitamos la Q inicial
-                    tempData.cuartilAssign.push({
-                        cuartil: h,
-                        Q: nivelCuartil
-                    })
+                    if(nivelCuartil){
+                        tempData.cuartilAssign.push({
+                            cuartil: h,
+                            Q: nivelCuartil
+                        })
+                    }
                 }
             }
             returnData.push(tempData)
