@@ -229,18 +229,16 @@ const PerfilamientoFile = {
 
         return returnData;
     },
-    async getUserInfo(userId, fileId) {
-        if(userId && fileId){
+    async getUserInfo(fileId) {
+        if(fileId){
             const File = await includes.files.getAllFiles({_id: fileId});
             if(File.length === 0) return false;
             const FData = await includes.XLSX.XLSXFile.getData({path: File[0].path});
-            let returnData = null;
+            let returnData = [];
             FData.map(value => {
                 if(value.name !== 'Cuartiles' && value.name !== 'Grupos de perfilamiento'){
                     value.data.rows.map(user => {
-                        if(userId == user.DNI){
-                            returnData = user;
-                        }
+                        returnData = [...returnData, user]
                     })
                 }
             })

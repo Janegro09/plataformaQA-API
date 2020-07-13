@@ -207,6 +207,7 @@ class Partitures {
             wherePartiture = {partitureId: id, userId: userId};
             whereInstance = {partitureId: id}
             whereStep = {userId: userId, _id: stepId}
+            partitureInfoByUser = true;
         }else if(id && userId){
             // Retornamos una partitura especifica de un usuario
             where = {_id: id};
@@ -218,6 +219,7 @@ class Partitures {
             // Retornamos una partitura
             where = {_id: id};
             wherePartiture = {partitureId: id};
+            partitureInfoByUser = true;
         }
         
 
@@ -229,6 +231,7 @@ class Partitures {
 
             // Traemos los usuarios
             if(wherePartiture){
+                let partitureFileusers = await perfilamientoFile.getUserInfo(FileId);
                 let u = await infobyPartitureSchema.find().where(wherePartiture);
                 for(let x = 0; x < u.length; x++){
                     let temp = await includes.users.schema.find({_id: u[x].userId}).where({userDelete: false});
@@ -236,7 +239,7 @@ class Partitures {
                     let rowFromPartiture = "";
                     if(partitureInfoByUser){
                         // Traemos la informacion agregada de la partitura
-                        rowFromPartiture = await perfilamientoFile.getUserInfo(temp[0].id, FileId);
+                        rowFromPartiture = partitureFileusers.filter(v => v.DNI == temp[0].id)
                     }
                     let user = {
                         idDB: temp[0]._id,
