@@ -258,16 +258,24 @@ class Partitures {
                         G2: temp[0].nameG2,
                         partitureStatus: u[x].status,
                         rowFromPartiture,
-                        lastUpdate: false
+                        lastUpdate: [],
+                        improvment: u[x].improvment || false
                     }
 
                     if(u[x].modifications.length > 0){
-                        let lastM = u[x].modifications[(u[x].modifications.length - 1)];
-
-                        user.lastUpdate = {
-                            user: lastM.id || false,
-                            date: Date(lastM.date) || false
+                        let lastM = u[x].modifications;
+                        let ordenado = lastM.sort((a,b) => b.date - a.date);
+                        for(let x of ordenado){
+                            if(!x.section) continue;
+                            if(!user.lastUpdate.find(element => element.section === x.section)){
+                                user.lastUpdate = [...user.lastUpdate, {
+                                    user: x.id || false,
+                                    date: x.date || false,
+                                    section: x.section
+                                }]
+                            }
                         }
+
                     }
         
                     users.push(user);
@@ -314,13 +322,33 @@ class Partitures {
                 }
             }
 
+            
+
             for(let i = 0; i < partitures.length; i++){
                 let partiture = partitures[i]
+                /**
+                 * Obtenemos el estado de la partitura dependiendo del valor de los usuarios
+                 * 
+                 */
+                let partitureStatus = null;
+                let ps = await infobyPartitureSchema.find({partitureId: partiture._id});
+                for(let x of ps){
+                    if(x.status === 'run') {
+                        partitureStatus = x.status;
+                        break;
+                    }else if(x.status === 'pending'){
+                        partitureStatus = x.status;
+                    }else if(x.status === 'finished' && (!partitureStatus || partitureStatus === 'finished')){
+                        partitureStatus = x.status;
+                    }
+                }
+
                 if(!viewAllPartitures && archivosPermitidos.indexOf(partiture.fileId) === -1) continue;
                     let tempData = {
                         id: partiture._id,
                         name: partiture.name,
                         fileId: partiture.fileId,
+                        partitureStatus,
                         perfilamientos: partiture.perfilamientos,
                         dates: {
                             createdAt: partiture.createdAt
@@ -377,17 +405,26 @@ class Partitures {
         }
 
     }
+
     static async modifySteps(arrayModifications){
         if(arrayModifications.length === 0) throw new Error('Error en los parametros enviados')
         let error = false;
         for(let i = 0; i < arrayModifications.length; i++){
             const {id, userId, stepId, modify, userLogged} = arrayModifications[i];
 
-
-
             // Chequeamos que exista ese step
             let c = await stepsSchema.find({_id: stepId, userId: userId});
             if(c.length === 0) return false;
+
+            if(modify.improvment) {
+                let improvment = modify.improvment;
+                const acceptedValues = ['+','+-','-'];
+                if(acceptedValues.includes(improvment)){
+                    await infobyPartitureSchema.updateOne({partitureId: id, userId},{
+                        improvment
+                    })
+                }
+            }
 
             this.addModificationforUser(id,userId,userLogged)
 
@@ -481,7 +518,8 @@ class Partitures {
         let updateRequest = await partituresInfoByUsersTable.updateOne({partitureId: partitureId}, {modifications: [...userRequest[0].modifications, {
             idDB: loggedUser.idDB,
             id: loggedUser.id,
-            date: Date.now()
+            date: Date.now(),
+            section: loggedUser.role.role
         }]});
 
         if(updateRequest.ok > 0) return true;

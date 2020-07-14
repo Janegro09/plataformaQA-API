@@ -28,7 +28,10 @@ var partituresInfoByUsers = new Schema({
         type: String,
         default: "pending"
     },
-    improvent: String,
+    improvment: {
+        type: String,
+        default: '+-'
+    },
     modifications: Array
 });
 
