@@ -240,7 +240,9 @@ class Partitures {
                     if(partitureInfoByUser){
                         // Traemos la informacion agregada de la partitura
                         rowFromPartiture = partitureFileusers.filter(v => v.DNI == temp[0].id)
+                        rowFromPartiture = rowFromPartiture.length > 0 ? rowFromPartiture[0] : false;
                     }
+
                     let user = {
                         idDB: temp[0]._id,
                         id: temp[0].id,
@@ -255,7 +257,17 @@ class Partitures {
                         G1: temp[0].nameG1,
                         G2: temp[0].nameG2,
                         partitureStatus: u[x].status,
-                        rowFromPartiture
+                        rowFromPartiture,
+                        lastUpdate: false
+                    }
+
+                    if(u[x].modifications.length > 0){
+                        let lastM = u[x].modifications[(u[x].modifications.length - 1)];
+
+                        user.lastUpdate = {
+                            user: lastM.id || false,
+                            date: Date(lastM.date) || false
+                        }
                     }
         
                     users.push(user);
@@ -369,33 +381,48 @@ class Partitures {
         if(arrayModifications.length === 0) throw new Error('Error en los parametros enviados')
         let error = false;
         for(let i = 0; i < arrayModifications.length; i++){
-            const {id, userId, stepId, modify, audioFile} = arrayModifications[i];
+            const {id, userId, stepId, modify, userLogged} = arrayModifications[i];
+
+
 
             // Chequeamos que exista ese step
             let c = await stepsSchema.find({_id: stepId, userId: userId});
             if(c.length === 0) return false;
 
-            // Almacenamos el audio
-            let f;
-            if(audioFile !== undefined){
-                f = new partituresFilesSchema({
-                    partitureId: id,
-                    fileId: audioFile,
-                    stepId: stepId,
-                    userId: userId
-                })
-                f = await f.save();
-                if(!f) return false;
-            }
+            this.addModificationforUser(id,userId,userLogged)
 
             c = await stepsSchema.updateOne({_id: stepId, userId: userId}, modify)
             if(c.ok === 0 && !f)  {
                 error = true;
             }
         }
-
         if(error) return false;
         else return true;
+    }
+
+    static async uploadFile(reqObject) {
+        if(!reqObject) throw new Error('Error en los parametros enviados');
+        const { stepId, id, file, userId, section } = reqObject;
+
+        // Comprobamos la existencia del stepID
+        let c = await stepsSchema.find({_id: stepId, userId: userId});
+        if(c.length === 0) return false;
+
+
+        // Almacenamos el audio
+        let f;
+        if(file !== undefined){
+            f = new partituresFilesSchema({
+                partitureId: id,
+                fileId: file,
+                stepId,
+                userId,
+                section
+            })   
+            f = await f.save();
+            if(!f) return false;
+        }
+        return true;
     }
 
     static async deleteAudioFiles(arrayIds){
@@ -411,7 +438,7 @@ class Partitures {
             deleteFile = await deleteFile.delete();
             if(!deleteFile) throw new Error('Error al eliminar el archivo')
 
-            c = await partituresFilesSchema.deleteOne({_id: id});
+            c = await partituresFilesSchema.deleteOne({fileId: id});
 
             if(c.deletedCount === 0) {
                 throw new Error('Error al eliminar el registro')
@@ -443,6 +470,22 @@ class Partitures {
             return true;
         }
         
+    }
+
+    static async addModificationforUser(partitureId, userId, loggedUser) {
+        if(!partitureId || !userId) throw new Error('Error en los parametros enviados');
+
+        let userRequest = await partituresInfoByUsersTable.find({partitureId: partitureId, userId: userId});
+        if(userRequest.length === 0) throw new Error(`El usuario ${userId}, no esta asignado a la partitura ${partitureId}`);
+
+        let updateRequest = await partituresInfoByUsersTable.updateOne({partitureId: partitureId}, {modifications: [...userRequest[0].modifications, {
+            idDB: loggedUser.idDB,
+            id: loggedUser.id,
+            date: Date.now()
+        }]});
+
+        if(updateRequest.ok > 0) return true;
+        else return false;
     }
 }
 

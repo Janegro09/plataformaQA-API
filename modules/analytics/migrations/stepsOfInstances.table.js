@@ -36,9 +36,6 @@ var stepsOfInstances = new Schema({
         type: Number,
         default: 0
     },
-    assignedMonitorings: {
-        type: Array
-    },
     responsibleComments: {
         type: String
     },
@@ -50,8 +47,7 @@ var stepsOfInstances = new Schema({
     },
     accountAdministratorComments: {
         type: String
-    },
-    audioFile: String
+    }
 });
 
 module.exports = mongoose.model('stepsOfInstances',stepsOfInstances);

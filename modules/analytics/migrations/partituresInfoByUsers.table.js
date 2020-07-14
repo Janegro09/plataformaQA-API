@@ -27,7 +27,9 @@ var partituresInfoByUsers = new Schema({
     status: {
         type: String,
         default: "pending"
-    }
+    },
+    improvent: String,
+    modifications: Array
 });
 
 module.exports = mongoose.model('partituresInfoByUsers',partituresInfoByUsers);

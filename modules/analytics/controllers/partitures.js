@@ -87,18 +87,8 @@ const controller = {
                 id: data.id,
                 userId: data.userId,
                 stepId: data.stepId,
-                modify: tempModData
-            }
-
-
-            // Guardamos el archivo enviado
-            if(req.files !== undefined && req.files.audioFile !== undefined){
-                const file = req.files.audioFile;
-                let f = new includes.files(req);
-                f = await f.save();
-                if(f){
-                    tempData.audioFile = f.id;
-                }
+                modify: tempModData,
+                userLogged: req.authUser[0]
             }
 
             modifyData.push(tempData);
@@ -146,6 +136,35 @@ const controller = {
         if(!req.params.id || !req.params.userId || !req.query.status) return includes.views.error.message(res, 'Error en los parametros enviados.')
         partituresModel.changePartitureStatus(req.params.id, req.params.userId, req.query.status).then(v => {
             if(!v) return includes.views.error.message(res, 'Error al modificar el estado de la partitura')
+            else return includes.views.success.update(res)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
+    },
+    async uploadFile(req, res) {
+        if(!req.query || !req.files.file || !req.params.id || !req.params.userId || !req.params.stepId) return includes.views.error.message(res, 'Error en los parametros enviados.')
+        const acceptedSections = ['monitorings', 'coachings'];
+        if(!acceptedSections.includes(req.query.section)) return includes.views.error.message(res, 'Error en los parametros enviados.')
+        const { stepId, userId, id }    = req.params;
+        const { section }               = req.query;
+        tempData = {
+            stepId,
+            userId,
+            id,
+            section
+        }
+        // Guardamos el archivo enviado
+        if(req.files !== undefined && req.files.file !== undefined){
+            const file = req.files.file;
+            let f = new includes.files(req);
+            f = await f.save();
+            if(f){
+                tempData.file = f.id;
+            }
+        }
+
+        partituresModel.uploadFile(tempData).then(v => {
+            if(!v) return includes.views.error.message(res, 'Error al subir el archivo')
             else return includes.views.success.update(res)
         }).catch(e => {
             return includes.views.error.message(res, e.message);

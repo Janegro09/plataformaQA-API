@@ -31,6 +31,9 @@ var filesbypartitures = new Schema({
         type: String,
         required: true
     },
+    section: {
+        type: String
+    },
     createdAt: {
         type: Date,
         default: Date.now
