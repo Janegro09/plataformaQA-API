@@ -19,6 +19,7 @@ const partitures                    = require('./partitures.table');
 const partituresInfoByUsers         = require('./partituresInfoByUsers.table');
 const stepsOfInstances              = require('./stepsOfInstances.table');
 const filesbypartitures             = require('./filesByPartitures.table');
+const perfilamientoPerUserHistory   = require('./perfilamientoperUserHistory.table');
 
 module.exports = function() {
     instancesOfPartitures();
@@ -27,4 +28,5 @@ module.exports = function() {
     partituresInfoByUsers();
     stepsOfInstances();
     filesbypartitures();
+    perfilamientoPerUserHistory();
 }();
