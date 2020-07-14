@@ -384,8 +384,6 @@ class Partitures {
                 }
             }
 
-
-
             for (let i = 0; i < partitures.length; i++) {
                 let partiture = partitures[i]
                 /**
