@@ -36,18 +36,16 @@ var stepsOfInstances = new Schema({
         type: Number,
         default: 0
     },
-    responsibleComments: {
-        type: String
-    },
-    managerComments: {
-        type: String
-    },
-    coordinatorOnSiteComments: {
-        type: String
-    },
-    accountAdministratorComments: {
-        type: String
-    }
+    detalleTransaccion: String,
+    patronMejora: String,
+    compromisoRepresentante: String,
+    fechaInforme: Date,
+    responsibleComments: String,
+    managerComments: String,
+    coordinatorOnSiteComments: String,
+    accountAdministratorComments: String,
+    coachingComments: String,
+    improvment: String
 });
 
 module.exports = mongoose.model('stepsOfInstances',stepsOfInstances);
