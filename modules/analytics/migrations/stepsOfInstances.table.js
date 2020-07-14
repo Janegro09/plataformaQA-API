@@ -36,6 +36,7 @@ var stepsOfInstances = new Schema({
         type: Number,
         default: 0
     },
+    customFilesSync: Array,
     detalleTransaccion: String,
     patronMejora: String,
     compromisoRepresentante: String,

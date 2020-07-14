@@ -354,7 +354,8 @@ class Partitures {
                             compromisoRepresentante: st.compromisoRepresentante,
                             fechaInforme: st.fechaInforme,
                             improvment: st.improvment,
-                            audioFiles: file
+                            audioFiles: file,
+                            customFilesSync: st.customFilesSync
                         }
 
                         if (viewresponsibleComments) {
@@ -418,6 +419,7 @@ class Partitures {
                 }
                 ReturnData.push(tempData)
             }
+
             return ReturnData;
         } catch (e) {
             throw e
