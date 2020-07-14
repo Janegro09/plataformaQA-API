@@ -64,11 +64,11 @@ const cuartilesGroups = {
                 for(let l = 0; l < users.length; l++){
                     if(this.assignedUsers.indexOf(users[l]) === -1 && !assignAllUsers){
                         tempData['Cant de agentes'].value++;
-                        this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value);
+                        this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, tempData['Cluster'].value);
                         this.assignedUsers.push(users[l]) // Asignamos los usuarios al array
                     }else if(assignAllUsers){
                         tempData['Cant de agentes'].value++;
-                        this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value);
+                        this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, tempData['Cluster'].valu);
                     }
                 }
             }
@@ -111,7 +111,7 @@ const cuartilesGroups = {
             return v
         })
     },
-    assignGCtoUser(userId, groupName){
+    assignGCtoUser(userId, groupName, clusterName){
         this.newData.map(v => {
             if(v.name !== 'Grupos de perfilamiento' && v.name !== 'Cuartiles'){
                 // Buscamos si existe la columna de grupos de cuartiles asignados "'Grupos de cuartiles Asignados'"
@@ -119,6 +119,9 @@ const cuartilesGroups = {
                 if(headers.indexOf('Grupos de cuartiles Asignados') === -1){
                     headers.push('Grupos de cuartiles Asignados');
                 } 
+                if(!headers.includes('Cluster')){
+                    headers.push('Cluster')
+                }
 
                 let users = v.data.rows;
                 for(let u = 0; u < users.length; u++){
@@ -128,6 +131,7 @@ const cuartilesGroups = {
                             user['Grupos de cuartiles Asignados'].value += ` + ${groupName}`;
                         }else if(!user['Grupos de cuartiles Asignados']){
                             user['Grupos de cuartiles Asignados'] = {value: groupName, style: ""}
+                            user['Cluster'] = {value: clusterName, style: ""}
                         }
                     }
                 }
@@ -269,7 +273,7 @@ const cuartilesGroups = {
             this.newData.push(tempData)
         }
     },
-    async getUsersbyGC(group){
+    async getUsersbyGC(group, getUserInfo = false){
         let returnData = [];
 
         this.oldData.map(v => {
@@ -281,7 +285,11 @@ const cuartilesGroups = {
                     
                     groups.map(e => {
                         if(e === group){
-                            returnData.push(actualUser.DNI);
+                            if(getUserInfo){
+                                returnData.push(actualUser);
+                            }else{
+                                returnData.push(actualUser.DNI)
+                            }
                         }
                     })
                 }
@@ -289,7 +297,7 @@ const cuartilesGroups = {
         })
         return returnData
     },
-    async getPerfilamientos(fileId, getUsers = false) {
+    async getPerfilamientos(fileId, getUsers = false, getUserInfo = false) {
         if(!fileId) throw new Error('ID del archivo no especificado');
         this.init()
         let c = await includes.files.checkExist(fileId);
@@ -321,7 +329,7 @@ const cuartilesGroups = {
             }
 
             if(getUsers){
-                tempData.usersAssign = await this.getUsersbyGC(grupo['Nombre del grupo'])
+                tempData.usersAssign = await this.getUsersbyGC(grupo['Nombre del grupo'], getUserInfo)
             }
 
             for(let h in grupo){

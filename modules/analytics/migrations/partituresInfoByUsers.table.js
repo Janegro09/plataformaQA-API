@@ -32,6 +32,15 @@ var partituresInfoByUsers = new Schema({
         type: String,
         default: '+-'
     },
+    cluster: {
+        type: String
+    },
+    createdAt: {
+        type: Date,
+        default: Date.now
+    },
+    detallePA: String,
+    GCAssigned: String,
     modifications: Array
 });
 

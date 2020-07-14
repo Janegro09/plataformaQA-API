@@ -44,7 +44,7 @@ class Partitures {
     async create() {
         try {
             // Partitures --------------------------
-            this.fileData = await cuartilesGroupsModel.getPerfilamientos(this.file, true);
+            this.fileData = await cuartilesGroupsModel.getPerfilamientos(this.file, true, true);
             // Chequeamos la existencia de los perfilamientos asignados
             await this.getFileName();
             if (this.perfilamientosAssignados.lenth === 0 || !this.perfilamientosAssignados) throw new Error('No asigno perfilamientos')
@@ -74,11 +74,14 @@ class Partitures {
             partitureObject = new partituresSchema(partitureObject);
             for (let u = 0; u < this.users.length; u++) {
                 // obtenemos el id del usuario
-                let userDBid = await includes.users.model.getUseridDB(this.users[u])
+                let userDBid = await includes.users.model.getUseridDB(this.users[u].DNI)
                 let infoUser = new infobyPartitureSchema({
                     partitureId: partitureObject._id,
                     userId: userDBid,
-                    status: "pending"
+                    status: "pending",
+                    cluster: this.users[u].Cluster,
+                    detallePA: this.users[u]['DETALLE_PA'],
+                    GCAssigned: this.users[u]['Grupos de cuartiles Asignados']
                 })
                 partitureInfoByUser.push(infoUser);
             }
@@ -102,7 +105,7 @@ class Partitures {
                 for (let p = 0; p < instance.steps.length; p++) {
                     // Creamos un registro por cada usuario
                     for (let q = 0; q < this.users.length; q++) {
-                        let user = this.users[q];
+                        let user = this.users[q].DNI;
                         user = await includes.users.model.getUseridDB(user)
                         let b = new stepsSchema({
                             userId: user,
@@ -120,19 +123,19 @@ class Partitures {
 
             // Guardamos todos los registros en la base de datos
 
-            // Partituras
+            // // Partituras
             let c = await partitureObject.save()
             if (!c) throw new Error('Error al crear el registro')
 
-            // Info extra de partituras por usuarios
+            // // Info extra de partituras por usuarios
             c = await infobyPartitureSchema.insertMany(partitureInfoByUser);
             if (c.length === 0) throw new Error('Error al crear el registro')
 
-            // Instancias
+            // // Instancias
             c = await instancesSchema.insertMany(instances);
             if (c.length === 0) throw new Error('Error al crear el registro')
 
-            // Steps
+            // // Steps
             c = await stepsSchema.insertMany(steps);
             if (c.length === 0) throw new Error('Error al crear el registro')
 
@@ -295,7 +298,9 @@ class Partitures {
                         partitureStatus: u[x].status,
                         rowFromPartiture,
                         lastUpdate: [],
-                        improvment: u[x].improvment || false
+                        improvment: u[x].improvment || false,
+                        cluster: u[x].cluster || false
+
                     }
 
                     if (u[x].modifications.length > 0) {
@@ -367,14 +372,12 @@ class Partitures {
                         if (viewmanagerComments) {
                             tData.managerComments = st.managerComments;
                         }
-
-                        if (tempData.steps.length > 0) {
-                            instances.push(tempData)
-                        }
-
+                        
                         tempData.steps.push(tData);
+                    }
 
-
+                    if (tempData.steps.length > 0) {
+                        instances.push(tempData)
                     }
 
 
