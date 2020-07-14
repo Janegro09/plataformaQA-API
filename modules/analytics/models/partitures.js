@@ -16,8 +16,6 @@ const includes = require('../../includes');
 // Schemas
 const helper = require('../helper');
 
-const XLSXdatabase = require('./XLSXdatabase');
-
 const cuartilesGroupsModel = require('./cuartilesGroups');
 
 // Schemas
