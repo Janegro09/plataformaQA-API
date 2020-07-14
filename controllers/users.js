@@ -18,7 +18,7 @@ const usersModel    = require('../models/users');
 const FileUpload    = require('./files');
 const permit            = require('../models/permissions');
 
-var controller = {
+module.exports = {
     async new(req, res) {
         let img;
         if(!helper.regExCheck(req.body.email, 3)) {
@@ -105,5 +105,3 @@ var controller = {
         })
     }
 }
-
-module.exports = controller;

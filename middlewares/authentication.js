@@ -23,7 +23,7 @@ const Roles         = require('../models/roles')
 const routesPath    = cfile.mainInfo.routes;
 const TOKEN_PASS    = cfile.mainInfo.jwtPass;
 
-class Auth {
+module.exports = class Auth {
 
     constructor(user) {
         this.user = user;
@@ -89,5 +89,3 @@ class Auth {
         }
     }
 }
-
-module.exports = Auth;

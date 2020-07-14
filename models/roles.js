@@ -23,7 +23,7 @@ const userSchema        = require('../database/migrations/usersTable');
  * 
  * Si en el constructor se especifica ID entonces va a modificar sobre 
  */
-class Roles {
+module.exports = class Roles {
     constructor(req) {
         let {id, role, permissions, description} = req;
         this.role               = role;
@@ -187,7 +187,3 @@ class Roles {
         }
     }
 }
-
-
-module.exports = Roles;
-

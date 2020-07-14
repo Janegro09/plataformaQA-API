@@ -18,7 +18,7 @@ const Roles         = require('../models/roles');
 const Permit        = require('../models/permissions')
 
 
-var controller = {
+module.exports = {
     get: async (req, res) => {
         let id = req.params.id ? req.params.id : "";
         Roles.get(id, true).then(response => {
@@ -66,5 +66,3 @@ var controller = {
         })
     }
 }
-
-module.exports = controller;

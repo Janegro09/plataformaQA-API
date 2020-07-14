@@ -16,8 +16,6 @@ const includes = require('../../includes');
 // Schemas
 const helper = require('../helper');
 
-const XLSXdatabase  = require('./XLSXdatabase');
-const perfilamientoFile = require('./perfilamientoFile');
 
 // Cuartiles COlors
 const CQ1 = "00ff00";

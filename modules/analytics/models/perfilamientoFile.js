@@ -17,7 +17,6 @@ const includes = require('../../includes');
 const helper = require('../helper');
 
 const programsModel = require('../../programs/models/programs');
-const XLSXdatabase  = require('./XLSXdatabase');
 
 const PerfilamientoFile = {
     /**

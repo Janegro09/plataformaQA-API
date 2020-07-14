@@ -26,7 +26,7 @@ const userLoginSchema       = require('../database/migrations/usersLogin');
 /**
  * Clase para manejar usuarios 
  */
-class Users {
+module.exports = class Users {
     constructor(userObject = {}){
         this.id                 = userObject.id                 ? userObject.id                               : false;        
         this.name               = userObject.name               ? userObject.name                             : false;
@@ -524,5 +524,4 @@ class Users {
     }
 }
 
-module.exports = Users;
  

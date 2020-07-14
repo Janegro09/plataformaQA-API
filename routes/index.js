@@ -26,6 +26,7 @@ app.use(`${routesPath}/users`,require('./users')); // Users routes
 app.use(`${routesPath}/roles`,require('./roles')); // Roles routes
 app.use(`${routesPath}/groups`,require('./groups')); // Users groups routes
 app.use(`${routesPath}/permissions`,require('./permissions')); // Permissions routes
+app.use(`${routesPath}/files`, require('./files'));
 
 // Incluimos las rutas de los modulos
 const modules = global.modules;

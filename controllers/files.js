@@ -19,8 +19,9 @@ const fs     = require('fs');
 const filesModel = require('../database/migrations/Files');
 const tempURLs   = require('../database/migrations/tempURLs');
 const cfile     = helper.configFile();
+const views     = require('../views');
 
-class uploadFile {
+module.exports = class uploadFile {
     constructor(req){
         if(typeof req == 'string'){
             // Estamos enviando un id
@@ -209,6 +210,29 @@ class uploadFile {
             })
         })
     }
-}
 
-module.exports = uploadFile;
+    static async getPublicFile(req, res) {
+        let id = req.params.id;
+        if(id){
+            try {
+                // Buscamos el archivo correspondiente a la url temporal
+                let idFile = await this.getFileID(id);
+                let c = await filesModel.find({_id: idFile});
+                if(c.length == 0) {
+                    views.success.file.download(res,'public/notFound.jpg');
+                }
+                url = c[0].path;
+                if(helper.files.exists(url)){
+                   views.success.file.download(res,url);
+                }else{
+                   await filesModel.deleteOne({_id: id});
+                   views.success.file.download(res,'public/notFound.jpg');
+                }
+            } catch {
+                views.success.file.download(res,'public/notFound.jpg');
+            }
+        }else {
+            views.success.file.download(res,'public/notFound.jpg');
+        }
+    }
+}

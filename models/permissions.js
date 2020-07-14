@@ -22,7 +22,7 @@ const views         = require('../views');
 /**
  * Clase para registrar una ruta y crear un permiso para esa ruta en particular
  */
-let Permit = {
+module.exports = {
     /**
      * Consulta si el usuario tiene permiso para acceder a ese metodo
      * @param {Object} req 
@@ -120,4 +120,3 @@ let Permit = {
     }
 }
 
-module.exports = Permit;

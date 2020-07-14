@@ -21,7 +21,7 @@ const usersSchema       = require('../database/migrations/usersTable');
 /**
  * Clase para manejar Grupos 
  */
-class Groups {
+module.exports = class Groups {
     constructor(req) {
         let {group = false,
             id = false} = req;
@@ -209,7 +209,4 @@ class Groups {
         }
     }
 }
-
-
-module.exports = Groups;
 

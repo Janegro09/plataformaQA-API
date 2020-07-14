@@ -19,7 +19,7 @@ const nodeMailer    = require('nodemailer');
 const Roles         = require('../models/roles')
 const Groups         = require('../models/groups')
 
-var controller = {
+module.exports = {
     /**
      * Esta funcion checkea el tipo de valor en comparacion con expresiones regulares
      * @param {mixed} value valor para validar
@@ -245,5 +245,3 @@ var controller = {
 
     }
 }
-
-module.exports = controller;

@@ -18,18 +18,12 @@ const Users         = require('../models/users');
 const Auth          = require('../middlewares/authentication');
 const Roles         = require('../models/roles')
 const Groups        = require('../models/groups')
-const Files         = require('../controllers/files');
-const filesModel = require('../database/migrations/Files');
-const Permit        = require('../models/permissions')
-const fetch         = require('node-fetch');
-const { request } = require('express');
 
-
-var controller = {
+module.exports = {
     principalView: (req, res) => {
         let ini = "<h1>API en desarrollo y testing <strong style='color:#f00;'>*los datos son ficticios*</strong></h1>";
-        ini += "<h4>Desarrollador: Ramiro Macciuci &copy; &reg;</h4>"
-        ini += "<h4>Cel: +54 11 2174 2416 | ramimacciuci@gmail.com</h4>"
+        ini += "<h4>Desarrollador: Telecom Argentina S.A. - Soluciones Digitales &copy; &reg;</h4>"
+        ini += "<h4>Cel: +54 11 2174 2416 | rmacciucivicente@teco.com.ar</h4>"
         return res.status(200).send(ini);
     },
     test: (req, res) => {
@@ -42,35 +36,11 @@ var controller = {
             roles: []
         }
         // Enviamos Grupos
-        returnData.groups = await Groups.get();
+        returnData.groups   = await Groups.get();
         // Enviamos Roles
-        returnData.roles= await Roles.get();
+        returnData.roles    = await Roles.get();
 
         return views.customResponse(res,true,202,"",returnData)
-    },
-    getPublicFile: async (req, res) => {
-        let id = req.params.id;
-        if(id){
-            try {
-                // Buscamos el archivo correspondiente a la url temporal
-                let idFile = await Files.getFileID(id);
-                let c = await filesModel.find({_id: idFile});
-                if(c.length == 0) {
-                    views.success.file.download(res,'public/notFound.jpg');
-                }
-                url = c[0].path;
-                if(helper.files.exists(url)){
-                   views.success.file.download(res,url);
-                }else{
-                   await filesModel.deleteOne({_id: id});
-                   views.success.file.download(res,'public/notFound.jpg');
-                }
-            } catch {
-                views.success.file.download(res,'public/notFound.jpg');
-            }
-        }else {
-            views.success.file.download(res,'public/notFound.jpg');
-        }
     },
     login: async (req, res) => {
         const {user, password} = req.body;
@@ -112,5 +82,3 @@ var controller = {
     }
 
 }
-
-module.exports = controller;
