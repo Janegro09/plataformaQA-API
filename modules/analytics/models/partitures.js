@@ -30,7 +30,6 @@ const partituresFilesSchema = require('../migrations/filesByPartitures.table');
 const perfilamientoFile = require('./perfilamientoFile');
 
 const programsModel = require('../../programs/models/programs');
-const { update } = require('../controllers/partitures');
 
 class Partitures {
     constructor(reqObject) {
