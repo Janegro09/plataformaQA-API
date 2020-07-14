@@ -47,7 +47,7 @@ router.get('/partitures/:id?/:userId?/:stepId?',includes.permit.checkPermit, con
 router.delete('/partitures/:id',includes.permit.checkPermit, controllerPartitures.delete);
 router.put('/partitures/:id?/:userId?/:stepId?',includes.permit.checkPermit, controllerPartitures.update);
 router.post('/partitures/:id/:userId', includes.permit.checkPermit, controllerPartitures.changePartitureStatus)
-router.post('/partitures/:id/:userId/:stepId/files',includes.permit.checkPermit ,controllerPartitures.uploadFile)
+router.post('/partitures/:id/:userId/:stepId/files' ,controllerPartitures.uploadFile)
 
 // Audio files
 router.delete('/partitures/:id/:fileId', controllerPartitures.deleteFile);
