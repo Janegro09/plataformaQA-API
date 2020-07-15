@@ -16,14 +16,15 @@
 const express           = require('express');
 const Files         = require('../controllers/files');
 let router = express.Router();
-// const permit            = require('../models/permissions');
+const permit            = require('../models/permissions');
+
 
 /**
  * permit.checkPermit --> sirve para comprobar si el usuario tiene los permisos para acceder a ese request 
  */
 
 router.get('/:id?', Files.getPublicFile);
-router.post('/', Files.newFile);
-router.delete('/:id', Files.deleteFile);
+router.post('/',permit.checkPermit, Files.newFile);
+router.delete('/:id', permit.checkPermit ,Files.deleteFile);
 
 module.exports = router;
