@@ -1,5 +1,5 @@
 /**
- * @fileoverview Modulo Forms | Schema para los campos perzonalizados
+ * @fileoverview Modulo Forms | Schema para los campos personalizados
  * 
  * @version 1.0
  * 
