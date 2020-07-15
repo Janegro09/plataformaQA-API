@@ -23,5 +23,7 @@ let router = express.Router();
  */
 
 router.get('/:id', Files.getPublicFile);
+router.post('/', Files.newFile);
+router.delete('/:id', Files.deleteFile);
 
 module.exports = router;

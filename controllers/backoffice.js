@@ -140,6 +140,12 @@ const controller = {
         })
         log.save().then(ok => {ok}).catch(err => {err})
 
+    },
+    exports: async (req, res) => {
+
+    },
+    dashboard: async (req, res) => {
+        
     }
 }
 

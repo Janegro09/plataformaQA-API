@@ -23,5 +23,7 @@ const permit            = require('../models/permissions');
  */
 
 router.get('/nomina', permit.checkPermit ,backoffice.importNomina);
+router.get('/home', backoffice.dashboard);
+router.get('/exports/:section', backoffice.exports);
 
 module.exports = router;

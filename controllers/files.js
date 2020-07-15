@@ -235,4 +235,12 @@ module.exports = class uploadFile {
             views.success.file.download(res,'public/notFound.jpg');
         }
     }
+
+    static async newFile(req, res) {
+
+    }
+
+    static async deleteFile(req, res) {
+
+    }
 }
