@@ -127,4 +127,12 @@ module.exports = class customFields {
 
         return returnData;
     }
+
+    static async delete(id) {
+        if(!id) throw new Error('Error en los parametros enviados');
+
+        let c = await customFieldsSchema.deleteOne({_id: id});
+        if(c.ok > 0 && c.deletedCount > 0) return true;
+        else return false;
+    }
 }

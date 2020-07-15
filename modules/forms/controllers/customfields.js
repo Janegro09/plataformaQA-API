@@ -83,6 +83,18 @@ module.exports = {
         }
     },
     delete: async (req, res) => {
+        const { id } = req.params;
+        if(!id) return includes.views.error.message(res, 'Error en los parametros enviados');
+        try {    
+            await customFieldsModel.get(id);
         
+            let n = await customFieldsModel.delete(id);
+            if(!n) return includes.views.error.message(res, 'Error al eliminar el campo personalizado')
+            else return includes.views.success.delete(res);
+
+        } catch (e) {
+            return includes.views.error.message(res, e.message)
+        }
+
     }
 }
