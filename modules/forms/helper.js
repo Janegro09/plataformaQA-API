@@ -13,8 +13,7 @@
  */
 
 const includes = require('../includes');
-const modules = require('../../modules');
 
-modules.exports = {
+module.exports = {
 
 }

@@ -1,8 +1,6 @@
 const includes = require('../../includes');
-const modules = require('../../modules');
 
-const helper = {
+module.exports = {
 
 }
 
-modules.exports = helper;
