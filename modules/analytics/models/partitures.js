@@ -425,6 +425,29 @@ class Partitures {
 
     }
 
+    static async getPartitureInfoByUser(userId) {
+        let dataReturn = [];
+        if(userId){
+            // Buscamos las partituras que tiene asignadas el usuario
+            let partitures = await partituresInfoByUsersTable.find({userId});
+            for(let p of partitures) {
+                let c = await partituresSchema.find({_id: p.partitureId});
+                let tempData = {
+                    id: c._id,
+                    name: c.name,
+                    status: p.status,
+                    imporvment: p.imporvment,
+                    cantOfModifications: p.modifications.length,
+                    cluster: p.cluster,
+                    GCAssigned: p.GCAssigned,
+                    createdAt: p.createdAt
+                }
+                dataReturn.push(tempData)
+            }
+        }
+        return dataReturn;
+    }
+
     static async delete(partitureId) {
         if (!partitureId) throw new Error('ID no especificado')
 

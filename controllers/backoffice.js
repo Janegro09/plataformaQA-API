@@ -19,6 +19,9 @@ const views         = require('../views');
 const Permit        = require('../models/permissions')
 const logSchema     = require('../database/migrations/logNomina');
 
+// Incluimos los modulos para la informacion del dashboard
+const partituresModule = require('../modules/analytics/models/partitures');
+
 const models = {
     users: require('../models/users'),
     groups: require('../models/groups'),
@@ -145,7 +148,19 @@ const controller = {
 
     },
     dashboard: async (req, res) => {
-        
+        let dataReturn = {};
+        const datosDashboard = {
+            perfilamientos: true
+        }
+        if(req.authUser.length > 0){
+            const usuarioLogeado = req.authUser[0];
+            
+            // Datos de mis perfilamientos
+            if(datosDashboard.perfilamientos){
+                dataReturn.misPerfilamientos = await partituresModule.getPartitureInfoByUser(usuarioLogeado.idDB);
+            }
+        } 
+        return views.customResponse(res, true, 200, "datos del usuario logeado", dataReturn);
     }
 }
 

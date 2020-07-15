@@ -21,9 +21,9 @@ const permit            = require('../models/permissions');
 /**
  * permit.checkPermit --> sirve para comprobar si el usuario tiene los permisos para acceder a ese request 
  */
-
-router.get('/nomina', permit.checkPermit ,backoffice.importNomina);
-router.get('/home', backoffice.dashboard);
-router.get('/exports/:section', backoffice.exports);
+const routeBackoffice = '/backoffice';
+router.get(`${routeBackoffice}/nomina`, permit.checkPermit ,backoffice.importNomina);
+router.get(`/home`, backoffice.dashboard);
+router.get(`${routeBackoffice}/exports/:section`, backoffice.exports);
 
 module.exports = router;
