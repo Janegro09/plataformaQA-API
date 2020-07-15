@@ -13,7 +13,8 @@
 
 
 // Tables 
-
+const customfields = require('./customfields.table');
 
 module.exports = function() {
+    customfields();
 }();
