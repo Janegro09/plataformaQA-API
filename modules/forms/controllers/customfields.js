@@ -16,6 +16,13 @@ const customFieldsModel = require('../models/customfields');
 
 module.exports = {
     get: async (req, res) => {
+        const { id } = req.params;
+        customFieldsModel.get(id).then(v => {
+            if(!v) return includes.views.error.message(res, 'Error al mostrar los campos personalizados')
+            else return includes.views.customResponse(res, true, 200, "", v);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
 
     },
     new: async (req, res) => {
@@ -50,7 +57,30 @@ module.exports = {
 
     },
     update: async (req, res) => {
+        const { id } = req.params;
+        if(!id) return includes.views.error.message(res, 'Error en los parametros enviados');
+        
+        let dataModify = {
+            id
+        };
+        
+        for(let i in req.body){
+            if(req.body[i] !== undefined){
+                dataModify[i] = req.body[i]
+            }
+        }
+            
+        try {    
+            await customFieldsModel.get(id);
+            
+            let n = new customFieldsModel(dataModify);
+            n = await n.update()
+            if(!n) return includes.views.error.message(res, 'Error al modificar el campo personalizado')
+            else return includes.views.success.update(res);
 
+        } catch (e) {
+            return includes.views.error.message(res, e.message)
+        }
     },
     delete: async (req, res) => {
         

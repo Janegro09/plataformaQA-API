@@ -18,7 +18,8 @@ const Schema   = mongoose.Schema;
 var customfields = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     type: {
         type: String,
