@@ -21,7 +21,7 @@ const tempURLs   = require('../database/migrations/tempURLs');
 const cfile     = helper.configFile();
 const views     = require('../views');
 
-module.exports = class uploadFile {
+class uploadFile {
     constructor(req){
         if(typeof req == 'string'){
             // Estamos enviando un id
@@ -244,3 +244,5 @@ module.exports = class uploadFile {
 
     }
 }
+
+module.exports = uploadFile;

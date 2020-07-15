@@ -15,9 +15,9 @@
 const helper        = require('./helper');
 const views         = require('../views');
 const Groups         = require('../models/groups');
-const Permit        = require('../models/permissions')
+const Permit        = require('../models/permissions');
 
-module.exports = {
+const grupos = {
     async get(req, res) {
         try{
             let c = await Groups.get(req.params.id);
@@ -53,3 +53,5 @@ module.exports = {
         })
     }
 }
+
+module.exports = grupos;

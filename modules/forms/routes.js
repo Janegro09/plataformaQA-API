@@ -20,10 +20,10 @@ const controller = require('./controllers/customfields');
 
 // Custom fields routes
 const customFields = "/customfields";
-router.get(`${customFields}/:id?`, controller.get);
-router.post(`${customFields}/new`, controller.new);
-router.put(`${customFields}/:id`, controller.update);
-router.delete(`${customFields}/:id`, controller.delete);
+router.get(`${customFields}/:id?`, includes.permit.checkPermit, controller.get);
+router.post(`${customFields}/new`, includes.permit.checkPermit, controller.new);
+router.put(`${customFields}/:id`, includes.permit.checkPermit, controller.update);
+router.delete(`${customFields}/:id`, includes.permit.checkPermit, controller.delete);
 
 // Forms routes
 

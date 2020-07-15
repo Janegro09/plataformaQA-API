@@ -18,11 +18,10 @@ const PermissionSchema  = require('../database/migrations/Permissions');
 const Roles             = require('./roles');
 const cfile         = helper.configFile();
 const views         = require('../views');
-
 /**
  * Clase para registrar una ruta y crear un permiso para esa ruta en particular
  */
-module.exports = {
+const Permit = {
     /**
      * Consulta si el usuario tiene permiso para acceder a ese metodo
      * @param {Object} req 
@@ -120,3 +119,4 @@ module.exports = {
     }
 }
 
+module.exports = Permit;
