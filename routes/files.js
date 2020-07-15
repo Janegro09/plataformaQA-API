@@ -22,7 +22,7 @@ let router = express.Router();
  * permit.checkPermit --> sirve para comprobar si el usuario tiene los permisos para acceder a ese request 
  */
 
-router.get('/:id', Files.getPublicFile);
+router.get('/:id?', Files.getPublicFile);
 router.post('/', Files.newFile);
 router.delete('/:id', Files.deleteFile);
 

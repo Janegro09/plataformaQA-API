@@ -65,6 +65,9 @@ module.exports = class Auth {
     static async checkToken(req, res, next) {
         let url = req.url;
         url = url.split('/')[3];
+        if(url && url.indexOf('?') !== -1){
+            url = url.split('?')[0];
+        }
         if(cfile.routesNotToken.indexOf(url) === -1) {
             var token   = req.headers.authorization;
             if(!token) return views.error.code(res,'ERR_04');

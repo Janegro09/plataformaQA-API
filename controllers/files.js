@@ -21,6 +21,8 @@ const tempURLs   = require('../database/migrations/tempURLs');
 const cfile     = helper.configFile();
 const views     = require('../views');
 
+const authorizedSections = ['filesLibraryPartitures'];
+
 class uploadFile {
     constructor(req){
         if(typeof req == 'string'){
@@ -32,6 +34,7 @@ class uploadFile {
             this.url = req.originalUrl;
             this.url = this.url.split('/')[3];
             this.file = req.files;
+            this.section = false;
         }
     }
 
@@ -44,6 +47,9 @@ class uploadFile {
      */
     async save() {
         let folder = global.baseUrl + '/../files/';
+        if(this.section){
+            this.url = this.section;
+        }
         if(!helper.files.exists(`${folder}${this.url}`,true)){
             // Creamos la carpeta 
             fs.mkdirSync(`${folder}${this.url}`, "0755");
@@ -80,11 +86,16 @@ class uploadFile {
                 type: file.mimetype,
                 name: ""
             }
-            // Consultamos si existe una imagen con ese nombre
-            for(let x = 0; x < 5; x++){
-                fileData.name += Math.random().toString(36).replace(/[^a-z]+/g, '');
+
+            if(this.section){
+                fileData.name = file.name;
+                fileData.section = this.section
+            }else {
+                for(let x = 0; x < 5; x++){
+                    fileData.name += Math.random().toString(36).replace(/[^a-z]+/g, '');
+                }
+                fileData.name += `.${typeFile[1]}`;
             }
-            fileData.name += `.${typeFile[1]}`;
             fileData.path += fileData.name;
             saveFile += fileData.name;
             // // Validaciones de seguridad para imagen
@@ -214,9 +225,16 @@ class uploadFile {
     static async getPublicFile(req, res) {
         let id = req.params.id;
         if(id){
+            // Descargamos un archivo
+            const { urltemp } = req.query;
+            let idFile, url;
+            if(urltemp === 'false'){
+                idFile = id;
+            }else{
+                idFile = await this.getFileID(id);
+            }
             try {
                 // Buscamos el archivo correspondiente a la url temporal
-                let idFile = await this.getFileID(id);
                 let c = await filesModel.find({_id: idFile});
                 if(c.length == 0) {
                     views.success.file.download(res,'public/notFound.jpg');
@@ -232,16 +250,66 @@ class uploadFile {
                 views.success.file.download(res,'public/notFound.jpg');
             }
         }else {
-            views.success.file.download(res,'public/notFound.jpg');
+            // Entonces buscamos archivos
+            const { section } = req.query;
+
+            if(!section || !authorizedSections.includes(section)) {
+                return views.error.message(res,'Error en los parametros enviados');
+                // views.success.file.download(res,'public/notFound.jpg');
+            }
+
+            let c = await filesModel.find({section: section});
+            if(c.length === 0) return views.error.message(res, 'No existen registros en nuestra base de datos');
+
+            let dataReturn = [];
+            for(let i of c) {
+                let tempData = {
+                    id: i._id,
+                    name: i.name,
+                    type: i.type
+                }
+                dataReturn.push(tempData)
+            }
+            return views.customResponse(res,true,200,`Archivos de la seccion: ${section}`, dataReturn);
         }
     }
 
     static async newFile(req, res) {
+        const { section } = req.body;
+        if(!section) return views.error.message(res, 'Error en los parametros enviados');
+        if(!req.files) return views.error.code(res, 'ERR_09'); 
+        if(!req.files.file) return views.error.code(res, 'ERR_09'); 
+        const file = req.files.file;
 
+
+        try {
+            
+            if(!authorizedSections.includes(section)) throw new Error('Error en los parametros enviados');
+
+            let a = new uploadFile(req);
+            a.section = section;
+            let c = await a.save();
+
+            if(c) return views.customResponse(res, true, 200, "Archivo subido correctamente", c);
+            else return views.error.message(res,'Error al subir el archivo')
+
+        } catch (e) {
+            return views.error.message(res, e.message);
+        }
     }
 
     static async deleteFile(req, res) {
+        const { section } = req.query;
+        const { id } = req.params;
 
+        if(!id || !section) return views.error.message(res, 'Error en los parametros enviados');
+
+        if(!authorizedSections.includes(section)) return views.error.message(res, 'Error en los parametros enviados');
+
+        let c = new uploadFile(id);
+        c = await c.delete();
+        if(c) return views.success.delete(res);
+        else return views.error.message('Error al eliminar el archivo')
     }
 }
 

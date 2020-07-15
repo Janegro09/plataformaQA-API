@@ -15,6 +15,7 @@
 const express       = require('express');
 const helper        = require('../controllers/helper')
 const main          = require('../controllers/main');
+const files         = require('../controllers/files');
 const backoffice    = require('../controllers/backoffice');
 const cfile         = helper.configFile();
 const routesPath    = cfile.mainInfo.routes;
@@ -29,6 +30,7 @@ router.get(`/`,main.principalView);
 router.get(`${routesPath}/test`,main.test);
 router.get(`${routesPath}/frontUtilities`, main.frontUtilities);
 router.post(`${routesPath}/login`, main.login);
+router.get(`${routesPath}/downloadFile/:id`, files.getPublicFile);
 
 
 module.exports = router;
