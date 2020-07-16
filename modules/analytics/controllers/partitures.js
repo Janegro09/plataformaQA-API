@@ -30,6 +30,7 @@ const controller = {
             if(!v) return includes.views.error.message(res, 'Error al crear la partitura')
             else return includes.views.success.create(res)
         }).catch(e => {
+            console.error(e)
             return includes.views.error.message(res, e.message);
         })
     },
@@ -105,7 +106,8 @@ const controller = {
                 id: data.id,
                 userId: data.userId,
                 stepId: "",
-                modify: {}
+                modify: {},
+                userLogged: req.authUser[0]
             }
             data.body.map(v => {
                 tempData.stepId = v.stepId;

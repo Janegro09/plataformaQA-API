@@ -15,7 +15,7 @@ const includes = require('../../includes');
 
 // Schemas
 const helper = require('../helper');
-
+const partituresSchema = require('../migrations/partitures.table');
 const cuartilesModel = require('./cuartiles')
 
 const cuartilesGroups = {
@@ -304,6 +304,23 @@ const cuartilesGroups = {
         if(!c) throw new Error("Archivo inexistente")
         this.file = c;
 
+        // Obtenemos la informacion para ver si el archivo tiene partituras creadas
+        let partitura = [];
+
+        let pt = await partituresSchema.find({fileId: {
+            $in: fileId
+        }});
+        if(pt.length > 0){
+            pt = pt[0].perfilamientos;
+            for(let a of pt){
+                if(a.fileId === fileId){
+                    partitura.push(a.name);
+                }
+            }
+        }else{
+            partitura = false;
+        }
+
         c = await includes.XLSX.XLSXFile.getData(this.file);
         this.oldData = c;
         let returnData = []
@@ -317,10 +334,19 @@ const cuartilesGroups = {
 
         for(let x = 0; x < groupsCuartiles.length; x++){
             let grupo = groupsCuartiles[x];
+            let p = false;
+            if(partitura !== false){
+                if(partitura.includes(grupo['Nombre del grupo'])){
+                    p = true;
+                } else {
+                    p = false;
+                }
+            }
             let tempData = {
                 name: grupo['Nombre del grupo'],
                 AssignAllUsers: grupo.assignAllUsers === 'SI' ? true : false,
                 cluster: grupo.Cluster,
+                partitura: p,
                 agentes: {
                     count: grupo['Cant de agentes'],
                     '%_Total': grupo['% Total']
@@ -330,6 +356,7 @@ const cuartilesGroups = {
 
             if(getUsers){
                 tempData.usersAssign = await this.getUsersbyGC(grupo['Nombre del grupo'], getUserInfo)
+                tempData.fileId = fileId;
             }
 
             for(let h in grupo){

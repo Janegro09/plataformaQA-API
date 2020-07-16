@@ -145,6 +145,7 @@ const controller = {
             if(!v) return includes.views.error.message(res, "Error al traer los perfilamientos");
             else return includes.views.customResponse(res, true, 200, "Perfilamientos", v);
         }).catch(e => {
+            console.log(e);
             return includes.views.error.message(res, e.message);
 
         })

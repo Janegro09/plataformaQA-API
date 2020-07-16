@@ -42,35 +42,43 @@ class Partitures {
     async create() {
         try {
             // Partitures --------------------------
-            this.fileData = await cuartilesGroupsModel.getPerfilamientos(this.file, true, true);
+            for(let f of this.file){
+                let response = await cuartilesGroupsModel.getPerfilamientos(f, true, true);
+                response.map(v => {
+                    this.fileData.push(v);
+                })
+            }
+
             // Chequeamos la existencia de los perfilamientos asignados
             await this.getFileName();
             if (this.perfilamientosAssignados.lenth === 0 || !this.perfilamientosAssignados) throw new Error('No asigno perfilamientos')
-            let perfilamientos = "";
             let partitureInfoByUser = [];
-            this.perfilamientosAssignados.map(v => {
-                // Chequeamos si existe
-                if (!this.checkPerfilamientoExistandAddUsers(v)) throw new Error('Perfilamiento especificado inexistente en el archivo: ' + this.file._id)
-                if (perfilamientos) {
-                    perfilamientos += ` + ${v}`
-                } else {
-                    perfilamientos = v;
-                }
-            })
+
+
+            for(let v of this.perfilamientosAssignados){
+                let partitureExists = await this.checkPerfilamientoExistandAddUsers(v);
+                if(!partitureExists) throw new Error('Error con el grupo de cuartiles que intenta agregar, puede ser que no exista o que ya este usandose para otra partitura.')
+            }
+
+        
+            
             let partitureObject = {
                 name: this.file.name,
-                fileId: this.file._id,
-                perfilamientos: perfilamientos
+                fileId: this.file.id,
+                perfilamientos: this.perfilamientosAssignados
             }
+
 
 
             if (this.expirationDate) {
                 partitureObject.expirationDate = this.expirationDate;
             }
 
+
             // Preparamos el registro
             partitureObject = new partituresSchema(partitureObject);
             for (let u = 0; u < this.users.length; u++) {
+
                 // obtenemos el id del usuario
                 let userDBid = await includes.users.model.getUseridDB(this.users[u].DNI)
                 let infoUser = new infobyPartitureSchema({
@@ -83,6 +91,7 @@ class Partitures {
                 })
                 partitureInfoByUser.push(infoUser);
             }
+
             // Instances ---------------------------------
 
             let instances = [];
@@ -145,20 +154,68 @@ class Partitures {
 
     async getFileName() {
         if (!this.file) throw new Error('Archivo inexistente')
+        let id = this.file;
+        let data = {
+            canal: [],
+            empresa: [],
+            mercado: [],
+            seccion: [],
+            plan: [],
+            fecha: []
+        }
+        for(let f of this.file){
+            let c = await includes.files.checkExist(f);
+            if (!c) throw new Error('Archivo inexistente')
+            c = c.name.split('.');
+            c = c[0].split(' ');
 
-        let c = await includes.files.checkExist(this.file);
-        if (!c) throw new Error('Archivo inexistente')
-        this.file = c;
+            let x = 0;
+            /**
+             * Esta iteracion arma los nombres cuando las partituras se arman desde varios archivos, se hace para no repetir
+             */
+            for(let i in data) {
+                if(!data[i].includes(c[x]) && c[x]){
+                    data[i].push(c[x])
+                }
+                x++
+            }
+        }
+        
+        let nameReturn = "";
 
+        for(let i in data){
+            data[i].map(v => {
+                nameReturn = nameReturn ? `${nameReturn} ${v}` : v
+            })
+        }
+
+        this.file = {
+            name: nameReturn,
+            id
+        };
         return true;
     }
 
-    checkPerfilamientoExistandAddUsers(name) {
-        if (!name) return false;
+    async checkPerfilamientoExistandAddUsers(object) {
+        if (!object) return false;
+
+        // Chequeamos que la partitura no este creada
+        let partiture = await partituresSchema.find({fileId: {
+            $in: object.fileId
+        }});
+
+        if(partiture.length === 0){
+            partiture = false;
+        }else {
+            partiture = partiture[0].perfilamientos;
+            for(let p of partiture){
+                if(p.fileId === object.fileId && p.name === object.name) return false;
+            }
+        }
 
         for (let x = 0; x < this.fileData.length; x++) {
             let perfilamiento = this.fileData[x]
-            if (perfilamiento.name === name) {
+            if (perfilamiento.name === object.name && perfilamiento.fileId == object.fileId) {
                 for (let u = 0; u < perfilamiento.usersAssign.length; u++) {
                     if (this.users.indexOf(perfilamiento.usersAssign[u]) >= 0) continue;
                     this.users.push(perfilamiento.usersAssign[u])
@@ -384,6 +441,7 @@ class Partitures {
             }
 
             for (let i = 0; i < partitures.length; i++) {
+                let AccesoaArchivo = true;
                 let partiture = partitures[i]
                 /**
                  * Obtenemos el estado de la partitura dependiendo del valor de los usuarios
@@ -401,8 +459,13 @@ class Partitures {
                         partitureStatus = x.status;
                     }
                 }
+                for(let p of partiture.fileId){
+                    if(archivosPermitidos.includes(p)) {
+                        AccesoaArchivo = false;
+                    }
+                }
 
-                if (!viewAllPartitures && archivosPermitidos.indexOf(partiture.fileId) === -1) continue;
+                if (!viewAllPartitures && !AccesoaArchivo) continue;
                 let tempData = {
                     id: partiture._id,
                     name: partiture.name,

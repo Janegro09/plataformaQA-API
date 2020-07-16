@@ -228,10 +228,10 @@ class uploadFile {
             // Descargamos un archivo
             const { urltemp } = req.query;
             let idFile, url;
-            if(urltemp === 'false'){
+            if(urltemp && urltemp === 'false'){
                 idFile = id;
-            }else{
-                idFile = await this.getFileID(id);
+            }else {
+                idFile = await uploadFile.getFileID(id);
             }
             try {
                 // Buscamos el archivo correspondiente a la url temporal
@@ -246,7 +246,8 @@ class uploadFile {
                    await filesModel.deleteOne({_id: id});
                    views.success.file.download(res,'public/notFound.jpg');
                 }
-            } catch {
+            } catch (e){
+		console.log(e)
                 views.success.file.download(res,'public/notFound.jpg');
             }
         }else {
