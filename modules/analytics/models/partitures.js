@@ -48,15 +48,18 @@ class Partitures {
             if (this.perfilamientosAssignados.lenth === 0 || !this.perfilamientosAssignados) throw new Error('No asigno perfilamientos')
             let perfilamientos = "";
             let partitureInfoByUser = [];
-            this.perfilamientosAssignados.map(v => {
-                // Chequeamos si existe
-                if (!this.checkPerfilamientoExistandAddUsers(v)) throw new Error('Perfilamiento especificado inexistente en el archivo: ' + this.file._id)
+
+            for(let v of this.perfilamientosAssignados){
+                let partitureExists = await this.checkPerfilamientoExistandAddUsers(v);
+                if(!partitureExists) throw new Error('Error con el grupo de cuartiles que intenta agregar, puede ser que no exista o que ya este usandose para otra partitura. File: ' + this.file._id)
                 if (perfilamientos) {
                     perfilamientos += ` + ${v}`
                 } else {
                     perfilamientos = v;
                 }
-            })
+            }
+
+
             let partitureObject = {
                 name: this.file.name,
                 fileId: this.file._id,
@@ -153,8 +156,17 @@ class Partitures {
         return true;
     }
 
-    checkPerfilamientoExistandAddUsers(name) {
+    async checkPerfilamientoExistandAddUsers(name) {
         if (!name) return false;
+
+        let partiture = await partituresSchema.find({fileId: this.file._id});
+        if(partiture.length === 0){
+            partiture = false;
+        }else {
+            partiture = partiture[0].perfilamientos;
+            partiture = partiture.split(' + ')
+            if(partiture.includes(name)) return false;
+        }
 
         for (let x = 0; x < this.fileData.length; x++) {
             let perfilamiento = this.fileData[x]
