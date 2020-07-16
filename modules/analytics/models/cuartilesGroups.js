@@ -15,7 +15,7 @@ const includes = require('../../includes');
 
 // Schemas
 const helper = require('../helper');
-
+const partituresSchema = require('../migrations/partitures.table');
 const cuartilesModel = require('./cuartiles')
 
 const cuartilesGroups = {
@@ -304,6 +304,14 @@ const cuartilesGroups = {
         if(!c) throw new Error("Archivo inexistente")
         this.file = c;
 
+        // Obtenemos la informacion para ver si el archivo tiene partituras creadas
+        let partitura = await partituresSchema.find({fileId: fileId});
+        if(partitura.length === 0){
+            partitura = false;
+        }else {
+            partitura = partitura[0].perfilamientos;
+            partitura = partitura.split(' + ');
+        }
         c = await includes.XLSX.XLSXFile.getData(this.file);
         this.oldData = c;
         let returnData = []
@@ -316,11 +324,13 @@ const cuartilesGroups = {
         })
 
         for(let x = 0; x < groupsCuartiles.length; x++){
+
             let grupo = groupsCuartiles[x];
             let tempData = {
                 name: grupo['Nombre del grupo'],
                 AssignAllUsers: grupo.assignAllUsers === 'SI' ? true : false,
                 cluster: grupo.Cluster,
+                partitura: partitura.includes(grupo['Nombre del grupo']) ? true : false,
                 agentes: {
                     count: grupo['Cant de agentes'],
                     '%_Total': grupo['% Total']
