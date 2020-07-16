@@ -324,7 +324,7 @@ const cuartilesGroups = {
         })
 
         for(let x = 0; x < groupsCuartiles.length; x++){
-
+            console.log(partitura);
             let grupo = groupsCuartiles[x];
             let tempData = {
                 name: grupo['Nombre del grupo'],
