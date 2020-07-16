@@ -324,13 +324,15 @@ const cuartilesGroups = {
         })
 
         for(let x = 0; x < groupsCuartiles.length; x++){
-            console.log(partitura);
+            if(partitura !== false){
+                partitura = partitura.includes(grupo['Nombre del grupo']) ? true : false;
+            }
             let grupo = groupsCuartiles[x];
             let tempData = {
                 name: grupo['Nombre del grupo'],
                 AssignAllUsers: grupo.assignAllUsers === 'SI' ? true : false,
                 cluster: grupo.Cluster,
-                partitura: partitura.includes(grupo['Nombre del grupo']) ? true : false,
+                partitura,
                 agentes: {
                     count: grupo['Cant de agentes'],
                     '%_Total': grupo['% Total']
