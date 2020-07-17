@@ -106,7 +106,8 @@ const controller = {
                 id: data.id,
                 userId: data.userId,
                 stepId: "",
-                modify: {}
+                modify: {},
+                userLogged: req.authUser[0]
             }
             data.body.map(v => {
                 tempData.stepId = v.stepId;
