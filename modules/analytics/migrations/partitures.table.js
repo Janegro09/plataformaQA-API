@@ -21,11 +21,11 @@ var partitures = new Schema({
         required: true
     },
     fileId: {
-        type: String,
+        type: Array,
         required: true
     },
     perfilamientos: {
-        type: String,
+        type: Array,
         required: true
     },
     expirationDate: {
