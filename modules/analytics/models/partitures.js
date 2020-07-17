@@ -78,6 +78,7 @@ class Partitures {
             // Preparamos el registro
             partitureObject = new partituresSchema(partitureObject);
             for (let u = 0; u < this.users.length; u++) {
+
                 // obtenemos el id del usuario
                 let userDBid = await includes.users.model.getUseridDB(this.users[u].DNI)
                 let infoUser = new infobyPartitureSchema({
