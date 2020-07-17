@@ -228,9 +228,9 @@ class uploadFile {
             // Descargamos un archivo
             const { urltemp } = req.query;
             let idFile, url;
-            if(urltemp === 'false'){
+            if(urltemp && urltemp === 'false'){
                 idFile = id;
-            }else{
+            }else {
                 idFile = await this.getFileID(id);
             }
             try {
