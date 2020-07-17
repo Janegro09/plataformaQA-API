@@ -305,14 +305,22 @@ const cuartilesGroups = {
         this.file = c;
 
         // Obtenemos la informacion para ver si el archivo tiene partituras creadas
-        let partitura = false;
-        // let partitura = await partituresSchema.find({fileId: fileId});
-        // if(partitura.length === 0){
-        //     partitura = false;
-        // }else {
-        //     partitura = partitura[0].perfilamientos;
-        //     partitura = partitura.split(' + ');
-        // }
+        let partitura = [];
+
+        let pt = await partituresSchema.find({fileId: {
+            $in: fileId
+        }});
+        if(pt.length > 0){
+            pt = pt[0].perfilamientos;
+            for(let a of pt){
+                if(a.fileId === fileId){
+                    partitura.push(a.name);
+                }
+            }
+        }else{
+            partitura = false;
+        }
+
         c = await includes.XLSX.XLSXFile.getData(this.file);
         this.oldData = c;
         let returnData = []
