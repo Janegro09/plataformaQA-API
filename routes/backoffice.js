@@ -24,6 +24,6 @@ const permit            = require('../models/permissions');
 const routeBackoffice = '/backoffice';
 router.get(`${routeBackoffice}/nomina`, permit.checkPermit ,backoffice.importNomina);
 router.get(`/home`, backoffice.dashboard);
-router.get(`${routeBackoffice}/exports/:section`, backoffice.exports);
+router.get(`${routeBackoffice}/exports`, backoffice.exports);
 
 module.exports = router;
