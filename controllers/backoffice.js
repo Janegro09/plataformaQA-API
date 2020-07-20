@@ -149,9 +149,32 @@ const controller = {
     },
     dashboard: async (req, res) => {
         let dataReturn = {};
-        const datosDashboard = {
-            perfilamientos: true
+        const userLogged = req.authUser[0] || false;
+        if (!userLogged.role.role) return views.error.message(res, 'Error con el usuario logeado');
+
+        // Activacion de secciones por usuario
+        let datosDashboard = {
+            perfilamientos: false,
+            misDatos: true
         }
+
+        // Permisos de visualizacion de contenido
+        switch (userLogged.role.role) {
+            case 'ADMINISTRATOR':
+            case 'SUPERVISOR':
+            case 'COORDINADOR':
+                break;
+            case 'GERENTE':
+                break;
+            case 'RESPONSABLE':
+                break;
+            case 'LIDER':
+                break;
+            case 'REPRESENTANTE':
+                datosDashboard.perfilamientos = true;
+                break;
+        }
+
         if(req.authUser.length > 0){
             const usuarioLogeado = req.authUser[0];
             
