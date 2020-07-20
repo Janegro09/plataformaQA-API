@@ -18,6 +18,7 @@ const csvtojson     = require('csvtojson');
 const views         = require('../views');
 const Permit        = require('../models/permissions')
 const logSchema     = require('../database/migrations/logNomina');
+const { exportData } = require('../models/backoffice');
 
 // Incluimos los modulos para la informacion del dashboard
 const partituresModule = require('../modules/analytics/models/partitures');
@@ -145,13 +146,55 @@ const controller = {
 
     },
     exports: async (req, res) => {
+        const { type, name } = req.query;
+        if(!type || !name) return views.error.message(res, "Error en los parametros enviados");
+
+        const authorizedNames = [{type: "database", name: "users"}];
+
+        let c = authorizedNames.find(element => element.type === type && element.name === name);
+        if(!c) return views.error.message(res, "Parametros enviados no autorizados");
+        
+        let exp = new exportData(type, name);
+
+        exp.getData().then(v => {
+            if(!v) return views.error.message(res, "Error al exportar el archivo");
+            return views.customResponse(res, true, 200, `export ${type} | ${name}`, v);
+        }).catch(e => {
+            return views.error.message(res, e.message)
+        })
+
+
+
 
     },
     dashboard: async (req, res) => {
         let dataReturn = {};
-        const datosDashboard = {
-            perfilamientos: true
+        const userLogged = req.authUser[0] || false;
+        if (!userLogged.role.role) return views.error.message(res, 'Error con el usuario logeado');
+
+        // Activacion de secciones por usuario
+        let datosDashboard = {
+            perfilamientos: false,
+            misDatos: true
         }
+
+        // Permisos de visualizacion de contenido
+        switch (userLogged.role.role) {
+            case 'ADMINISTRATOR':
+            case 'SUPERVISOR':
+            case 'COORDINADOR':
+                break;
+            case 'GERENTE':
+                break;
+            case 'RESPONSABLE':
+                break;
+            case 'LIDER':
+                break;
+            case 'REPRESENTANTE':
+                datosDashboard.perfilamientos = true;
+                break;
+        }
+
         if(req.authUser.length > 0){
             const usuarioLogeado = req.authUser[0];
             

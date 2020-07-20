@@ -52,7 +52,7 @@ class uploadFile {
         }
         if(!helper.files.exists(`${folder}${this.url}`,true)){
             // Creamos la carpeta 
-            fs.mkdirSync(`${folder}${this.url}`, "0755");
+            fs.mkdirSync(`${folder}${this.url}`, "0775");
         }
         let typeFile, file, saveFile, fileData;
         for(let x in this.file){
@@ -75,7 +75,7 @@ class uploadFile {
 
             if(!helper.files.exists(`${folder}${this.url}/${typeFile[0]}`,true)){
                 try{
-                    fs.mkdirSync(`${folder}${this.url}/${typeFile[0]}`, '0755');
+                    fs.mkdirSync(`${folder}${this.url}/${typeFile[0]}`, '0775');
                 }catch {
                     return false;
                 }
