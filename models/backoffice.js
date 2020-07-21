@@ -21,10 +21,11 @@ const groupsPerUsers = require('../database/migrations/groupsperuser');
 
 module.exports.exportData = class Export {
     constructor(type, name) {
-        this.type   = type || false;
-        this.name   = name || false;
-        this.data   = null;
-        this.fileId = null;
+        this.type       = type || false;
+        this.name       = name || false;
+        this.data       = null;
+        this.headers    = null; 
+        this.fileId     = null;
     }
 
     async getData() {
@@ -41,7 +42,8 @@ module.exports.exportData = class Export {
     }
     
     async getDatabase() {
-        const { name, type, data } = this;
+        let { name, headers} = this;
+        headers = [];
 
         const authorizedTables = ["users"];
 
@@ -111,7 +113,13 @@ module.exports.exportData = class Export {
                     }
                 } else {
                     tempData[y] = register[y]
-                }    
+                }
+                
+                // Almacenamos los headers
+                if(!headers.includes(y)){
+                    this.headers = [...headers, y]
+                }
+                
             }
             
             DataReturn.push(tempData)
@@ -120,7 +128,10 @@ module.exports.exportData = class Export {
     }
 
     async crearXLSX() {
-        const { data } = this;
+        const { data, headers } = this;
+
+        console.log(headers);
+
     }
 }
 
