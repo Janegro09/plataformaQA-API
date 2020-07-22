@@ -42,8 +42,13 @@ module.exports.exportData = class Export {
     }
     
     async getDatabase() {
+<<<<<<< HEAD
         let { name } = this;
         this.headers = [];
+=======
+        let { name, headers} = this;
+        headers = [];
+>>>>>>> 968ff0d5225c53fc189b76db625ea0bc1b4f0c0e
 
         const authorizedTables = ["users"];
 
@@ -116,8 +121,13 @@ module.exports.exportData = class Export {
                 }
                 
                 // Almacenamos los headers
+<<<<<<< HEAD
                 if(!this.headers.includes(y)){
                     this.headers.push(y)
+=======
+                if(!headers.includes(y)){
+                    this.headers = [...headers, y]
+>>>>>>> 968ff0d5225c53fc189b76db625ea0bc1b4f0c0e
                 }
                 
             }
@@ -130,8 +140,12 @@ module.exports.exportData = class Export {
     async crearXLSX() {
         const { data, headers } = this;
 
+<<<<<<< HEAD
         console.log(headers) // headers para crear el XLSX
         
+=======
+        console.log(headers);
+>>>>>>> 968ff0d5225c53fc189b76db625ea0bc1b4f0c0e
 
     }
 }
