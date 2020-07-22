@@ -166,10 +166,11 @@ const PerfilamientoFile = {
         let returnData = [];
 
         // Buscamos los archivos
-        let c = await includes.files.getAllFiles({section: 'analytics'});
-
+        let c = await includes.files.getAllFiles({section: 'analytics'})
         
-        for(let x = 0; x < c.length; x++){
+        let ordenado = c.sort((a,b) => b.updatedAt - a.updatedAt);
+
+        for(let x = 0; x < ordenado.length; x++){
             // Consultamos el programa asignado
             let programa = await programsModel.getProgramtoPerfilamiento(c[x]._id);
             let tempData = {
