@@ -68,7 +68,7 @@ const cuartilesGroups = {
                         this.assignedUsers.push(users[l]) // Asignamos los usuarios al array
                     }else if(assignAllUsers){
                         tempData['Cant de agentes'].value++;
-                        this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, tempData['Cluster'].valu);
+                        this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, false);
                     }
                 }
             }
@@ -128,10 +128,16 @@ const cuartilesGroups = {
                     let user = users[u];
                     if(user.DNI.value !== undefined && user.DNI.value == userId) {
                         if(user['Grupos de cuartiles Asignados'] !== undefined && user['Grupos de cuartiles Asignados'].value !== undefined){
-                            user['Grupos de cuartiles Asignados'].value += ` + ${groupName}`;
+                            let descomponemos = user['Grupos de cuartiles Asignados'].value.split(' + ');
+                            // console.log(descomponemos);
+                            if(!descomponemos.includes(groupName)){
+                                user['Grupos de cuartiles Asignados'].value += ` + ${groupName}`;
+                            }
                         }else if(!user['Grupos de cuartiles Asignados']){
                             user['Grupos de cuartiles Asignados'] = {value: groupName, style: ""}
-                            user['Cluster'] = {value: clusterName, style: ""}
+                            if(clusterName){
+                                user['Cluster'] = {value: clusterName, style: ""}
+                            }
                         }
                     }
                 }
