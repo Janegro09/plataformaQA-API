@@ -105,7 +105,6 @@ class Partitures {
                 if (instance.expirationDate) {
                     tempData.expirationDate = new Date(instance.expirationDate);
                 }
-                console.log(tempData.expirationDate);
                 let c = new instancesSchema(tempData);
                 // Steps --------------------------------------------
                 for (let p = 0; p < instance.steps.length; p++) {
