@@ -149,11 +149,12 @@ const controller = {
         })
     },
     async uploadFile(req, res) {
-        if(!req.query || !req.files.file || !req.params.id || !req.params.userId || !req.params.stepId) return includes.views.error.message(res, 'Error en los parametros enviados.')
+        if(!req.query || (!req.files.file && !req.body.exception)|| !req.params.id || !req.params.userId || !req.params.stepId) return includes.views.error.message(res, 'Error en los parametros enviados.')
         const acceptedSections = ['monitorings', 'coachings'];
         if(!acceptedSections.includes(req.query.section)) return includes.views.error.message(res, 'Error en los parametros enviados.')
         const { stepId, userId, id }    = req.params;
         const { section }               = req.query;
+        const { exception }             = req.body;
         tempData = {
             stepId,
             userId,
@@ -168,6 +169,8 @@ const controller = {
             if(f){
                 tempData.file = f.id;
             }
+        } else if(exception) {
+            tempData.exception = exception;
         }
 
         partituresModel.uploadFile(tempData).then(v => {
