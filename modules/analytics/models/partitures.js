@@ -386,6 +386,10 @@ class Partitures {
                     let tempData = {
                         id: instance._id,
                         name: instance.name,
+                        dates: {
+                            expirationDate: instance.expirationDate,
+                            createdAt: instance.createdAt
+                        },
                         steps: []
                     }
 

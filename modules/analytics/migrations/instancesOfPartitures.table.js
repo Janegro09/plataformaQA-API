@@ -25,7 +25,7 @@ var instancesOfPartitures = new Schema({
         required: true
     },
     expirationDate: {
-        type: Date,
+        type: String,
     },
     createdAt: {
         type: Date,
