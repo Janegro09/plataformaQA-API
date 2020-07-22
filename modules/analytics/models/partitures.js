@@ -398,7 +398,7 @@ class Partitures {
                         let st = steps[s];
 
                         // Buscamos archivos para ese step
-                        let file = await partituresFilesSchema.find({ stepId: st._id, userId: userId })
+                        let file = await partituresFilesSchema.find({ stepId: st._id, userId: userId });
                         file = file.length === 0 ? false : file;
                         let tData = {
                             id: st._id,
@@ -592,26 +592,29 @@ class Partitures {
 
     static async uploadFile(reqObject) {
         if (!reqObject) throw new Error('Error en los parametros enviados');
-        const { stepId, id, file, userId, section } = reqObject;
+        const { stepId, id, file, userId, section, message } = reqObject;
 
         // Comprobamos la existencia del stepID
         let c = await stepsSchema.find({ _id: stepId, userId: userId });
         if (c.length === 0) return false;
 
-
-        // Almacenamos el audio
-        let f;
-        if (file !== undefined) {
-            f = new partituresFilesSchema({
-                partitureId: id,
-                fileId: file,
-                stepId,
-                userId,
-                section
-            })
-            f = await f.save();
-            if (!f) return false;
+        let insertData = {
+            partitureId: id,
+            stepId,
+            userId,
+            section
         }
+
+        if(file){
+            insertData.fileId = file;
+        }else if(message){
+            insertData.message = message;
+        }else throw new Error('Debe especificar un archivo o un mensaje')
+
+        // Almacenamos el audio o el mensaje
+        let f = new partituresFilesSchema(insertData);
+        f = await f.save();
+        if (!f) return false;
         return true;
     }
 
@@ -621,18 +624,20 @@ class Partitures {
             const id = arrayIds[i]
 
             // Consultamos el nombre del archivo
-            let c = await partituresFilesSchema.find({ fileId: id });
+            let c = await partituresFilesSchema.find({ _id: id });
             if (c.length === 0) throw new Error('Registro inexistente')
-
-            let deleteFile = new includes.files(id);
-            deleteFile = await deleteFile.delete();
-            if (!deleteFile) throw new Error('Error al eliminar el archivo')
-
-            c = await partituresFilesSchema.deleteOne({ fileId: id });
-
+        
+            if(c[0].fileId){
+                let deleteFile = new includes.files(c[0].fileId);
+                deleteFile = await deleteFile.delete();
+                if (!deleteFile) throw new Error('Error al eliminar el archivo')
+            }
+            c = await partituresFilesSchema.deleteOne({ _id: id });
             if (c.deletedCount === 0) {
                 throw new Error('Error al eliminar el registro')
             }
+
+
         }
         return true;
     }

@@ -13,6 +13,7 @@
 const includes = require('../../includes');
 
 const partituresModel = require('../models/partitures');
+const { views } = require('../../includes');
 
 const controller = {
     async new(req, res){
@@ -149,28 +150,28 @@ const controller = {
         })
     },
     async uploadFile(req, res) {
-        if(!req.query || (!req.files.file && !req.body.exception)|| !req.params.id || !req.params.userId || !req.params.stepId) return includes.views.error.message(res, 'Error en los parametros enviados.')
+        if(!req.query || (!req.files && !req.body.message)|| !req.params.id || !req.params.userId || !req.params.stepId) return includes.views.error.message(res, 'Error en los parametros enviados.')
         const acceptedSections = ['monitorings', 'coachings'];
         if(!acceptedSections.includes(req.query.section)) return includes.views.error.message(res, 'Error en los parametros enviados.')
         const { stepId, userId, id }    = req.params;
         const { section }               = req.query;
-        const { exception }             = req.body;
-        tempData = {
+        const { message }               = req.body;
+        let tempData = {
             stepId,
             userId,
             id,
             section
         }
-        // Guardamos el archivo enviado
-        if(req.files !== undefined && req.files.file !== undefined){
-            const file = req.files.file;
+
+        if(req.files){
+            // const file = req.files.file;
             let f = new includes.files(req);
             f = await f.save();
             if(f){
                 tempData.file = f.id;
             }
-        } else if(exception) {
-            tempData.exception = exception;
+        } else if(message) {
+            tempData.message = message;
         }
 
         partituresModel.uploadFile(tempData).then(v => {

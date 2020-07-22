@@ -17,8 +17,10 @@ const Schema   = mongoose.Schema;
 
 var filesbypartitures = new Schema({
     fileId: {
-        type: String,
-        required: true
+        type: String
+    },
+    message: {
+        type: String
     },
     partitureId: {
         type: String,
