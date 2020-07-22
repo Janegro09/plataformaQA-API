@@ -130,19 +130,19 @@ class Partitures {
 
             // // Partituras
             let c = await partitureObject.save()
-            if (!c) throw new Error('Error al crear el registro')
+            if (!c) throw new Error('Error al crear el registro. CODE01')
 
             // // Info extra de partituras por usuarios
             c = await infobyPartitureSchema.insertMany(partitureInfoByUser);
-            if (c.length === 0) throw new Error('Error al crear el registro')
+            if (c.length === 0) throw new Error('Error al crear el registro.CODE02')
 
             // // Instancias
             c = await instancesSchema.insertMany(instances);
-            if (c.length === 0) throw new Error('Error al crear el registro')
+            if (c.length === 0) throw new Error('Error al crear el registro. CODE03')
 
             // // Steps
             c = await stepsSchema.insertMany(steps);
-            if (c.length === 0) throw new Error('Error al crear el registro')
+            if (c.length === 0) throw new Error('Error al crear el registro. CODE04')
 
             return true;
         } catch (e) {
