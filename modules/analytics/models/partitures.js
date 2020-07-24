@@ -705,7 +705,7 @@ class Partitures {
                 dataReturn.audioFilesRequired += s.requestedMonitorings;
             }
 
-            let files = await filesByPartituresTable.find({userId, partitureId});
+            let files = await filesByPartituresTable.find({userId, partitureId, section: 'monitorings'});
             dataReturn.audioFilesActually = files.length
         }
         return dataReturn;
