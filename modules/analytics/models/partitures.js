@@ -1,12 +1,12 @@
 /**
  * @fileoverview Modulo analytics | Modelo para partituras
- * 
+ *
  * @version 1.0
- * 
+ *
  * @author Soluciones Digitales - Telecom Argentina S.A.
  * @author Ramiro Macciuci <rmacciucivicente@teco.com.ar>
  * @copyright Soluciones Digitales - Telecom Argentina
- * 
+ *
  * History:
  * 1.0 - Version principal
  */
@@ -28,6 +28,8 @@ const partituresFilesSchema = require('../migrations/filesByPartitures.table');
 const perfilamientoFile = require('./perfilamientoFile');
 
 const programsModel = require('../../programs/models/programs');
+const stepsOfInstancesTable = require('../migrations/stepsOfInstances.table');
+const filesByPartituresTable = require('../migrations/filesByPartitures.table');
 
 class Partitures {
     constructor(reqObject) {
@@ -60,8 +62,8 @@ class Partitures {
                 if(!partitureExists) throw new Error('Error con el grupo de cuartiles que intenta agregar, puede ser que no exista o que ya este usandose para otra partitura.')
             }
 
-        
-            
+
+
             let partitureObject = {
                 name: this.file.name,
                 fileId: this.file.id,
@@ -115,6 +117,7 @@ class Partitures {
                         let b = new stepsSchema({
                             userId: user,
                             instanceId: c._id,
+                            partitureId: partitureObject._id,
                             completed: false,
                             name: instance.steps[p].name,
                             requestedMonitorings: instance.steps[p].requiredMonitorings
@@ -176,7 +179,7 @@ class Partitures {
                 x++
             }
         }
-        
+
         let nameReturn = "";
 
         for(let i in data){
@@ -333,6 +336,8 @@ class Partitures {
                         rowFromPartiture = rowFromPartiture.length > 0 ? rowFromPartiture[0] : false;
                     }
 
+                    const { audioFilesRequired, audioFilesActually } = await this.getAudiosCountbyUser(temp[0]._id, wherePartiture.partitureId);
+
                     let user = {
                         idDB: temp[0]._id,
                         id: temp[0].id,
@@ -349,6 +354,8 @@ class Partitures {
                         partitureStatus: u[x].status,
                         rowFromPartiture,
                         lastUpdate: [],
+                        audioFilesRequired,
+                        audioFilesActually,
                         improvment: u[x].improvment || false,
                         cluster: u[x].cluster || false
 
@@ -367,9 +374,7 @@ class Partitures {
                                 }]
                             }
                         }
-
                     }
-
                     users.push(user);
                 }
             }
@@ -428,7 +433,7 @@ class Partitures {
                         if (viewmanagerComments) {
                             tData.managerComments = st.managerComments;
                         }
-                        
+
                         tempData.steps.push(tData);
                     }
 
@@ -445,7 +450,7 @@ class Partitures {
                 let partiture = partitures[i]
                 /**
                  * Obtenemos el estado de la partitura dependiendo del valor de los usuarios
-                 * 
+                 *
                  */
                 let partitureStatus = null;
                 let ps = await infobyPartitureSchema.find({ partitureId: partiture._id });
@@ -519,7 +524,7 @@ class Partitures {
         if (partiture.length === 0) throw new Error('Partitura inexistente')
 
         try {
-            // eliminamos todos los registros 
+            // eliminamos todos los registros
             // partitures
             await partituresSchema.deleteMany({ _id: partitureId });
 
@@ -537,7 +542,7 @@ class Partitures {
             // partitures info by users
             await partituresInfoByUsersTable.deleteMany({ partitureId: partitureId })
 
-            // Eliminamos todos los archivos 
+            // Eliminamos todos los archivos
             let filesToDelete = [];
             let files = await partituresFilesSchema.find({ partitureId: partitureId });
             files.map(file => {
@@ -624,7 +629,7 @@ class Partitures {
             // Consultamos el nombre del archivo
             let c = await partituresFilesSchema.find({ _id: id });
             if (c.length === 0) throw new Error('Registro inexistente')
-        
+
             if(c[0].fileId){
                 let deleteFile = new includes.files(c[0].fileId);
                 deleteFile = await deleteFile.delete();
@@ -686,6 +691,24 @@ class Partitures {
 
         if (updateRequest.ok > 0) return true;
         else return false;
+    }
+
+    static async getAudiosCountbyUser(userId, partitureId) {
+        let dataReturn = {
+            audioFilesRequired: 0,
+            audioFilesActually: 0
+        }
+        if(userId && partitureId) {
+            // Buscamos los steps segun la instancia y el usuario
+            let steps = await stepsOfInstancesTable.find({userId, partitureId});
+            for(let s of steps) {
+                dataReturn.audioFilesRequired += s.requestedMonitorings;
+            }
+
+            let files = await filesByPartituresTable.find({userId, partitureId});
+            dataReturn.audioFilesActually = files.length
+        }
+        return dataReturn;
     }
 }
 
