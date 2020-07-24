@@ -93,7 +93,6 @@ class Partitures {
             }
 
             // Instances ---------------------------------
-
             let instances = [];
             let steps = [];
             for (let i = 0; i < this.instances.length; i++) {
@@ -105,8 +104,8 @@ class Partitures {
                 if (instance.expirationDate) {
                     tempData.expirationDate = new Date(instance.expirationDate);
                 }
-                console.log(tempData.expirationDate);
                 let c = new instancesSchema(tempData);
+		instances.push(c);
                 // Steps --------------------------------------------
                 for (let p = 0; p < instance.steps.length; p++) {
                     // Creamos un registro por cada usuario
@@ -125,7 +124,6 @@ class Partitures {
                     }
                 }
             }
-
             // Guardamos todos los registros en la base de datos
 
             // // Partituras
