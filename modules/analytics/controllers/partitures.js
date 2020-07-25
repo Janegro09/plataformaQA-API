@@ -86,9 +86,9 @@ const controller = {
             }
 
             // Cambiamos el estado de la partitura por usuario, si mejora o no
-            if(data.body.improvment) {
+            // if(data.body.improvment) {
 
-            }
+            // }
 
             tempData = {
                 id: data.id,

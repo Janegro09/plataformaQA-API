@@ -582,13 +582,40 @@ class Partitures {
                 }
             }
 
+
             this.addModificationforUser(id, userId, userLogged)
 
             c = await stepsSchema.updateOne({ _id: stepId, userId: userId }, modify)
-            if (c.ok === 0 && !f) {
+            if (c.ok === 0) {
                 error = true;
             }
+            // Chequeamos si todos los estados de los steps es completed entonces cambiamos el estado de la partitura a finished
+            let stepsStatus = await stepsSchema.find({userId, partitureId: id});
+            let modifiyPartitureStatus = {
+                finished: 0,
+                notFinished: 0
+            }
+            for(let j of stepsStatus) {
+                if(j.completed === false) {
+                    modifiyPartitureStatus.notFinished++
+                } else {
+                    modifiyPartitureStatus.finished++
+                }
+            }
+            if(modifiyPartitureStatus) {
+                let temp;
+                if(modifiyPartitureStatus.notFinished === 0 && modifiyPartitureStatus.finished > 0) {
+                    temp = 'finished';
+                } else if(modifiyPartitureStatus.notFinished > 0 && modifiyPartitureStatus.finished === 0) {
+                    temp = 'pending'
+                } else {
+                    temp = 'run'
+                }
+                await this.changePartitureStatus(id, userId, temp);
+            }
         }
+
+
         if (error) return false;
         else return true;
     }
