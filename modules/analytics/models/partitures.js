@@ -589,8 +589,6 @@ class Partitures {
             }
 
 
-            this.addModificationforUser(id, userId, userLogged)
-
             c = await stepsSchema.updateOne({ _id: stepId, userId: userId }, modify)
             if (c.ok === 0) {
                 error = true;
@@ -619,8 +617,13 @@ class Partitures {
                 }
                 await this.changePartitureStatus(id, userId, temp);
             }
+
+            await this.addModificationforUser(id, userId, userLogged)
+
+
         }
 
+        
 
         if (error) return false;
         else return true;
