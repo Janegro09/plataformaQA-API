@@ -709,20 +709,17 @@ class Partitures {
     static async addModificationforUser(partitureId, userId, loggedUser) {
         if (!partitureId || !userId) throw new Error('Error en los parametros enviados');
 
-        let userRequest = await partituresInfoByUsersTable.find({ partitureId: partitureId, userId: userId });
+        let userRequest = await partituresInfoByUsersTable.find({ partitureId, userId });
         if (userRequest.length === 0) throw new Error(`El usuario ${userId}, no esta asignado a la partitura ${partitureId}`);
 
-        let status = userRequest[0].status === 'pending' ? 'run' :  userRequest[0].status;
+        let modifications = [...userRequest[0].modifications, {
+            idDB: loggedUser.idDB,
+            id: loggedUser.id,
+            date: Date.now(),
+            section: loggedUser.role.role
+        }]
 
-
-        let updateRequest = await partituresInfoByUsersTable.updateOne({ partitureId: partitureId }, {
-            modifications: [...userRequest[0].modifications, {
-                idDB: loggedUser.idDB,
-                id: loggedUser.id,
-                date: Date.now(),
-                section: loggedUser.role.role
-            }],
-            status
+        let updateRequest = await partituresInfoByUsersTable.updateOne({ partitureId, userId }, {modifications
         });
 
         if (updateRequest.ok > 0) return true;
