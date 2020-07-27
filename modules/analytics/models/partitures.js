@@ -591,16 +591,27 @@ class Partitures {
             }
             // Chequeamos si todos los estados de los steps es completed entonces cambiamos el estado de la partitura a finished
             let stepsStatus = await stepsSchema.find({userId, partitureId: id});
-            let modifiyPartitureStatus = true;
+            let modifiyPartitureStatus = {
+                finished: 0,
+                notFinished: 0
+            }
             for(let j of stepsStatus) {
                 if(j.completed === false) {
-                    // Si hay alguna que no esta completada entonces no modifica la partitura y corta la ejecucoón del for
-                    modifiyPartitureStatus = false;
+                    modifiyPartitureStatus.notFinished++
+                } else {
+                    modifiyPartitureStatus.finished++
                 }
-            }
 
             if(modifiyPartitureStatus) {
-                await this.changePartitureStatus(id, userId, 'finished');
+                let temp;
+                if(modifiyPartitureStatus.notFinished === 0 && modifiyPartitureStatus.finished > 0) {
+                    temp = 'finished';
+                } else if(modifiyPartitureStatus.notFinished > 0 && modifiyPartitureStatus.finished === 0) {
+                    temp = 'pending'
+                } else {
+                    temp = 'run'
+                }
+                await this.changePartitureStatus(id, userId, temp);
             }
         }
 
