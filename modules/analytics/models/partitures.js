@@ -611,6 +611,7 @@ class Partitures {
                 } else {
                     temp = 'run'
                 }
+                console.log(temp);
                 await this.changePartitureStatus(id, userId, temp);
             }
         }
@@ -688,7 +689,7 @@ class Partitures {
             ]
             if (!aceptedStatus.includes(status)) throw new Error('Solo se aceptan los estados que aparecen en la documentación de la API. Por favor, revisela!')
 
-            let updateRequest = await partituresInfoByUsersTable.updateOne({ partitureId: partitureId }, { status: status });
+            let updateRequest = await partituresInfoByUsersTable.updateOne({ partitureId: partitureId, userId: userId }, { status: status });
             if (updateRequest.ok > 0) return true;
             else return false;
         } else {
