@@ -458,10 +458,16 @@ class Partitures {
                     if (x.status === 'run') {
                         partitureStatus = x.status;
                         break;
-                    } else if (x.status === 'pending') {
+                    } else if (x.status === 'pending' && partitureStatus !== 'run' && partitureStatus !== 'finished') {
                         partitureStatus = x.status;
                     } else if (x.status === 'finished' && (!partitureStatus || partitureStatus === 'finished')) {
                         partitureStatus = x.status;
+                    } else if (x.status === 'finished' && partitureStatus === 'pending') {
+                        partitureStatus = 'run';
+                        break;
+                    } else if (x.status === 'pending') {
+                        partitureStatus = 'run';
+                        break;
                     }
                 }
                 for(let p of partiture.fileId){
@@ -611,7 +617,6 @@ class Partitures {
                 } else {
                     temp = 'run'
                 }
-                console.log(temp);
                 await this.changePartitureStatus(id, userId, temp);
             }
         }
