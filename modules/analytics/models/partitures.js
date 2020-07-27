@@ -601,7 +601,7 @@ class Partitures {
                 } else {
                     modifiyPartitureStatus.finished++
                 }
-
+            }
             if(modifiyPartitureStatus) {
                 let temp;
                 if(modifiyPartitureStatus.notFinished === 0 && modifiyPartitureStatus.finished > 0) {
