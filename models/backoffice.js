@@ -131,6 +131,7 @@ module.exports.exportData = class Export {
         const { data, headers } = this;
 
         console.log(headers) // headers para crear el XLSX
+        console.log(data);
         
 
     }

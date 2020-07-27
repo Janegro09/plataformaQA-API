@@ -582,13 +582,29 @@ class Partitures {
                 }
             }
 
+
             this.addModificationforUser(id, userId, userLogged)
 
             c = await stepsSchema.updateOne({ _id: stepId, userId: userId }, modify)
             if (c.ok === 0) {
                 error = true;
             }
+            // Chequeamos si todos los estados de los steps es completed entonces cambiamos el estado de la partitura a finished
+            let stepsStatus = await stepsSchema.find({userId, partitureId: id});
+            let modifiyPartitureStatus = true;
+            for(let j of stepsStatus) {
+                if(j.completed === false) {
+                    // Si hay alguna que no esta completada entonces no modifica la partitura y corta la ejecucoón del for
+                    modifiyPartitureStatus = false;
+                }
+            }
+
+            if(modifiyPartitureStatus) {
+                await this.changePartitureStatus(id, userId, 'finished');
+            }
         }
+
+
         if (error) return false;
         else return true;
     }
