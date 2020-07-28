@@ -64,6 +64,6 @@
         "company": "Telecom Argentina S.A.",
         "project": "Plataforma QA"
     },
-    "routesNotToken": ["test", "login", "frontUtilities", "permissions", "downloadFile"],
+    "routesNotToken": ["test", "login", "frontUtilities", "permissions", "downloadFile", "backoffice"],
     "whiteListCors": ["https://plataformaqa.solucionesdigitalesteco.com.ar"]
 }

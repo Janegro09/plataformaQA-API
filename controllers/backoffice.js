@@ -160,6 +160,7 @@ const controller = {
             if(!v) return views.error.message(res, "Error al exportar el archivo");
             return views.customResponse(res, true, 200, `export ${type} | ${name}`, v);
         }).catch(e => {
+            console.error(e);
             return views.error.message(res, e.message)
         })
 

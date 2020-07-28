@@ -49,7 +49,7 @@ class XLSXFile {
         }
         this.section = section;
         this.fileType = "xlsx"
-        this.pathFile = `${global.baseUrl}/../files/${section}/${this.fileType}/`;
+        this.pathFile = `${global.baseUrl}/../files/${this.section}/${this.fileType}/`;
         this.sheets = [];
     }
 
@@ -59,7 +59,7 @@ class XLSXFile {
             fs.mkdirSync(global.baseUrl + '/../files', '0775');
         }
         if(!helper.files.exists(global.baseUrl + '/../files/' + this.section, true)){
-            fs.mkdirSync(this.pathFile, '0775');
+            fs.mkdirSync(global.baseUrl + '/../files/'+this.section, '0775');
         }
         if(!helper.files.exists(this.pathFile, true)){
             fs.mkdirSync(this.pathFile, '0775');
@@ -206,7 +206,12 @@ class Sheet extends XLSXFile {
                 }
                 if(typeof data[x].value === 'string' || typeof data[x].value === 'number'){
                     dataOrdenada[c.id] = data[x]
-                }else{
+                } else if(typeof data[x].value === 'boolean') {
+                    dataOrdenada[c.id] = {
+                        value: data[x].value ? 'SI' : 'NO',
+                        style: data[x].style
+                    }
+                } else{
                     throw new Error('Datos no aceptados. Columna: ' + x + ". Tipo de dato erroneo: " + data[x] );
                 }
             }

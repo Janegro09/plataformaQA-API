@@ -18,6 +18,7 @@ const mongoose = require('mongoose');
 const rolesSchema = require('../database/migrations/Roles');
 const groupsSchema = require('../database/migrations/groups');
 const groupsPerUsers = require('../database/migrations/groupsperuser');
+const { XLSXFile, Sheet } = require('./XLSXFiles');
 
 module.exports.exportData = class Export {
     constructor(type, name) {
@@ -77,7 +78,7 @@ module.exports.exportData = class Export {
                 
                 
                 /**
-                 * Se desactivo agregar los usuarios cuando se exporta en XLSX porque baja mucho la performance.
+                 * Se desactivo agregar los grupos por usuarios cuando se exporta en XLSX porque baja mucho la performance.
                  */
                 let userGroups = null
                 // buscamos los grupos del usuario
@@ -103,16 +104,28 @@ module.exports.exportData = class Export {
                 if(register[y] instanceof Date){
                     let d = new Date(register[y]);
 
-                    tempData[y] = `${d.getUTCDate()}/${d.getUTCMonth() + 1}/${d.getUTCFullYear()} | ${d.getUTCHours()}:${d.getUTCMinutes()}`
+                    tempData[y] = {
+                        value: `${d.getUTCDate()}/${d.getUTCMonth() + 1}/${d.getUTCFullYear()} | ${d.getUTCHours()}:${d.getUTCMinutes()}`,
+                        style: ""
+                    }
                 } else if(y == 'role' && roles){
-                    tempData[y] = register[y];
+                    tempData[y] = {
+                        value: register[y],
+                        style: ""
+                    };
                     
                     let c = roles.find(element => element._id == register[y]);
                     if(c){
-                        tempData[y] = c.role
+                        tempData[y] = {
+                            value: c.role,
+                            style: ""
+                        }
                     }
                 } else {
-                    tempData[y] = register[y]
+                    tempData[y] = {
+                        value: register[y],
+                        style: ""
+                    }
                 }
                 
                 // Almacenamos los headers
@@ -128,11 +141,21 @@ module.exports.exportData = class Export {
     }
 
     async crearXLSX() {
-        const { data, headers } = this;
+        const { data, headers, name } = this;
 
-        console.log(headers) // headers para crear el XLSX
-        console.log(data);
-        
+        const today = new Date();
+
+        const usersFile = new XLSXFile(`${name}|${today.getUTCDay()}/${today.getUTCMonth() + 1}/${today.getUTCFullYear()}`, 'exports');
+
+        let sheet = new Sheet(usersFile, name);
+
+        sheet.addHeaders(headers);
+        for(let d of data) {
+            sheet.addRow(d)
+        }
+
+        sheet.createSheet();
+        return await sheet.save()
 
     }
 }
