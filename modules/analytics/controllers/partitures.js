@@ -180,6 +180,18 @@ const controller = {
         }).catch(e => {
             return includes.views.error.message(res, e.message);
         })
+    },
+    async downloadFile(req, res) {
+        const { id, userId, stepId, fileId } = req.params;
+        if(!id || !userId || !stepId || !fileId) return includes.views.error.code(res, 'ERR_09'); 
+
+        partituresModel.getFileId(id, userId, stepId, fileId).then(v => {
+            if(!v) return includes.views.error.message(res, 'Error al descargar el archivo')
+            else return includes.views.customResponse(res, true, 200, "", v);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
+        
     }
 }
 

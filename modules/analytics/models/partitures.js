@@ -743,6 +743,20 @@ class Partitures {
         }
         return dataReturn;
     }
+
+    static async getFileId (id, userId, stepId, fileId) {
+        if(!id || !userId || !stepId || !fileId ) throw new Error('IDs no especificados');
+
+        // Buscamos el archivo
+        let file = await filesByPartituresTable.find({userId, partitureId: id, stepId, _id: fileId});
+        if(file.length === 0) throw new Error('Archivo inexistente');
+
+        file = file[0].fileId;
+
+        let tempId = await includes.files.getTempURL(file);
+
+        return tempId;
+    }
 }
 
 module.exports = Partitures;
