@@ -65,6 +65,7 @@ class Users {
         this.puntoVenta         = userObject.puntoVenta         ? userObject.puntoVenta                       : false;
         this.group              = userObject.group              ? userObject.group                            : false;
         this.turno              = userObject.turno              ? userObject.turno                            : false;
+        this.updatedAt          = Date.now();
     }
 
     /**

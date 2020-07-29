@@ -274,7 +274,6 @@ class UserNomina {
         this.usuario.equipoEspecifico   = this.obj['Equipo Especifico'];
         this.usuario.puntoVenta         = this.obj['Punto de Venta'];
         this.usuario.turno              = this.obj['Turno'];
-        this.usuario.updatedAt          = new Date();
         this.usuario.password           = 'Telecom01';
         this.usuario.role               = await models.roles.getornewRol(this.obj['Funcion'],this.obj['Detalle de Funcion']); 
         this.usuario.group              = await models.groups.getorcreateGroup(this.obj['Empresa']);
