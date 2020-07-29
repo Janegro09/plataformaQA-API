@@ -27,7 +27,7 @@ router.get('/file/:id/columns',includes.permit.checkPermit, controllerPerfilamie
 router.post('/file',includes.permit.checkPermit,controllerPerfilamiento.new);
 router.put('/file/:id',includes.permit.checkPermit, controllerPerfilamiento.assignProgram)
 router.get('/file', includes.permit.checkPermit, controllerPerfilamiento.get);
-router.get('/file/:id/download',includes.permit.checkPermit, controllerPerfilamiento.download);
+router.get('/file/:id/download', controllerPerfilamiento.download);
 router.delete('/file/:id', includes.permit.checkPermit, controllerPerfilamiento.delete);
 
 // Cuartiles routes
