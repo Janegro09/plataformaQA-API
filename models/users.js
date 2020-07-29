@@ -103,6 +103,7 @@ class Users {
                 if(data.group){
                     await Groups.assignUserGroup(c[0]._id, data.group);
                 }
+                data.updatedAt = Date.now();
                 c = await userSchema.updateOne({_id: c._id},data);
                 if(c.ok > 0){
                     return true;
@@ -229,6 +230,7 @@ class Users {
         // if(data.group) {
         //     data.group = (await Groups.get(data.group))._id;
         // }
+        data.updatedAt = Date.now();
         let c = await userSchema.updateOne({"id": this.id},data);
         if(c.ok > 0){
             return await Users.get(this.id, false);
