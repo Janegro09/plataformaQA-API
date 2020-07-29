@@ -588,6 +588,22 @@ class Partitures {
                 }
             }
 
+            // Chequeamos que los audios que envia existan
+            if(modify.customFilesSync) {
+                let files = [];
+                for(let audio of modify.customFilesSync){
+		            let id = audio;
+		            if(typeof audio === 'object') {
+			            id = audio.id
+                    } 
+                    let search = await includes.files.checkExist(id);
+                    if(search) {
+                        files.push(audio);
+                    }                
+                }
+
+                modify.customFilesSync = files;
+            }
 
             c = await stepsSchema.updateOne({ _id: stepId, userId: userId }, modify)
             if (c.ok === 0) {
@@ -610,8 +626,6 @@ class Partitures {
                 let temp;
                 if(modifiyPartitureStatus.notFinished === 0 && modifiyPartitureStatus.finished > 0) {
                     temp = 'finished';
-                } else if(modifiyPartitureStatus.notFinished > 0 && modifiyPartitureStatus.finished === 0) {
-                    temp = 'pending'
                 } else {
                     temp = 'run'
                 }
