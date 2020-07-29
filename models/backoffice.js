@@ -19,6 +19,7 @@ const rolesSchema = require('../database/migrations/Roles');
 const groupsSchema = require('../database/migrations/groups');
 const groupsPerUsers = require('../database/migrations/groupsperuser');
 const { XLSXFile, Sheet } = require('./XLSXFiles');
+const files = require('../controllers/files');
 
 module.exports.exportData = class Export {
     constructor(type, name) {
@@ -38,8 +39,9 @@ module.exports.exportData = class Export {
                 throw new Error('Error en el tipo especificado');
         }
 
-        await this.crearXLSX();
+        let response = await this.crearXLSX();
 
+        return response;
     }
     
     async getDatabase() {
@@ -75,7 +77,9 @@ module.exports.exportData = class Export {
             if(name === 'users') {
                 // Si el usuario esta eliminado saltamos
                 if(register.userDelete) continue;
-                
+                const notPrintUsers = ["UserMainQA","UserRootTelecom"];
+
+                if(notPrintUsers.includes(register['id'])) continue;
                 
                 /**
                  * Se desactivo agregar los grupos por usuarios cuando se exporta en XLSX porque baja mucho la performance.
@@ -101,6 +105,7 @@ module.exports.exportData = class Export {
 
             for(let y in register){
                 if(y == '_id' || y == '__v' || y == 'password') continue;
+
                 if(register[y] instanceof Date){
                     let d = new Date(register[y]);
 
@@ -110,25 +115,38 @@ module.exports.exportData = class Export {
                     }
                 } else if(y == 'role' && roles){
                     tempData[y] = {
-                        value: register[y],
+                        value: register[y].toString(),
                         style: ""
                     };
                     
                     let c = roles.find(element => element._id == register[y]);
                     if(c){
                         tempData[y] = {
-                            value: c.role,
+                            value: c.role.toString(),
                             style: ""
                         }
                     }
+                } else if(y == 'id') {
+                    // Cambiamos el nombre de id por userId porque ya existe una columna llamada ID en los XLSX
+
+                    
+                    tempData['userId'] = {
+                        value: register[y].toString(),
+                        style: ""
+                    }
+
                 } else {
                     tempData[y] = {
-                        value: register[y],
+                        value: register[y].toString(),
                         style: ""
                     }
                 }
                 
                 // Almacenamos los headers
+                
+                // Cambiamos el nombre de id por userId porque ya existe una columna llamada ID en los XLSX
+                y = y === 'id' ? 'userId' : y;
+
                 if(!this.headers.includes(y)){
                     this.headers.push(y)
                 }
@@ -145,7 +163,7 @@ module.exports.exportData = class Export {
 
         const today = new Date();
 
-        const usersFile = new XLSXFile(`${name}|${today.getUTCDay()}/${today.getUTCMonth() + 1}/${today.getUTCFullYear()}`, 'exports');
+        const usersFile = new XLSXFile(`${name} ${today.getUTCDate()}-${today.getUTCMonth() + 1}-${today.getUTCFullYear()}.xlsx`, 'exports');
 
         let sheet = new Sheet(usersFile, name);
 
@@ -155,8 +173,10 @@ module.exports.exportData = class Export {
         }
 
         sheet.createSheet();
-        return await sheet.save()
+        let c = await usersFile.save();
 
+
+        return c;
     }
 }
 

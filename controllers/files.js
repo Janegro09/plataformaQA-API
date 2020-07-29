@@ -20,6 +20,7 @@ const filesModel = require('../database/migrations/Files');
 const tempURLs   = require('../database/migrations/tempURLs');
 const cfile     = helper.configFile();
 const views     = require('../views');
+const { files } = require('./helper');
 
 const authorizedSections = ['filesLibraryPartitures'];
 
@@ -153,25 +154,30 @@ class uploadFile {
      * Funcion para obtener una URL Temporal
      * @param {String} fileID 
      */
-    static async getTempURL(fileID) {
+    static async getTempURL(fileID, deletedAfterDownload = false) {
         if(!fileID) return false;
         
         // Buscamos si existe el archivo
         let c = await filesModel.find({_id: fileID});
         if(c.length === 0) return false;
-        else {
-            let path = c[0].path;
-            if(!helper.files.exists(path)){
-                // Eliminamos el registro
-                c = await filesModel.deleteOne({_id: fileID});
-                return false;
-            }
-        }
+        /**
+         * ATENCION!! LEER!
+         * Lo desctivamos porque a veces cuando el archivo esta en creacion va a verificar si esta y no lo encunetra entonces elimina el registro y devuelve falso.
+        */
+        // else {
+        //     let path = c[0].path;
+        //     if(!helper.files.exists(path)){
+        //         // Eliminamos el registro
+        //         c = await filesModel.deleteOne({_id: fileID});
+        //         return false;
+        //     }
+        // }
         // Creamos URL Temporal
         c = new tempURLs({
-            fileId: fileID
+            fileId: fileID,
+            deletedAfterDownload
         })
-        let query = await c.save();
+        await c.save();
         
         return c._id
     }
@@ -187,7 +193,10 @@ class uploadFile {
         let c = await tempURLs.find({_id: tempId});
         if(c.length === 0) return false;
 
-        idReturn = c[0].fileId;
+        idReturn = {
+            id: c[0].fileId,
+            deletedAfterDownload: c[0].deletedAfterDownload
+        };
 
         // Eliminamos la url temporal ya que solo tiene validez de 1 uso
         c = await tempURLs.deleteOne({_id: c[0]._id});
@@ -224,6 +233,7 @@ class uploadFile {
 
     static async getPublicFile(req, res) {
         let id = req.params.id;
+        let deletedAfterDownload = false;
         if(id){
             // Descargamos un archivo
             const { urltemp } = req.query;
@@ -231,7 +241,9 @@ class uploadFile {
             if(urltemp && urltemp === 'false'){
                 idFile = id;
             }else {
-                idFile = await uploadFile.getFileID(id);
+                let c = await uploadFile.getFileID(id);
+                idFile = c.id;
+                deletedAfterDownload = c.deletedAfterDownload;
             }
             try {
                 // Buscamos el archivo correspondiente a la url temporal
@@ -242,12 +254,18 @@ class uploadFile {
                 url = c[0].path;
                 if(helper.files.exists(url)){
                    views.success.file.download(res,url);
+                   // eliminamos el archivo despues de 5 segundos
+                   if(deletedAfterDownload) {
+                       setTimeout(() => {
+                            files.delete(url);
+                       }, 5000)
+                   }
                 }else{
                    await filesModel.deleteOne({_id: id});
                    views.success.file.download(res,'public/notFound.jpg');
                 }
             } catch (e){
-		console.log(e)
+		        console.log(e)
                 views.success.file.download(res,'public/notFound.jpg');
             }
         }else {

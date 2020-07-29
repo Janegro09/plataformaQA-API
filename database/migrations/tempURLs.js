@@ -23,6 +23,10 @@ var tempurls = new Schema({
     updatedAt: {
         type: Date,
         default: Date.now
+    },
+    deletedAfterDownload: {
+        type: Boolean,
+        default: false
     }
 });
 

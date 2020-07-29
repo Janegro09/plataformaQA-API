@@ -64,6 +64,7 @@ class XLSXFile {
         if(!helper.files.exists(this.pathFile, true)){
             fs.mkdirSync(this.pathFile, '0775');
         }
+
         let workBook = new excelNode.Workbook();
     
          // Creamos sheets

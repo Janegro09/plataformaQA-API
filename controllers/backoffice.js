@@ -156,14 +156,17 @@ const controller = {
         
         let exp = new exportData(type, name);
 
-        exp.getData().then(v => {
+        exp = await exp.getData()
+        // Creamos el id temporal y devolvemos eso 
+        files.getTempURL(exp.id, true).then(v => {
             if(!v) return views.error.message(res, "Error al exportar el archivo");
-            return views.customResponse(res, true, 200, `export ${type} | ${name}`, v);
+            return views.customResponse(res, true, 200, `export ${type} | ${name}`, {
+                tempId: v
+            });
         }).catch(e => {
             console.error(e);
             return views.error.message(res, e.message)
         })
-
 
 
 
