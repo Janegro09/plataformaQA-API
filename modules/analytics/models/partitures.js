@@ -279,7 +279,7 @@ class Partitures {
         if (req) {
             // comprobamos si es administrador
             let user = await includes.users.model.getUsersperGroup(req.authUser[0].id);
-            if (user.indexOf('all') >= 0) {
+            if (user.indexOf('all') >= 0 || req.authUser[0].role.role === 'ADMINISTRATOR') {
                 viewAllPartitures = true;
             } else {
                 let programasPermitidos = await programsModel.get(req);
