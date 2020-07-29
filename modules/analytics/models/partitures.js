@@ -610,8 +610,6 @@ class Partitures {
                 let temp;
                 if(modifiyPartitureStatus.notFinished === 0 && modifiyPartitureStatus.finished > 0) {
                     temp = 'finished';
-                } else if(modifiyPartitureStatus.notFinished > 0 && modifiyPartitureStatus.finished === 0) {
-                    temp = 'pending'
                 } else {
                     temp = 'run'
                 }
