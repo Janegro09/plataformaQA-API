@@ -163,7 +163,7 @@ module.exports.exportData = class Export {
 
         const today = new Date();
 
-        const usersFile = new XLSXFile(`${name} ${today.getUTCDate()}-${today.getUTCMonth() + 1}-${today.getUTCFullYear()} ${today.getUTCHours()}:${today.getUTCMinutes()}.xlsx`, 'exports');
+        const usersFile = new XLSXFile(`${name} ${today.getDate()}-${today.getMonth() + 1}-${today.getFullYear()} ${today.getHours()} ${today.getMinutes()}.xlsx`, 'exports');
 
         let sheet = new Sheet(usersFile, name);
 
