@@ -592,7 +592,11 @@ class Partitures {
             if(modify.customFilesSync) {
                 let files = [];
                 for(let audio of modify.customFilesSync){
-                    let search = await includes.files.checkExist(audio);
+		    let id = audio;
+		    if(typeof audio === 'object') {
+			id = audio.id
+		    } 
+                    let search = await includes.files.checkExist(id);
                     if(search) {
                         files.push(audio);
                     }                
