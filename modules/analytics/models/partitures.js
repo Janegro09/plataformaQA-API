@@ -588,6 +588,18 @@ class Partitures {
                 }
             }
 
+            // Chequeamos que los audios que envia existan
+            if(modify.customFilesSync) {
+                let files = [];
+                for(let audio of modify.customFilesSync){
+                    let search = await includes.files.checkExist(audio);
+                    if(search) {
+                        files.push(audio);
+                    }                
+                }
+
+                modify.customFilesSync = files;
+            }
 
             c = await stepsSchema.updateOne({ _id: stepId, userId: userId }, modify)
             if (c.ok === 0) {
