@@ -20,7 +20,7 @@ var groupsByUsers = new Schema({
         type: String,
         required: true
     },
-    userId: {
+    userGroupId: {
         type: String,
         required: true
     },

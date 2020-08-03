@@ -27,7 +27,7 @@ class ProgramsGroups {
         this.name           = name          || "";
         this.description    = description   || "";
         this.id             = id            || 0;
-        this.usersAssign    = usersAssign   || [];
+        this.usersGroupsAssign    = usersGroupsAssign   || [];
         this.status         = status        || true;
     }
 
@@ -64,16 +64,16 @@ class ProgramsGroups {
         // Asignamos los usuarios al grupo
         for(let i = 0, users = this.usersAssign; i < users.length; i++){
             // Buscamos si el usuario existe
-            const user = await includes.users.schema.find({_id: users[i]}).where({userDelete: false});
+            const user = await includes.usersGroups.find({_id: users[i]}).where({userDelete: false});
             if(user.length === 0) continue;
 
             // Consultamos si el usuario ya esta asignado a este grupo
-            const assign = await Schemas.usersByGroups.find().where({userId: users[i], groupId: this.id});
+            const assign = await Schemas.usersByGroups.find().where({userGroupId: users[i], groupId: this.id});
             if(assign.length > 0) continue;
 
             // Asignamos el usuario
             const query = new Schemas.usersByGroups({
-                userId: users[i],
+                userGroupId: users[i],
                 groupId: this.id
             });
 
@@ -107,7 +107,7 @@ class ProgramsGroups {
         if(this.id == 0) throw new Error('ID Not specified');
         let tempData = {};
         for(let d in this) {
-            if(d == "id" || d == "usersAssign") continue;
+            if(d == "id" || d == "usersGroupsAssign") continue;
             if(this[d]){
                 tempData[d] = this[d];
             }
