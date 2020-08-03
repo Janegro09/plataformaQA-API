@@ -17,6 +17,7 @@ const includes = {
         schema: require('../database/migrations/usersTable')
     },
     usersGroups: require('../database/migrations/groups'),
+    usersGroupsModel: require('../models/groups'),
     express: require('express'),
     permit: require('../models/permissions'),
     views: require('../views'),

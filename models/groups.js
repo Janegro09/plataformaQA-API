@@ -17,6 +17,7 @@ const helper            = require('../controllers/helper');
 const groupsSchema        = require('../database/migrations/groups');
 const groupsPerUserSchema = require('../database/migrations/groupsperuser');
 const usersSchema       = require('../database/migrations/usersTable');
+const Roles = require('./roles');
 
 /**
  * Clase para manejar Grupos 
@@ -121,6 +122,26 @@ class Groups {
 
     }
 
+    static async getGruposAutorizados(userId) {
+        let returnData = [];
+        let consulta;
+        if(userId){
+            // Obtenemos el rol del usuario que consulta
+            consulta = await usersSchema.find({_id: userId});
+            if(consulta.length > 0) {
+                consulta = await Roles.get(consulta[0].role)
+                if(consulta.length > 0) {
+                    if(consulta[0].role === 'ADMINISTRATOR') {
+                        returnData = ['all'];
+                    } else {
+                        returnData = await groupsPerUserSchema.find({userId});
+                    }
+                }
+            }
+        }
+        return returnData;
+    }
+
     /**
      * Si se especifica solo userId devuelve array con los grupos que pertenece el usuario, si solo se especifica groupId, devuelve los usuarios que pertenecen a ese grupo 
      * @param {String} userId 
@@ -129,7 +150,7 @@ class Groups {
     static async getUserGroups(userId, groupId) {
         let consulta;
         if(userId && !groupId){
-            consulta = await groupsPerUserSchema.find({userId: userId});
+            consulta = await groupsPerUserSchema.find({userId});
         }else if(!userId && groupId){
             // Devuelve un array con ids de usuarios pertenecientes a ese grupo
             let c = await groupsPerUserSchema.find({groupId: groupId});

@@ -141,13 +141,16 @@ const controller = {
 
     },
     async changePartitureStatus(req, res){
-        if(!req.params.id || !req.params.userId || !req.query.status) return includes.views.error.message(res, 'Error en los parametros enviados.')
-        partituresModel.changePartitureStatus(req.params.id, req.params.userId, req.query.status).then(v => {
-            if(!v) return includes.views.error.message(res, 'Error al modificar el estado de la partitura')
-            else return includes.views.success.update(res)
-        }).catch(e => {
-            return includes.views.error.message(res, e.message);
-        })
+        /**
+         * Esta funcion queda obsoleta ya que requieren que el estado cambie automaticamente cuando se cambiaron todos los campos del lado del usuario
+         */
+        // if(!req.params.id || !req.params.userId || !req.query.status) return includes.views.error.message(res, 'Error en los parametros enviados.')
+        // partituresModel.changePartitureStatus(req.params.id, req.params.userId, req.query.status).then(v => {
+        //     if(!v) return includes.views.error.message(res, 'Error al modificar el estado de la partitura')
+        //     else return includes.views.success.update(res)
+        // }).catch(e => {
+        //     return includes.views.error.message(res, e.message);
+        // })
     },
     async uploadFile(req, res) {
         if(!req.query || (!req.files && !req.body.message)|| !req.params.id || !req.params.userId || !req.params.stepId) return includes.views.error.message(res, 'Error en los parametros enviados.')

@@ -23,7 +23,7 @@ const Schemas = {
 
 class ProgramsGroups {
     constructor(req) {
-        const {name, usersAssign, id, description, status} = req;
+        const {name, usersGroupsAssign, id, description, status} = req;
         this.name           = name          || "";
         this.description    = description   || "";
         this.id             = id            || 0;
@@ -52,21 +52,20 @@ class ProgramsGroups {
 
         // Asignamos los usuarios
         c = await this.userAssign()
-
         if(!c) throw new Error('Error al crear el grupo y asignarles usuarios');
         else return true;
     }
 
     async userAssign() {
-        if(this.usersAssign.length === 0) return true;
+        if(this.usersGroupsAssign.length === 0) return true;
 
         let userstoAssign = [];
         // Asignamos los usuarios al grupo
-        for(let i = 0, users = this.usersAssign; i < users.length; i++){
+        for(let i = 0, users = this.usersGroupsAssign; i < users.length; i++){
             // Buscamos si el usuario existe
-            const user = await includes.usersGroups.find({_id: users[i]}).where({userDelete: false});
+            
+            const user = await includes.usersGroups.find({_id: users[i]}).where({groupDeleted: false});
             if(user.length === 0) continue;
-
             // Consultamos si el usuario ya esta asignado a este grupo
             const assign = await Schemas.usersByGroups.find().where({userGroupId: users[i], groupId: this.id});
             if(assign.length > 0) continue;
@@ -87,8 +86,8 @@ class ProgramsGroups {
 
     static async unassignUser(groupId, userId) {
         // Consultamos si existe el registro
-        let c = await Schemas.usersByGroups.find({userId: userId, groupId: groupId});
-        if(c.length === 0) throw new Error(`El usuario ${userId}, no esta asignado al grupo ${groupId}`);
+        let c = await Schemas.usersByGroups.find({userGroupId: userId, groupId: groupId});
+        if(c.length === 0) throw new Error(`El grupo ${userId}, no esta asignado al grupo de programas ${groupId}`);
 
         const idRegistro = c[0]._id;
 
@@ -169,34 +168,36 @@ class ProgramsGroups {
             }
             if(id) {
                 // Traemos data de los usuarios asignados
-                tempData.assignedUsers = [];
+                tempData.assignedGroups = [];
                 let users = [];
                 let _ids = [];
                 const query = await Schemas.usersByGroups.find({groupId: id});
                 query.map(v => {
-                    _ids.push(v.userId);
+                    _ids.push(v.userGroupId);
                 })
                 if(req && typeof req == 'object'){
-                    // Convertimos los _ID en id para buscarlos en el modelo de usuarios
+                    // Convertimos los _ID en id para buscarlos en el modelo de grupos de usuarios
                     for(let y = 0; y < _ids.length; y++){
-                        let c = await includes.users.schema.find({_id: _ids[y]});
+                        let c = await includes.usersGroups.find({_id: _ids[y]});
                         if(c.length === 0) continue;
                         else {
-                            users.push(c[0].id);
+                            users.push({id: c[0]._id,group: c[0].group});
                         }
                     }
-                    // Si esta logeado le devolvemos info de usuarios 
-                    for(let x = 0; x < users.length; x++){
-                        let c = await includes.users.model.get(users[x],false,req);
-                        if(!c || c.length === 0) continue;
-                        tempData.assignedUsers.push({
-                            idDB: c[0].idDB,
-                            id: c[0].id,
-                            name: c[0].name,
-                            lastName: c[0].lastName,
-                            email: c[0].email
-                        })
-                    }
+
+                    tempData.assignedGroups = users;
+                    // Si esta logeado le devolvemos info de grupos 
+                    // for(let x = 0; x < users.length; x++){
+                    //     let c = await includes.users.model.get(users[x],false,req);
+                    //     if(!c || c.length === 0) continue;
+                    //     tempData.assignedUsers.push({
+                    //         idDB: c[0].idDB,
+                    //         id: c[0].id,
+                    //         name: c[0].name,
+                    //         lastName: c[0].lastName,
+                    //         email: c[0].email
+                    //     })
+                    // }
                 }else{
                     tempData.assignedUsers = _ids;
                 }

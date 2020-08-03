@@ -19,6 +19,7 @@ const Schemas = {
     programs: require('../migrations/programs.table'),
     groupsbyPrograms: require('../migrations/programsByGroups.table'),
     programsGroups: require('../migrations/programsGroups.table'),
+    usersbyprograms: require('../migrations/groupsByUsers.table'),
     programsbyPerfilamientos: require('../migrations/programsbyPerfilamientos')
 }
 const programsGroupsModel = require('./programsGroups');
@@ -170,8 +171,10 @@ class Program {
 
     static async get(id = 0) {
         const req = id;
+        let isSpecific = true;
         if(id != 0 && (typeof id != 'string' && typeof id == 'object')){
             id = id.params.id || 0;
+            isSpecific = false;
         }
         let usuariosPermitidos, UsuarioLogeado;
         let responseData = [];
@@ -182,27 +185,26 @@ class Program {
             where._id = id;
         }
 
+
         let gruposDisponibles   = [];
         let programasPermitidos = [];
         if(req && typeof req == 'object'){
-            UsuarioLogeado = req.authUser[0].id;
-            usuariosPermitidos = await includes.users.model.getUsersperGroup(UsuarioLogeado);
-            if(usuariosPermitidos[0] !== 'all' && usuariosPermitidos.length > 0) {
-                if(usuariosPermitidos.indexOf(req.authUser[0].idDB) === -1) {
-                    // Agregamos el usuario que consulta para agregar los prog
-                    usuariosPermitidos.push(req.authUser[0].idDB)
-                }
+            UsuarioLogeado = req.authUser[0].idDB;
+            usuariosPermitidos = await includes.usersGroupsModel.getGruposAutorizados(UsuarioLogeado);
+            if(usuariosPermitidos.length > 0 && usuariosPermitidos[0] !== 'all') {
                 // Buscamos los grupos de programa de cada usuario
                 for(let x = 0; x < usuariosPermitidos.length; x++) {
-                    let tempData = await programsGroupsModel.getUserGroups(usuariosPermitidos[x]);
-                    if(tempData.length > 0) {
-                        tempData.map(v => {
-                            if(gruposDisponibles.indexOf(v) === -1) {
-                                gruposDisponibles.push(v);
-                            }
-                        })
+                    // Buscamos a que grupo de programas pertenece ese grupo de usuarios
+                    let Idgrupodeprograma = await Schemas.usersbyprograms.find({userGroupId: usuariosPermitidos[x].groupId});
+                    for(let gd of Idgrupodeprograma) {
+                        if(gruposDisponibles.indexOf(gd.groupId) === -1) {
+                            gruposDisponibles.push(gd.groupId);
+                        }
                     }
+
                 }
+
+
 
                 // Buscamos que programas pertenencen a estos grupos
                 let programas = await Schemas.groupsbyPrograms.find().where({
@@ -221,7 +223,7 @@ class Program {
         if(usuariosPermitidos[0] === 'all'){
             response = await Schemas.programs.find().where(where);
         }else{
-            if(id != 0) {
+            if(id != 0 && isSpecific) {
                 // Usuario no admin busca un programa especifico
                 if(programasPermitidos.indexOf(id) === -1){
                     throw new Error('No existe el registro buscado en nuestra base de datos');

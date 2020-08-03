@@ -275,6 +275,7 @@ class Partitures {
                 viewcoachingComments                = false;
                 break;
         }
+
         // Solo traemos las partituras disponibles por programa segun usuario
         if (req) {
             // comprobamos si es administrador
@@ -294,6 +295,7 @@ class Partitures {
                 }
             }
         }
+
         if (id && userId && stepId) {
             // Retornamos informacion sobre un paso especifico
             where = { _id: id };
@@ -471,7 +473,7 @@ class Partitures {
                     }
                 }
                 for(let p of partiture.fileId){
-                    if(archivosPermitidos.includes(p)) {
+                    if(!archivosPermitidos.includes(p)) {
                         AccesoaArchivo = false;
                     }
                 }
@@ -609,6 +611,19 @@ class Partitures {
             if (c.ok === 0) {
                 error = true;
             }
+
+            // Chequeamos si estan todos los campos entonces ponemos el estado como true
+            let stepStatus = await stepsSchema.find({_id: stepId});
+            let audiosRequeridos = await this.getAudiosCountbyUser(userId, id, stepId )
+            if(stepStatus.length > 0) {
+                let s = stepStatus[0];
+                if(s.compromisoRepresentante &&
+                    s.detalleTransaccion &&
+                    s.patronMejora && audiosRequeridos.audioFilesRequired === audiosRequeridos.audioFilesActually) {
+                        c = await stepsSchema.updateOne({ _id: stepId, userId: userId }, {completed: true})
+                    }
+            }
+
             // Chequeamos si todos los estados de los steps es completed entonces cambiamos el estado de la partitura a finished
             let stepsStatus = await stepsSchema.find({userId, partitureId: id});
             let modifiyPartitureStatus = {
@@ -740,19 +755,35 @@ class Partitures {
         else return false;
     }
 
-    static async getAudiosCountbyUser(userId, partitureId) {
+    static async getAudiosCountbyUser(userId, partitureId, stepId = false) {
         let dataReturn = {
             audioFilesRequired: 0,
             audioFilesActually: 0
         }
         if(userId && partitureId) {
+            let where = {
+                userId,
+                partitureId
+            }
+            if(stepId) {
+                where._id = stepId;
+            }
             // Buscamos los steps segun la instancia y el usuario
-            let steps = await stepsOfInstancesTable.find({userId, partitureId});
+            let steps = await stepsOfInstancesTable.find().where(where);
             for(let s of steps) {
                 dataReturn.audioFilesRequired += s.requestedMonitorings;
             }
 
-            let files = await filesByPartituresTable.find({userId, partitureId, section: 'monitorings'});
+            where = {
+                partitureId,
+                userId,
+                section: 'monitorings'
+            }
+
+            if(stepId) {
+                where.stepId = stepId;
+            }
+            let files = await filesByPartituresTable.find().where(where);
             dataReturn.audioFilesActually = files.length
         }
         return dataReturn;
