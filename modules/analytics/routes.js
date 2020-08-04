@@ -43,7 +43,7 @@ router.get('/file/:fileId/perfilamiento',includes.permit.checkPermit, controller
 
 // Partitures
 router.post('/partitures/new',includes.permit.checkPermit, controllerPartitures.new);
-router.get('/partitures/:id?/:userId?/:stepId?', controllerPartitures.get);
+router.get('/partitures/:id?/:userId?/:stepId?', includes.permit.checkPermit, controllerPartitures.get);
 router.delete('/partitures/:id',includes.permit.checkPermit, controllerPartitures.delete);
 router.put('/partitures/:id?/:userId?/:stepId?',includes.permit.checkPermit, controllerPartitures.update);
 router.post('/partitures/:id/:userId', includes.permit.checkPermit, controllerPartitures.changePartitureStatus)
