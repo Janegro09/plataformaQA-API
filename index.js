@@ -23,7 +23,9 @@ mongoose.Promise    = global.Promise;
 const port = process.env.PORT || cfile.mainInfo.port; // Si no esta especificado el puerto en .env entonces tomara el mismo del archivo de configuración
 
 // Realizamos las conexiones a la base de datos e iniciamos expressS
-mongoose.connect(`mongodb://${dbConfig.mongodb.user}:${dbConfig.mongodb.password}@${dbConfig.mongodb.host}:${dbConfig.mongodb.port}/${dbConfig.mongodb.database}`,{ useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true }).then(() => {
+//mongoose.connect(`mongodb://${dbConfig.mongodb.user}:${dbConfig.mongodb.password}@${dbConfig.mongodb.host}:${dbConfig.mongodb.port}/${dbConfig.mongodb.database}`,{ useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true }).then(() => {
+mongoose.connect(`mongodb://${dbConfig.mongodb.host}:${dbConfig.mongodb.port}/${dbConfig.mongodb.database}`,{ useNewUrlParser: true, useUnifiedTopology: true, useCreateIndex:true }).then(() => {
+
     console.log("-------------------------------------------------- ");
     console.log("DATABASES CONNECTIONS");
     console.log("");
