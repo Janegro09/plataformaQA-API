@@ -50,6 +50,7 @@ var stepsOfInstances = new Schema({
     coordinatorOnSiteComments: String,
     accountAdministratorComments: String,
     coachingComments: String,
+    resultadosRepresentante: String,
     improvment: String
 });
 
