@@ -101,13 +101,14 @@ class Partitures {
                 let instance = this.instances[i];
                 let tempData = {
                     partitureId: partitureObject._id,
-                    name: instance.name
+                    name: instance.name,
+                    blockingDate: instance.blockingDate || false
                 }
                 if (instance.expirationDate) {
                     tempData.expirationDate = new Date(instance.expirationDate);
                 }
                 let c = new instancesSchema(tempData);
-		instances.push(c);
+		        instances.push(c);
                 // Steps --------------------------------------------
                 for (let p = 0; p < instance.steps.length; p++) {
                     // Creamos un registro por cada usuario
@@ -389,6 +390,7 @@ class Partitures {
                     let tempData = {
                         id: instance._id,
                         name: instance.name,
+                        blockingDate: instance.blockingDate,
                         dates: {
                             expirationDate: instance.expirationDate,
                             createdAt: instance.createdAt

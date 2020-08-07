@@ -27,6 +27,10 @@ var instancesOfPartitures = new Schema({
     expirationDate: {
         type: Date,
     },
+    blockingDate: {
+        type: Boolean,
+        default: false
+    },
     createdAt: {
         type: Date,
         default: Date.now
