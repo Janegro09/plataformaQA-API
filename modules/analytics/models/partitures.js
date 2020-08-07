@@ -30,6 +30,7 @@ const perfilamientoFile = require('./perfilamientoFile');
 const programsModel = require('../../programs/models/programs');
 const stepsOfInstancesTable = require('../migrations/stepsOfInstances.table');
 const filesByPartituresTable = require('../migrations/filesByPartitures.table');
+const instancesOfPartituresTable = require('../migrations/instancesOfPartitures.table');
 
 class Partitures {
     constructor(reqObject) {
@@ -570,12 +571,26 @@ class Partitures {
     static async modifySteps(arrayModifications) {
         if (arrayModifications.length === 0) throw new Error('Error en los parametros enviados')
         let error = false;
+        const today = new Date();
         for (let i = 0; i < arrayModifications.length; i++) {
             const { id, userId, stepId, modify, userLogged } = arrayModifications[i];
 
             // Chequeamos que exista ese step
             let c = await stepsSchema.find({ _id: stepId, userId: userId });
             if (c.length === 0) return false;
+
+            // consultamos si se vencio y si es modificable
+            let instance = await instancesOfPartituresTable.find({_id: c[0].instanceId});
+            if(instance.length === 0) return false;
+            instance = instance[0];
+
+            let vencido = instance.expirationDate < today;
+            let blockingDate = instance.blockingDate || false;
+
+            if(vencido && blockingDate) throw new Error('No puede modificar ya que la fecha de vencimiento es bloqueante');
+
+
+
 
             if(!c[0].fechaInforme){
                 // Si no tiene fecha de informe se la agregamos
