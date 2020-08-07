@@ -19,9 +19,12 @@ const views         = require('../views');
 const helper        = require('../controllers/helper')
 const cfile         = helper.configFile();
 const Roles         = require('../models/roles')
+const fs            = require('fs');
 
 const routesPath    = cfile.mainInfo.routes;
-const TOKEN_PASS    = cfile.mainInfo.jwtPass;
+// const TOKEN_PASS    = cfile.mainInfo.jwtPass;
+const TOKEN_PASS    = fs.readFileSync('token.key','utf-8');
+const cert          = fs.readFileSync('token.pub','utf-8');
 
 module.exports = class Auth {
 
@@ -39,6 +42,7 @@ module.exports = class Auth {
             email: this.user.email
         }
         let token = jwt.sign(tokenData,TOKEN_PASS,{
+            algorithm: 'RS256',
             expiresIn: 60 * 60 // Expires in 1 hour
         })
         let consulta = await Tokens.findOne({userId: this.user.id});
@@ -73,7 +77,7 @@ module.exports = class Auth {
             if(!token) return views.error.code(res,'ERR_04');
             token = token.split(" ");
             if(token[0] != 'Bearer') return views.error.code(res,'ERR_04');
-            jwt.verify(token[1], TOKEN_PASS, async (err, t) => {
+            jwt.verify(token[1], cert, { algorithms: ["RS256"] }, async (err, t) => {
                 if(err) return views.error.code(res,'ERR_04');
                 let user = await Users.get(t.id);
                 // checkamos que el token almacenado a ese usuario sea el mismo
