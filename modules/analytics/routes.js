@@ -20,6 +20,7 @@ const controllerPerfilamiento       = require('./controllers/perfilamiento');
 const controllerCuartiles           = require('./controllers/cuartiles');
 const controllerPartitures          = require('./controllers/partitures');
 const controllerPartituresModels    = require('./controllers/partituresModels');
+const controllerCuartilesModels     = require('./controllers/cuartilesModels');
 
 // ------------------------------------------ PERFILAMIENTO ---------------------------------------------------------
 // Perfilamiento Routes
@@ -58,6 +59,11 @@ router.post('/partituresModels/new',includes.permit.checkPermit, controllerParti
 router.put('/partituresModels/:id',includes.permit.checkPermit, controllerPartituresModels.update);
 router.get('/partituresModels/:id?',includes.permit.checkPermit, controllerPartituresModels.get);
 router.delete('/partituresModels/:id',includes.permit.checkPermit, controllerPartituresModels.delete);
+
+// Cuartiles models
+router.post('/cuartilesModels', controllerCuartilesModels.new);
+router.get('/cuartilesModels/:id?', controllerCuartilesModels.get);
+router.delete('/cuartilesModels/:id', controllerCuartilesModels.delete);
 
 
 
