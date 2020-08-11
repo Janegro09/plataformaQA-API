@@ -174,6 +174,7 @@ const PerfilamientoFile = {
         if(!rol) throw new Error('Error en permisos_2');
 
         let archivosPermitidos = [];
+        let where = { section: 'analytics' }
         if(!rolesQueVenTodosLosArchivos.includes(rol)) {
             let programasPermitidos = await programsModel.get(req);
             for(let programa of programasPermitidos) {
@@ -184,9 +185,10 @@ const PerfilamientoFile = {
                     }
                 })
             }
+            where._id = { $in: archivosPermitidos };
         }
         
-        let c = await includes.files.getAllFiles({ section: 'analytics', _id: { $in: archivosPermitidos }})
+        let c = await includes.files.getAllFiles(where)
         // Buscamos los archivos
         
         let ordenado = c.sort((a,b) => b.updatedAt - a.updatedAt);
