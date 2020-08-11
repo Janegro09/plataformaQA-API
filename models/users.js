@@ -218,7 +218,7 @@ class Users {
         if(data.role){
             let rol = await Roles.get(data.role, true);
             if(!rol) return false;
-            data.roleNotModifiedByNomina = false;
+            data.roleModifiedByNomina = false;
         }
 
         if(data.sexo) {
