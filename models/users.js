@@ -115,7 +115,6 @@ class Users {
                 data.updatedAt = Date.now();
 		
                 c = await userSchema.updateOne({_id: c[0]._id}, data);
- 		console.log(c);
                 if(c.ok > 0){
                     return true;
                 }else{
