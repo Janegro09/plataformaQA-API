@@ -76,7 +76,7 @@ const controller = {
         }
     },
     async get(req, res) {
-        PerfilamientoFile.getFiles().then(v => {
+        PerfilamientoFile.getFiles(req).then(v => {
             if(v.length === 0) return includes.views.error.message(res, "No existen archivos");
             return includes.views.customResponse(res, true, 200, "", v);
         }, e => {

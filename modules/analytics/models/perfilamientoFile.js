@@ -162,11 +162,34 @@ const PerfilamientoFile = {
     /**
      * Devuelve los archivos existentes de perfilamientos ordenados por fecha
      */
-    async getFiles() {
+    async getFiles(req) {
         let returnData = [];
 
+        const rolesQueVenTodosLosArchivos = ["ADMINISTRATOR", "LIDER ON SITE", "COORDINADOR", "COORDINADOR OC"];
+
+        if(!req) throw new Error('Error en permisos');
+
+        let rol = req.authUser[0].role.role || false;
+        let company = req.authUser[0].razonSocial || false;
+        if(!rol) throw new Error('Error en permisos_2');
+
+        let archivosPermitidos = [];
+        let where = { section: 'analytics' }
+        if(!(rolesQueVenTodosLosArchivos.includes(rol) && company === 'TELECOM')) {
+            let programasPermitidos = await programsModel.get(req);
+            for(let programa of programasPermitidos) {
+                let files = await programsModel.getFileswithPrograms(programa.id);
+                files.map(v => {
+                    if (archivosPermitidos.indexOf(v) === -1) {
+                        archivosPermitidos.push(v);
+                    }
+                })
+            }
+            where._id = { $in: archivosPermitidos };
+        }
+        
+        let c = await includes.files.getAllFiles(where)
         // Buscamos los archivos
-        let c = await includes.files.getAllFiles({section: 'analytics'})
         
         let ordenado = c.sort((a,b) => b.updatedAt - a.updatedAt);
 

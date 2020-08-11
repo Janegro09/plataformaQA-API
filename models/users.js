@@ -29,8 +29,8 @@ const userLoginSchema       = require('../database/migrations/usersLogin');
 class Users {
     constructor(userObject = {}){
         this.id                 = userObject.id                 ? userObject.id                               : false;        
-        this.name               = userObject.name               ? userObject.name                             : false;
-        this.lastName           = userObject.lastName           ? userObject.lastName                         : false;
+        this.name               = userObject.name               ? userObject.name.toUpperCase()               : false;
+        this.lastName           = userObject.lastName           ? userObject.lastName.toUpperCase()           : false;
         this.role               = userObject.role               ? userObject.role                             : false;
         this.dni                = userObject.dni                ? userObject.dni                              : false;
         this.cuil               = userObject.cuil               ? userObject.cuil                             : false;
@@ -77,7 +77,11 @@ class Users {
         let c = await userSchema.find({id: this.id});
         let data = {};
         for (let x in this){
-            if((c.length > 0 && x == 'dni') || (c.length > 0 && x == 'cuil') || (c.length > 0 && x == 'id') || (c.length > 0 && x == 'password') || (c.length > 0 && x == 'role')) continue;
+            if((c.length > 0 && x == 'dni') || (c.length > 0 && x == 'cuil') || (c.length > 0 && x == 'id') || (c.length > 0 && x == 'password')) continue;
+            if(c.length > 0 && x == 'role') {
+                const { roleModifiedByNomina } = c[0];
+                if(roleModifiedByNomina === false) continue;
+            }
             if(this[x] !== false || x == 'userActive'){
                 data[x] = this[x];
             }
@@ -101,10 +105,16 @@ class Users {
             // Entonces modificamos el usuario
             try {
                 if(data.group){
-                    await Groups.assignUserGroup(c[0]._id, data.group);
+                    /**ATENCIOOOOOOOOOOOOOOOOOOOOOON!
+                     * 
+                     * Desactivamos esta funcion para que no elimine todos los grupos del usuario y los asigne como estan en la nomina, ya que se les resetean los mismos en cada actualizacion diaria
+                     * 
+                     */
+                    // await Groups.assignUserGroup(c[0]._id, data.group);
                 }
                 data.updatedAt = Date.now();
-                c = await userSchema.updateOne({_id: c._id},data);
+		
+                c = await userSchema.updateOne({_id: c[0]._id}, data);
                 if(c.ok > 0){
                     return true;
                 }else{
@@ -213,6 +223,7 @@ class Users {
         if(data.role){
             let rol = await Roles.get(data.role, true);
             if(!rol) return false;
+            data.roleModifiedByNomina = false;
         }
 
         if(data.sexo) {
