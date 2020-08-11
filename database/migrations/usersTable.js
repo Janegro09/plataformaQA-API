@@ -35,6 +35,10 @@ var Users = new Schema({
         type: String,
         required: true
     },
+    roleModifiedByNomina: {
+        type: Boolean,
+        default: true
+    },
     dni: {
         type: Number,
         default: 0
