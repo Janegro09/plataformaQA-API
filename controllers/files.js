@@ -213,6 +213,7 @@ class uploadFile {
         return c;
     }
 
+
     /**
      * Elimina el archivo que se subio y borra el registro de la base de datos
      */
