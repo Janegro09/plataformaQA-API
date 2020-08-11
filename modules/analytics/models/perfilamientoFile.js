@@ -165,17 +165,17 @@ const PerfilamientoFile = {
     async getFiles(req) {
         let returnData = [];
 
-        const rolesQueVenTodosLosArchivos = ["ADMINISTRATOR", "LIDER ON SITE"];
+        const rolesQueVenTodosLosArchivos = ["ADMINISTRATOR", "LIDER ON SITE", "COORDINADOR", "COORDINADOR OC"];
 
         if(!req) throw new Error('Error en permisos');
 
         let rol = req.authUser[0].role.role || false;
-
+        let company = req.authUser[0].razonSocial || false;
         if(!rol) throw new Error('Error en permisos_2');
 
         let archivosPermitidos = [];
         let where = { section: 'analytics' }
-        if(!rolesQueVenTodosLosArchivos.includes(rol)) {
+        if(!rolesQueVenTodosLosArchivos.includes(rol) && company === 'TELECOM') {
             let programasPermitidos = await programsModel.get(req);
             for(let programa of programasPermitidos) {
                 let files = await programsModel.getFileswithPrograms(programa.id);
