@@ -175,7 +175,7 @@ const PerfilamientoFile = {
 
         let archivosPermitidos = [];
         let where = { section: 'analytics' }
-        if(!rolesQueVenTodosLosArchivos.includes(rol) && company === 'TELECOM') {
+        if(!(rolesQueVenTodosLosArchivos.includes(rol) && company === 'TELECOM')) {
             let programasPermitidos = await programsModel.get(req);
             for(let programa of programasPermitidos) {
                 let files = await programsModel.getFileswithPrograms(programa.id);
