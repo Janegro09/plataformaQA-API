@@ -29,8 +29,8 @@ const userLoginSchema       = require('../database/migrations/usersLogin');
 class Users {
     constructor(userObject = {}){
         this.id                 = userObject.id                 ? userObject.id                               : false;        
-        this.name               = userObject.name               ? userObject.name                             : false;
-        this.lastName           = userObject.lastName           ? userObject.lastName                         : false;
+        this.name               = userObject.name               ? userObject.name.toUpperCase()               : false;
+        this.lastName           = userObject.lastName           ? userObject.lastName.toUpperCase()           : false;
         this.role               = userObject.role               ? userObject.role                             : false;
         this.dni                = userObject.dni                ? userObject.dni                              : false;
         this.cuil               = userObject.cuil               ? userObject.cuil                             : false;
@@ -78,7 +78,7 @@ class Users {
         let data = {};
         for (let x in this){
             if((c.length > 0 && x == 'dni') || (c.length > 0 && x == 'cuil') || (c.length > 0 && x == 'id') || (c.length > 0 && x == 'password')) continue;
-            if(c.length > 0) {
+            if(c.length > 0 && x == 'role') {
                 const { roleModifiedByNomina } = c[0];
                 if(roleModifiedByNomina === false) continue;
             }
