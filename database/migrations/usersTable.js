@@ -25,11 +25,11 @@ var Users = new Schema({
     name: {
         type: String,
         required: true,
-        lowercase: true
+        uppercase: true
     },
     lastName: {
         type: String,
-        lowercase: true
+        uppercase: true
     },
     role: {
         type: String,
