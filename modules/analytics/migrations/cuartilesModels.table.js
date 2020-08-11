@@ -1,5 +1,5 @@
 /**
- * @fileoverview Modulo Programs | Schema para modelos de partituras
+ * @fileoverview Modulo Programs | Schema para modelos de cuartiles
  * 
  * @version 1.0
  * 
@@ -21,8 +21,8 @@ var cuartilesModels = new Schema({
         required: true,
         unique: true
     },
-    instances: {
-        type: Array,
+    values: {
+        type: String,
         required: true
     },
     createdAt: {

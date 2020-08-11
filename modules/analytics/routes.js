@@ -64,6 +64,7 @@ router.delete('/partituresModels/:id',includes.permit.checkPermit, controllerPar
 router.post('/cuartilesModels', controllerCuartilesModels.new);
 router.get('/cuartilesModels', controllerCuartilesModels.get);
 router.put('/cuartilesModels/:id', controllerCuartilesModels.modify);
+router.delete('/cuartilesModels/:id', controllerCuartilesModels.delete);
 
 
 module.exports = router;
