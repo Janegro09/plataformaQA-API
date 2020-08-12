@@ -309,7 +309,7 @@ const Cuartiles = {
                         if(q.indexOf('Q') >= 0){
                             if(q != 'Q4' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax){
                                 temp = q;
-                            }else if(q == 'Q4' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
+                            }else if(q == 'Q4' && value.value > cuartil[q].VMin && value.value <= cuartil[q].VMax){
                                 temp = q;
                                 
                             }
