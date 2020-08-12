@@ -48,21 +48,29 @@ const cuartilesGroups = {
                 'assignAllUsers': {value: assignAllUsers ? 'SI' : 'NO', style: ""}
             }
 
+            for(let crt of actual.cuartilAssign) {
+                if(crt.Q <= 0 && crt.Q > 4) throw new Error('Los valores de Q van de 1 a 4');
+                if(!this.searchornewColumn(crt.cuartil)) continue;
+
+                crt.users = this.usersToCuartil(crt);
+
+            }
+
             // Asignamos los cuartiles a los grupos
             for(let c = 0; c < actual.cuartilAssign.length; c++){
                 let cuartilEspecifico = actual.cuartilAssign[c];
                 if(cuartilEspecifico.Q <= 0 && cuartilEspecifico.Q > 4) throw new Error('Los valores de Q van de 1 a 4');
                 if(!this.searchornewColumn(cuartilEspecifico.cuartil)) continue;
-                let users = this.usersToCuartil(cuartilEspecifico);
+                let users = cuartilEspecifico.users;
                 if(!tempData[cuartilEspecifico.cuartil]){
                     tempData[cuartilEspecifico.cuartil] =  {value: `Q${cuartilEspecifico.Q}`, style: ""};
                 }else if(tempData[cuartilEspecifico.cuartil].value.length){
                     tempData[cuartilEspecifico.cuartil].value += ` + Q${cuartilEspecifico.Q}`;
                 }
-
-                // Asignar usuarios al array de usuarios asignados y si el usuario ya existe no podra reasignarse
+                // Asignar usuarios al array de usuarios asignados y si el usuario esta en todos los cuartiles
                 for(let l = 0; l < users.length; l++){
-                    if(this.assignedUsers.indexOf(users[l]) === -1 && !assignAllUsers){
+                    let userMatch = this.matchInAllCuartils(actual.cuartilAssign, users[l]);
+                    if(this.assignedUsers.indexOf(users[l]) === -1 && !assignAllUsers && userMatch){
                         tempData['Cant de agentes'].value++;
                         this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, tempData['Cluster'].value);
                         this.assignedUsers.push(users[l]) // Asignamos los usuarios al array
@@ -71,6 +79,7 @@ const cuartilesGroups = {
                         this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, false);
                     }
                 }
+
             }
 
             // Sacamos el porcentaje del total
@@ -93,6 +102,22 @@ const cuartilesGroups = {
 
         // Creamos el archivo
         return this.updateXLSX();
+    },
+    /**
+     * Esta funcion busca que un usuario se encuentre en todos los cuartiles y devuelve true si el usuario esta en todos los cuartiles sino false.
+     */
+    matchInAllCuartils: (cuartiles, userId) => {
+        const matchCount = cuartiles.length;
+        let matchs = 0;
+        // Vemos si el dni se encuentra en todos los cuartiles
+        for(let c of cuartiles) {
+            if(c.users.includes(userId)) {
+                matchs++;
+            }
+        }
+        
+        if(matchCount === matchs) return true;
+        else return false;
     },
     async updateXLSX(){
         // Creamos un archivo de perfilamiento
