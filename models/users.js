@@ -29,8 +29,8 @@ const userLoginSchema       = require('../database/migrations/usersLogin');
 class Users {
     constructor(userObject = {}){
         this.id                 = userObject.id                 ? userObject.id                               : false;        
-        this.name               = userObject.name               ? userObject.name.toUpperCase()               : false;
-        this.lastName           = userObject.lastName           ? userObject.lastName.toUpperCase()           : false;
+        this.name               = userObject.name               ? userObject.name                             : false;
+        this.lastName           = userObject.lastName           ? userObject.lastName                         : false;
         this.role               = userObject.role               ? userObject.role                             : false;
         this.dni                = userObject.dni                ? userObject.dni                              : false;
         this.cuil               = userObject.cuil               ? userObject.cuil                             : false;
@@ -423,8 +423,8 @@ class Users {
                 userObject = {
                     idDB: respuesta[y]._id,
                     id: respuesta[y].id,
-                    name: respuesta[y].name,
-                    lastName: respuesta[y].lastName,
+                    name: respuesta[y].name.toUpperCase(),
+                    lastName: respuesta[y].lastName.toUpperCase(),
                     dni: respuesta[y].dni,
                     fechaIngresoLinea :                     fechaIngresoLinea,
                     cuil: cuil,
