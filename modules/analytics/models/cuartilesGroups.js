@@ -55,7 +55,7 @@ const cuartilesGroups = {
                 crt.users = this.usersToCuartil(crt);
 
             }
-
+            
             // Asignamos los cuartiles a los grupos
             for(let c = 0; c < actual.cuartilAssign.length; c++){
                 let cuartilEspecifico = actual.cuartilAssign[c];
@@ -81,7 +81,7 @@ const cuartilesGroups = {
                 }
 
             }
-
+            
             // Sacamos el porcentaje del total
             let porcentaje  = (100 * tempData['Cant de agentes'].value) / this.totalUsers.length;
             porcentaje      = parseFloat(porcentaje.toFixed(2))

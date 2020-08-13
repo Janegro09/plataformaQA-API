@@ -135,6 +135,7 @@ const controller = {
             if(!v) return includes.views.error.message(res, "Error al crear grupos");
             else return includes.views.success.create(res)
         }).catch(e => {
+            console.log(e)
             return includes.views.error.message(res, e.message);
 
         })

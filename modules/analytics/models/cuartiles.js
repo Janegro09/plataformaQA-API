@@ -43,9 +43,9 @@ const Cuartiles = {
             let cuartilActual = data[crt];
             if(!cuartilActual.QName || !cuartilActual.Qorder || !cuartilActual.Q1 || !cuartilActual.Q4 || cuartilActual.Q1.VMin === undefined || cuartilActual.Q4.VMax === undefined) throw new Error('Error en los parametros enviados del cuartil')
             let bloques = (cuartilActual.Q4.VMax - cuartilActual.Q1.VMin) / 4; 
-	    if(cuartilActual.Q1.VMax && cuartilActual.Q3.VMax) {
-	    	bloques = (cuartilActual.Q3.VMax - cuartilActual.Q1.VMax ) / 2;
-	    }
+	        if(cuartilActual.Q1.VMax && cuartilActual.Q3.VMax) {
+	        	bloques = (cuartilActual.Q3.VMax - cuartilActual.Q1.VMax ) / 2;
+	        }
             let tempData = {
                 order: cuartilActual.Qorder,
                 name: cuartilActual.QName,
@@ -76,7 +76,6 @@ const Cuartiles = {
             tempData.Q3.VMin = tempData.Q2.VMax;
             tempData.Q3.VMax = cuartilActual.Q2 && cuartilActual.Q2.VMax ? cuartilActual.Q3.VMax : tempData.Q3.VMin + bloques;
             tempData.Q4.VMin = tempData.Q3.VMax;
-
 
             this.cuartiles.push(tempData)
         }  
@@ -316,10 +315,10 @@ const Cuartiles = {
                             }else if(q == 'Q4' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
                                 temp = q;
                             } else if(q == 'Q1' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
-				temp = q;		
-			    }else if(q == 'Q3' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax) {
-				temp = q;
-			    }else{ continue; } 
+                                temp = q;		
+                            }else if(q == 'Q3' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax) {
+                                temp = q;
+                            }else{ continue; } 
                             if(temp){
                                 if(cuartil.order == 'ASC'){
                                     switch(q){

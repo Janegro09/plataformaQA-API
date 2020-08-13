@@ -229,21 +229,89 @@ const PerfilamientoFile = {
             let tempData = {
                 columnName: headers[x],
                 VMax: 0,
-                VMin: (1000000 * 1000000)
-            }
-            for(let d = 0; d < rows.length; d++){
-                let value = rows[d][tempData.columnName];
-                value = parseFloat(value);
-                if(value > tempData.VMax){
-                    tempData.VMax = value;
-                }
-                if(value < tempData.VMin){
-                    tempData.VMin = value;
+                VMin: (1000000 * 1000000),
+                DefaultValues: {
+                    Q1: {
+                        VMin: 0,
+                        VMax: 0
+                    },
+                    Q2: {
+                        VMax: 0
+                    },
+                    Q3: {
+                        VMax: 0
+                    },
+                    Q4: {
+                        VMax: 0
+                    }
                 }
             }
 
+            let usersCount = rows.length;
+            let UsersbyQ = usersCount / 4;
+            let usersQ1 = parseInt(UsersbyQ);
+            let usersQ2 = parseInt(UsersbyQ);
+            let usersQ3 = parseInt(UsersbyQ);
+            let usersQ4 = usersCount - (parseInt(UsersbyQ) * 3);
+
+            let AllValues = []
+            /**
+             * Guardamos los valores en un array
+             */
+            for(let d = 0; d < usersCount; d++){
+                let value = rows[d][tempData.columnName];
+                value = parseFloat(value);
+                AllValues.push(value);
+                if(value > tempData.VMax){
+                    tempData.VMax = value;
+                    tempData.DefaultValues.Q4.VMax = value;
+                }
+                if(value < tempData.VMin){
+                    tempData.VMin = value;
+                    tempData.DefaultValues.Q1.VMin = value;
+                }
+            }
+
+            // Ordenamos los valores en desc
+            AllValues = AllValues.sort((a, b) => a - b);
+            let value;
+            for(let q1 = 0; q1 < usersQ1; q1++) {
+                value = AllValues[q1]
+                if(value >= tempData.DefaultValues.Q1.VMax) {
+                    tempData.DefaultValues.Q1.VMax = value;
+                }
+            }
+            for(let q2 = usersQ1; q2 < (usersQ2 * 2); q2++) {
+                value = AllValues[q2]
+                if(value >= tempData.DefaultValues.Q2.VMax) {
+                    tempData.DefaultValues.Q2.VMax = value;
+                }
+            }
+            for(let q3 = usersQ2; q3 < (usersQ3 * 3); q3++) {
+                value = AllValues[q3]
+                if(value >= tempData.DefaultValues.Q3.VMax) {
+                    tempData.DefaultValues.Q3.VMax = value;
+                }
+            }
+            // for(let q4 = usersQ3; q4 < usersQ4; q4++) {
+            //     value = AllValues[q4]
+            //     if(value >= tempData.DefaultValues.Q4.VMax) {
+            //         tempData.DefaultValues.Q4.VMax = value;
+            //     }
+            // }
+            // for(let a = 0; a < usersCount; a++) {
+            //     let value = AllValues[a];
+            // }
+
             tempData.VMax = parseFloat(tempData.VMax.toFixed(4))
             tempData.VMin = parseFloat(tempData.VMin.toFixed(4))
+
+            if(tempData.VMin >= tempData.VMax) {
+                tempData.VMin = 0;
+            }
+
+            tempData.DefaultValues.Q4.VMax = tempData.VMax;
+            tempData.DefaultValues.Q1.VMin = tempData.VMin;
 
             if(tempData.VMin >= tempData.VMax) continue;
 

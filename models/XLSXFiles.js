@@ -203,7 +203,9 @@ class Sheet extends XLSXFile {
             let c
             if(c = this.getColData(x)){
                 if(data[x].value === undefined){
-                    data[x].value = '0';
+                    let value = data[x];
+                    data[x] = {};
+                    data[x].value = value ? value : '0';
                 }
                 if(typeof data[x].value === 'string' || typeof data[x].value === 'number'){
                     dataOrdenada[c.id] = data[x]
