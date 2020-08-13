@@ -226,7 +226,7 @@ const PerfilamientoFile = {
         for(let x = 0; x < headers.length; x++){
             if(columnsHide.indexOf(headers[x]) >= 0) continue;
             if(headers[x].indexOf('#Q') >= 0) continue;
-            let tempData = {
+	    let tempData = {
                 columnName: headers[x],
                 VMax: 0,
                 VMin: (1000000 * 1000000),
