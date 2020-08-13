@@ -203,8 +203,11 @@ class Sheet extends XLSXFile {
             let c
             if(c = this.getColData(x)){
                 if(data[x].value === undefined){
-                    let value = data[x];
-                    data[x] = {};
+                    let value = false;
+                    if(data[x] && typeof data[x] !== 'object') {
+                        value = data[x]
+                    }
+                    data[x] = { style: data[x].style || '' };
                     data[x].value = value ? value : '0';
                 }
                 if(typeof data[x].value === 'string' || typeof data[x].value === 'number'){
@@ -215,7 +218,7 @@ class Sheet extends XLSXFile {
                         style: data[x].style
                     }
                 } else{
-                    throw new Error('Datos no aceptados. Columna: ' + x + ". Tipo de dato erroneo: " + data[x] );
+                    throw new Error('Datos no aceptados. Columna: ' + x + ". Tipo de dato erroneo: " + data[x] + '|' + data[x].value + '|' + typeof data[x].value );
                 }
             }
         }
