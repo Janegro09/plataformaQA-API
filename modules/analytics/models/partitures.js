@@ -330,6 +330,7 @@ class Partitures {
             if (wherePartiture) {
                 let partitureFileusers = await perfilamientoFile.getUserInfo(FileId);
                 let u = await infobyPartitureSchema.find().where(wherePartiture);
+
                 for (let x = 0; x < u.length; x++) {
                     let temp = await includes.users.schema.find({ _id: u[x].userId }).where({ userDelete: false });
                     if (temp.length === 0) continue;
@@ -482,6 +483,19 @@ class Partitures {
                 }
 
                 if (!viewAllPartitures && !AccesoaArchivo) continue;
+                let grupoAssigned = "";
+
+                for(let ga of partiture.perfilamientos) {
+                    grupoAssigned += `${ga.name} `;
+                }
+
+                // Obtenemos las instancias para traer la fecha de vencimiento
+                let endDate = await instancesSchema.find({ partitureId: partiture._id });
+                if(endDate.length > 0){
+                    endDate = endDate.sort((a, b) => b.expirationDate - a.expirationDate);
+                    endDate = endDate[0].expirationDate;
+                }
+
                 let tempData = {
                     id: partiture._id,
                     name: partiture.name,
@@ -491,6 +505,8 @@ class Partitures {
                     dates: {
                         createdAt: partiture.createdAt
                     },
+                    grupoAssigned,
+                    endDate,
                     users: users,
                     instances: instances
                 }
