@@ -34,7 +34,7 @@ const controller = {
         // Obtenemos todas o algun modelo de cuartiles
         perfilamientosModel.get().then(v => {
             if(!v) return views.error.message(res, "Error al mostrar las platanillas");
-            else return views.customResponse(res, true, 200, "Modelos de cuartiles", v);
+            else return views.customResponse(res, true, 200, "Modelos de perfilamientos", v);
         }).catch(e => {
             console.log('Err: ', e);
             return views.error.message(res, e.message);

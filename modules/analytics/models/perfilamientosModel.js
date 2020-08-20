@@ -12,7 +12,7 @@
  */
 
 const includes = require('../../includes');
-const cuartilesModelsTable = require('../migrations/perfilamientosModels.table');
+const perfilamientoModelstable = require('../migrations/perfilamientosModels.table');
 // Schemas
 
 class cuartilesModels {
@@ -26,10 +26,10 @@ class cuartilesModels {
         if(!name || !values) throw new Error('Error en los parametros enviados')
 
         // Buscamos si existe otro registro con ese nombre
-        let c = await cuartilesModelsTable.find({ name });
+        let c = await perfilamientoModelstable.find({ name });
         if(c.length > 0) throw new Error('El nombre ya ha sido utilizado');
 
-        c = new cuartilesModelsTable({
+        c = new perfilamientoModelstable({
             name, values
         })
 
@@ -39,7 +39,7 @@ class cuartilesModels {
     }
 
     static async get(){
-        return await cuartilesModelsTable.find();
+        return await perfilamientoModelstable.find();
 
 
     }
@@ -49,14 +49,14 @@ class cuartilesModels {
         if(!id || !values || !name) throw new Error('Error en los parametros enviados');
 
         // Buscamos si el nombre modificado existe en la base de datos
-        let c = await cuartilesModelsTable.find({name});
+        let c = await perfilamientoModelstable.find({name});
         if(c.length > 0) {
             // Vemos si el que existe es el mismo id del que modificamos entonces significa que no modificamos el nombre
 
             if(c[0]._id != id) throw new Error('El nombre ingresado ya fue utilizado');
         }
 
-        c = await cuartilesModelsTable.updateOne({ _id: id }, { name, values });
+        c = await perfilamientoModelstable.updateOne({ _id: id }, { name, values });
         if(c.ok) return true;
         else return false;
         
@@ -65,7 +65,7 @@ class cuartilesModels {
     static async delete(id) {
         if(!id) throw new Error('Error en los parametros enviados');
 
-        let c = await cuartilesModelsTable.deleteOne({ _id: id });
+        let c = await perfilamientoModelstable.deleteOne({ _id: id });
         if(c.ok) return true;
         else return false;
     }
