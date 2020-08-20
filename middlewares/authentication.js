@@ -43,7 +43,7 @@ module.exports = class Auth {
         }
         let token = jwt.sign(tokenData,TOKEN_PASS,{
             algorithm: 'RS256',
-            expiresIn: 60 * 60 // Expires in 1 hour
+            expiresIn: ((60 * 60) * 12) // Expires in 4 hour
         })
         let consulta = await Tokens.findOne({userId: this.user.id});
         if(!consulta){
