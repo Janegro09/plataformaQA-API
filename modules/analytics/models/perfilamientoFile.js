@@ -307,8 +307,11 @@ const PerfilamientoFile = {
 
 
 
-            tempData.VMax = parseFloat(tempData.VMax.toFixed(4))
-            tempData.VMin = parseFloat(tempData.VMin.toFixed(4))
+            /**
+             * Le sacamos el redondeo para que no de error
+             */
+            // tempData.VMax = parseFloat(tempData.VMax.toFixed(4))
+            // tempData.VMin = parseFloat(tempData.VMin.toFixed(4))
 
             if(tempData.VMin >= tempData.VMax) {
                 tempData.VMin = 0;
