@@ -272,36 +272,40 @@ const PerfilamientoFile = {
                 }
             }
 
-            // Ordenamos los valores en desc
-            AllValues = AllValues.sort((a, b) => a - b);
-            let value;
-            for(let q1 = 0; q1 < usersQ1; q1++) {
-                value = AllValues[q1]
-                if(value >= tempData.DefaultValues.Q1.VMax) {
-                    tempData.DefaultValues.Q1.VMax = value;
+            if(tempData.VMax !== 1 && tempData.VMin !== 0) {
+                // solo divide los valores por usuarios en caso que los valores maximos y minimos no sean 0 y 1, 
+                // Si es 1 entendemos que estamos hablando de campos booleanos como sustentable o grupo_anterior
+
+                // Ordenamos los valores en desc
+                AllValues = AllValues.sort((a, b) => a - b);
+                let value;
+                for(let q1 = 0; q1 < usersQ1; q1++) {
+                    value = AllValues[q1]
+                    if(value >= tempData.DefaultValues.Q1.VMax) {
+                        tempData.DefaultValues.Q1.VMax = value;
+                    }
                 }
-            }
-            for(let q2 = usersQ1; q2 < (usersQ2 * 2); q2++) {
-                value = AllValues[q2]
-                if(value >= tempData.DefaultValues.Q2.VMax) {
-                    tempData.DefaultValues.Q2.VMax = value;
+                for(let q2 = usersQ1; q2 < (usersQ2 * 2); q2++) {
+                    value = AllValues[q2]
+                    if(value >= tempData.DefaultValues.Q2.VMax) {
+                        tempData.DefaultValues.Q2.VMax = value;
+                    }
                 }
-            }
-            for(let q3 = usersQ2; q3 < (usersQ3 * 3); q3++) {
-                value = AllValues[q3]
-                if(value >= tempData.DefaultValues.Q3.VMax) {
-                    tempData.DefaultValues.Q3.VMax = value;
+                for(let q3 = usersQ2; q3 < (usersQ3 * 3); q3++) {
+                    value = AllValues[q3]
+                    if(value >= tempData.DefaultValues.Q3.VMax) {
+                        tempData.DefaultValues.Q3.VMax = value;
+                    }
                 }
+            } else {
+                // Si no dividimos por usuarios entonces, solo lo dividimos en bloques iguales de 0,25
+                let bloques = tempData.VMax / 4;
+                tempData.DefaultValues.Q1.VMax = bloques * 1;
+                tempData.DefaultValues.Q2.VMax = bloques * 2;
+                tempData.DefaultValues.Q3.VMax = bloques * 3;
             }
-            // for(let q4 = usersQ3; q4 < usersQ4; q4++) {
-            //     value = AllValues[q4]
-            //     if(value >= tempData.DefaultValues.Q4.VMax) {
-            //         tempData.DefaultValues.Q4.VMax = value;
-            //     }
-            // }
-            // for(let a = 0; a < usersCount; a++) {
-            //     let value = AllValues[a];
-            // }
+
+
 
             tempData.VMax = parseFloat(tempData.VMax.toFixed(4))
             tempData.VMin = parseFloat(tempData.VMin.toFixed(4))
