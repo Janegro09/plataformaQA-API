@@ -340,6 +340,7 @@ const Cuartiles = {
                                     dataReturn = temp;
                                 }
                                 cuartil[q].cant++;
+                                return dataReturn;
                                 temp = "";
                             }
                             
