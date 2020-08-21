@@ -340,18 +340,16 @@ const Cuartiles = {
                                     dataReturn = temp;
                                 }
                                 cuartil[q].cant++;
-                                return dataReturn;
                                 temp = "";
+                                return dataReturn;
                             }
-                            
-
-
+                        
                         }
                     }
                 }
             }
         }
-        return dataReturn;
+        // return dataReturn;
     },
     async getCuartiles(fileId, getUsers = false){
         this.init()
