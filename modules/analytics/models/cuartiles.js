@@ -179,7 +179,7 @@ const Cuartiles = {
                     // Chequeamos si la columna se llama igual que algun cuartil
                     for(let c = 0; c < this.cuartiles.length; c++){
                         let cuartil = this.cuartiles[c]; 
-                        if(header.indexOf(cuartil.name) >= 0){
+                        if(header == cuartil.name){
                             // Creamos una columna en la proxima iteracion
                             crearCuartil = cuartil.name;
                         }
@@ -188,6 +188,7 @@ const Cuartiles = {
                     tempData.data.headers.push(header);
                 }
             }
+
 
             // rows
             for(i = 0; i < this.oldData[0].data.rows.length; i++){
