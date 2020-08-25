@@ -1,5 +1,5 @@
 /**
- * @fileoverview Modulo Forms | Schema para los campos personalizados
+ * @fileoverview Modulo Forms | Schema para los formularios
  * 
  * @version 1.0
  * 
@@ -15,37 +15,25 @@
 const mongoose = require('mongoose');
 const Schema   = mongoose.Schema;
 
-var customfields = new Schema({
+var forms = new Schema({
     name: {
-        type: String,
-        required: true,
-        unique: true
-    },
-    type: {
         type: String,
         required: true
     },
-    values: Array,
-    required: {
-        type: Boolean,
-        default: false
-    },
-    format: String,
-    description: String,
-    section: String,
-    subsection: String,
+    parts: [{name: String, customFields: Array}],
     createdAt: {
         type: Date,
         default: Date.now
     },
-    calibrable: {
-        type: Boolean,
-        default: false
+    assignedProgram: {
+        type: String,
+        required: true
     },
     deleted: {
         type: Boolean,
-        default: false
-    }
+        default: true
+    },
+    description: String
 });
 
-module.exports = mongoose.model('customfields',customfields);
+module.exports = mongoose.model('forms',forms);
