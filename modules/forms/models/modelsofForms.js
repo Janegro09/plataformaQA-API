@@ -125,4 +125,58 @@ module.exports = class ModelsForms {
         return returnData;
 
     }
+
+    static async modify(id, data) {
+        if(!id || !data) throw new Error('Error en los parametros enviados');
+        let dataToModify = {};
+
+        for(let d in data) {
+            if(d == '_id') continue;
+            if(data[d]) {
+                dataToModify[d] = data[d]
+            }
+        }
+
+        // Chequeamos si existe el modelo
+        let c = await modelsofFromsTable.find({ _id: id });
+        if(c.length === 0) throw new Error('Modelo de formulario inexistente');
+
+        if(dataToModify.parts) {
+            let partsToSave = [];
+            for(let { name, customFields } of dataToModify.parts) {
+                if(!name) throw new Error('Debe definir los nombres en todas las partes del formulario');
+    
+                let part = {
+                    name,
+                    customFields: []
+                }
+    
+                for(let _id of customFields) {
+                    let request = await customfieldsTable.find({ _id });
+                    if(!request) continue;
+    
+                    part.customFields.push(_id);
+                }
+                partsToSave.push(part)
+            }
+            dataToModify.parts = partsToSave;
+        }
+
+        c = await modelsofFromsTable.updateOne({ _id: id }, dataToModify);
+
+        if(c.ok) return true;
+        else return false;
+    }
+
+    static async delete(id) {
+        if(!id) throw new Error('Error al eliminar el modelo');
+
+        // Chequeamos si existe el modelo
+        let c = await modelsofFromsTable.find({ _id: id });
+        if(c.length === 0) throw new Error('Modelo de formulario inexistente');
+
+        c = await modelsofFromsTable.deleteOne({ _id: id });
+        if(c.ok) return true;
+        else return false;
+    }
 }
