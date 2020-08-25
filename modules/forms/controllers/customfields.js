@@ -27,7 +27,7 @@ module.exports = {
     },
     new: async (req, res) => {
         if(!req.body) return includes.views.error.message(res, 'Error en los parametros enviados')
-        const { name, type, values, required, format, description, section, subsection } = req.body;
+        const { name, type, values, required, format, description, section, subsection, calibrable } = req.body;
 
         // Verificamos si se enviaron los campos requeridos
         const requiredValues = ['name', 'type', 'values', 'required', 'section'];
@@ -46,7 +46,8 @@ module.exports = {
             format,
             description,
             section,
-            subsection
+            subsection,
+            calibrable
         })
         campo.save().then(v => {
             if(!v) return includes.views.error.message(res, 'Error al guardar el campo personalizado')

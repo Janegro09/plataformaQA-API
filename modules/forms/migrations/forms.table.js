@@ -27,7 +27,8 @@ var forms = new Schema({
     },
     assignedProgram: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     deleted: {
         type: Boolean,

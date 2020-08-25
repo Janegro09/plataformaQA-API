@@ -16,10 +16,11 @@ const includes = require('../../includes');
 // Schemas
 const helper = require('../helper');
 const customFieldsSchema = require('../migrations/customfields.table');
+const customfields = require('../controllers/customfields');
 
 module.exports = class customFields {
     constructor(dataobject) {
-        const { id, name, type, values, required, format, description, section, subsection } = dataobject;
+        const { id, name, type, values, required, format, description, section, subsection, calibrable } = dataobject;
         this.id             = id            || false;
         this.name           = name          || false;
         this.type           = type          || false;
@@ -29,6 +30,7 @@ module.exports = class customFields {
         this.description    = description   || false;
         this.section        = section       || false;
         this.subsection     = subsection    || false;
+        this.calibrable     = calibrable    || false;
     }
 
     validarValores() {
@@ -110,11 +112,12 @@ module.exports = class customFields {
         if(query.length === 0) throw new Error('No existen registros en nuestra base de datos');
 
         for(let cf of query){
+            let values = await customFields.getValues(cf.values);
             let tempData = {
                 id: cf._id,
                 name: cf.name,
                 type: cf.type,
-                values: cf.values,
+                values,
                 required: cf.required,
                 format: cf.format,
                 description: cf.description,
@@ -123,6 +126,24 @@ module.exports = class customFields {
                 createdAt: cf.createdAt
             }
             returnData.push(tempData);
+        }
+
+        return returnData;
+    }
+
+    static async getValues(values) {
+        let returnData = [];
+        for(let v of values) {
+            let { value, customFieldsSync } = v;
+            if(customFieldsSync) {
+                customFieldsSync = await customFields.get(customFieldsSync)
+            }
+            let td = {
+                value,
+                customFieldsSync
+            }
+
+            returnData.push(td);
         }
 
         return returnData;
