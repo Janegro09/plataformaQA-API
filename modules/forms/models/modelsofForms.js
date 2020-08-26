@@ -24,8 +24,8 @@ module.exports = class ModelsForms {
         const { name, section, subsection, description, parts } = data;
         this.name           = name          || false;
         this.section        = section       || false;
-        this.subsection     = subsection    || false;
-        this.description    = description   || false;
+        this.subsection     = subsection    || "";
+        this.description    = description   || "";
         this.parts          = parts         || [];
     }
 

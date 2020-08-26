@@ -25,7 +25,7 @@ var forms = new Schema({
         type: Date,
         default: Date.now
     },
-    assignedProgram: {
+    programId: {
         type: String,
         required: true,
         unique: true

@@ -15,7 +15,16 @@ const Forms = require('../models/forms');
 
 module.exports = {
     new: async (req, res) => {
+        if(!req.body) return includes.views.error.message(res, "Error en los parametros enviados");
 
+        let formModel = new Forms(req.body);
+
+        formModel.save().then(v => {
+            if(!v) return includes.views.error.message(res, "Error al crear el formulario");
+            else return includes.views.success.create(res);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     get: async (req, res) => {
 
