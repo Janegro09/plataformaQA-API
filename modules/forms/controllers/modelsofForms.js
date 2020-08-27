@@ -55,8 +55,8 @@ module.exports = {
         if(!id) return includes.views.error.message(res, "ID no especificado");
 
         ModelsForms.delete(id).then(v => {
-            if(!v) return includes.views.error.message(res, "Error al eliminar el modelo de formulario");
-            else return includes.views.success.delete(res)
+            if(!v) return includes.views.error.message(res, "Error al modificar el modelo de formulario");
+            else return includes.views.success.update(res)
         }).catch(e => {
             return includes.views.error.message(res, e.message);
         })

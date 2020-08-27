@@ -169,7 +169,7 @@ class Program {
         return returnData
     }
 
-    static async get(id = 0) {
+    static async get(id = 0, allPermit = false) {
         const req = id;
         let isSpecific = true;
         if(id != 0 && (typeof id != 'string' && typeof id == 'object')){
@@ -185,10 +185,9 @@ class Program {
             where._id = id;
         }
 
-
         let gruposDisponibles   = [];
         let programasPermitidos = [];
-        if(req && typeof req == 'object'){
+        if(req && typeof req == 'object' && !allPermit){
             UsuarioLogeado = req.authUser[0].idDB;
             usuariosPermitidos = await includes.usersGroupsModel.getGruposAutorizados(UsuarioLogeado);
             if(usuariosPermitidos.length > 0 && usuariosPermitidos[0] !== 'all') {
@@ -218,6 +217,10 @@ class Program {
             }else if(usuariosPermitidos[0] !== 'all' || usuariosPermitidos.length === 0 || !usuariosPermitidos){
                 throw new Error('No existen registros para mostrar');
             }
+        }
+
+        if(allPermit) {
+            usuariosPermitidos = ["all"];
         }
         let response;
         if(usuariosPermitidos[0] === 'all'){

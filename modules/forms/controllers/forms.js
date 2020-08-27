@@ -27,12 +27,35 @@ module.exports = {
         })
     },
     get: async (req, res) => {
+        const { id } = req.params;
 
+        Forms.get(id, req).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al mostrar los formularios");
+            else return includes.views.customResponse(res, true, 200, "", v);
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     modify: async (req, res) => {
+        const { id } = req.params;
+        if(!id) return includes.views.error.message(res, "ID no especificado");
 
+        Forms.modify(id, req.body).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al modificar el modelo de formulario");
+            else return includes.views.success.update(res)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     },
     delete: async (req, res) => {
+        const { id } = req.params;
+        if(!id) return includes.views.error.message(res, "ID no especificado");
 
+        Forms.delete(id).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al modificar el modelo de formulario");
+            else return includes.views.success.update(res)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
     }
 }

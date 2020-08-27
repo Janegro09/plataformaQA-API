@@ -32,7 +32,7 @@ var forms = new Schema({
     },
     deleted: {
         type: Boolean,
-        default: true
+        default: false
     },
     description: String
 });
