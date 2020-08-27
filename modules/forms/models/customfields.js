@@ -112,7 +112,12 @@ module.exports = class customFields {
         if(query.length === 0) throw new Error('No existen registros en nuestra base de datos');
 
         for(let cf of query){
-            let values = await customFields.getValues(cf.values);
+            let values = cf.values;
+            if(typeof cf.values != 'string'){
+                values = await customFields.getValues(cf.values);
+
+            }
+
             let tempData = {
                 id: cf._id,
                 name: cf.name,
