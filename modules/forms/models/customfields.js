@@ -139,6 +139,10 @@ module.exports = class customFields {
 
             value = value || v;
 
+            /**
+             * Si v es un string entonces lo ponemos dentro del objeto value ya que cuando desarrollamos perfilamientos el array solo contenia string 
+             * y ahora como hubo un cambio de estructura necesitamos convertirlos sin eliminarlos de la base
+             */
             if(value) {
                 if(customFieldsSync) {
                     customFieldsSync = await customFields.get(customFieldsSync)
