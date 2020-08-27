@@ -27,16 +27,16 @@ router.put(`${customFields}/:id`, includes.permit.checkPermit, controllerCustomF
 router.delete(`${customFields}/:id`, includes.permit.checkPermit, controllerCustomFields.delete);
 
 const models = "/models";
-router.get(`${models}/:id?`, controllerModelsForms.get);
-router.post(`${models}/`, controllerModelsForms.new);
-router.put(`${models}/:id`, controllerModelsForms.modify);
-router.delete(`${models}/:id`, controllerModelsForms.delete);
+router.get(`${models}/:id?`, includes.permit.checkPermit, controllerModelsForms.get);
+router.post(`${models}/`,includes.permit.checkPermit, controllerModelsForms.new);
+router.put(`${models}/:id`, includes.permit.checkPermit, controllerModelsForms.modify);
+router.delete(`${models}/:id`, includes.permit.checkPermit, controllerModelsForms.delete);
 
 // Forms routes
 router.get('/:id?', controllerForms.get);
-router.post('/', controllerForms.new);
-router.put('/:id', controllerForms.modify);
-router.delete('/:id', controllerForms.delete);
+router.post('/', includes.permit.checkPermit, controllerForms.new);
+router.put('/:id', includes.permit.checkPermit, controllerForms.modify);
+router.delete('/:id', includes.permit.checkPermit, controllerForms.delete);
 // Models of Forms routes
 
 module.exports = router;
