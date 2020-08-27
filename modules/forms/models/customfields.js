@@ -136,6 +136,9 @@ module.exports = class customFields {
         let returnData = [];
         for(let v of values) {
             let { value, customFieldsSync } = v;
+
+            value = value || v;
+
             if(value) {
                 if(customFieldsSync) {
                     customFieldsSync = await customFields.get(customFieldsSync)
@@ -146,8 +149,6 @@ module.exports = class customFields {
                 }
     
                 returnData.push(td);
-            } else {
-                returnData.push(v);
             }
         }
 
