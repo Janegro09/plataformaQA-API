@@ -33,7 +33,7 @@ module.exports = class customFields {
         this.calibrable     = calibrable    || false;
     }
 
-    validarValores() {
+    async validarValores() {
         // Validamos el nombre
         if(this.name){
             if(typeof this.name !== 'string') throw new Error('El tipo de dato en name debe ser string');
@@ -49,6 +49,16 @@ module.exports = class customFields {
                 if(!this.values || typeof this.values !== 'object') throw new Error('El campo values es requerido para el tipo de campo ingresado y debe ser un array')
             }else {
                 this.values = false;
+            }
+        }
+
+        if(this.values) {
+            for(let { customFieldsSync } of this.values) {
+                if (customFieldsSync) {
+                    if(customFieldsSync === this.id) throw new Error('No puede agregar como campo condicional el mismo campo personalizado que esta modificando')
+                    let c = await customFieldsSchema.find({ _id: customFieldsSync })
+                    if(c.length === 0) throw new Error('Esta intentando agregar un custom field inexistente')
+                }
             }
         }
 
@@ -78,7 +88,7 @@ module.exports = class customFields {
     }
 
     async save() {
-        const data = this.validarValores();
+        const data = await this.validarValores();
 
         let d = new customFieldsSchema(data)
         try {
@@ -91,7 +101,7 @@ module.exports = class customFields {
     }
 
     async update() {
-        let data = this.validarValores();
+        let data = await this.validarValores();
 
         const { id } = this;
 
