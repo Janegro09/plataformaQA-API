@@ -16,7 +16,17 @@ const includes      = require('../includes');
 let router          = includes.express.Router();
 
 // Controladores
+const monController = require('./controllers/monitorings');
 
+const monRoute = '/monitoring'
+router.post(`${monRoute}/`, monController.new);
+
+router.get(`${monRoute}/exports`, monController.export);
+router.get(`${monRoute}/:id?`, monController.get);
+
+router.put(`${monRoute}/:id`, monController.modify);
+
+router.delete(`${monRoute}/:id`, monController.delete);
 // router.get('/')
 
 module.exports = router;

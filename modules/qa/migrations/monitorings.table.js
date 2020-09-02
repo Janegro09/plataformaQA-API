@@ -27,12 +27,29 @@ var monitorings = new Schema({
         required: true
     },
     customSections: String,
-    customResponses: String,
+    responses: [
+        {
+            section: String,
+            questions: [
+                {
+                    question: String,
+                    section: String,
+                    response: String
+                }
+            ]
+
+        }
+    ],
     createdBy: {
         type: String,
         required: true
     },
-    invalidated: String,
+    monitoringsFields: [],
+    calibrationsFields: [],
+    invalidated: {
+        type: mongoose.SchemaTypes.Mixed,
+        default: false
+    },
     deleted: {
         type: Boolean,
         default: false
