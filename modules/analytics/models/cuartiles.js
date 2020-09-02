@@ -447,7 +447,9 @@ const Cuartiles = {
             if(users[c][cuartilName]){
                 let value = users[c][cuartilName]
 
-                returnData[value].push(dni);      
+                if(returnData[value]){
+                    returnData[value].push(dni);      
+                }
             }
         }
         return returnData;
