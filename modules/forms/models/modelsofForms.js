@@ -49,11 +49,19 @@ module.exports = class ModelsForms {
                 customFields: []
             }
 
-            for(let _id of customFields) {
-                let request = await customfieldsTable.find({ _id });
+            for(let cf of customFields) {
+
+                if(!cf.question) throw new Error('Error en una pregunta, esta vacia o no envio parametros');
+
+                let question = cf.question;
+
+                let request = await customfieldsTable.find({ _id: cf.customField });
                 if(!request) continue;
 
-                part.customFields.push(_id);
+                part.customFields.push({
+                    question,
+                    customField: cf.customField
+                });
             }
             partsToSave.push(part)
         }
@@ -151,17 +159,24 @@ module.exports = class ModelsForms {
                     customFields: []
                 }
     
-                for(let _id of customFields) {
-                    let request = await customfieldsTable.find({ _id });
+                for(let cf of customFields) {
+
+                    if(!cf.question) throw new Error('Error en una pregunta, esta vacia o no envio parametros');
+    
+                    let question = cf.question;
+    
+                    let request = await customfieldsTable.find({ _id: cf.customField });
                     if(!request) continue;
     
-                    part.customFields.push(_id);
+                    part.customFields.push({
+                        question,
+                        customField: cf.customField
+                    });
                 }
                 partsToSave.push(part)
             }
             dataToModify.parts = partsToSave;
         }
-
         c = await modelsofFromsTable.updateOne({ _id: id }, dataToModify);
 
         if(c.ok) return true;

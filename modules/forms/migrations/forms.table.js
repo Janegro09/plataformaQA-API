@@ -20,7 +20,12 @@ var forms = new Schema({
         type: String,
         required: true
     },
-    parts: [{name: String, customFields: Array}],
+    parts: [
+        {
+            name: String, 
+            customFields: [{customField: String, question: String}]
+        }
+    ],
     createdAt: {
         type: Date,
         default: Date.now
