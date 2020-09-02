@@ -76,11 +76,16 @@ function register (routerObject) {
 
                     // Almacenamos todas las rutas existentes
                     routesExists.push(route);
+
+                    // Comprobamos si lo ultimo es una / y la eliminamos
+                    if(route[route.length - 1] == '/'){
+                        route = route.substr(0,route.length - 1);
+                    }
                     
                     dataTemp = new PermissionSchema({
-                        name: name,
-                        route: route,
-                        group: group
+                        name,
+                        route,
+                        group
                     });
                     // Agrega la ruta si no existe
                     dataTemp.save().then(ok => {ok}).catch(e => {e});
