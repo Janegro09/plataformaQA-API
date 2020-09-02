@@ -53,11 +53,14 @@ module.exports = class customFields {
         }
 
         if(this.values) {
-            for(let { customFieldsSync } of this.values) {
+            for(let { customFieldsSync, parametrizableValue } of this.values) {
                 if (customFieldsSync) {
                     if(customFieldsSync === this.id) throw new Error('No puede agregar como campo condicional el mismo campo personalizado que esta modificando')
                     let c = await customFieldsSchema.find({ _id: customFieldsSync })
                     if(c.length === 0) throw new Error('Esta intentando agregar un custom field inexistente')
+                }
+                if(parametrizableValue !== 0 && parametrizableValue !== 1) {
+                    parametrizableValue = false;
                 }
             }
         }
@@ -123,7 +126,6 @@ module.exports = class customFields {
 
         for(let cf of query){
             let values = await customFields.getValues(cf.values);
-
             let tempData = {
                 id: cf._id,
                 name: cf.name,
@@ -134,7 +136,8 @@ module.exports = class customFields {
                 description: cf.description,
                 section: cf.section,
                 subsection: cf.subsection,
-                createdAt: cf.createdAt
+                createdAt: cf.createdAt,
+                calibrable: cf.calibrable
             }
             returnData.push(tempData);
         }
@@ -145,7 +148,7 @@ module.exports = class customFields {
     static async getValues(values) {
         let returnData = [];
         for(let v of values) {
-            let { value, customFieldsSync } = v;
+            let { value, customFieldsSync, parametrizableValue } = v;
 
             value = value || v;
 
@@ -159,6 +162,7 @@ module.exports = class customFields {
                 }
                 let td = {
                     value,
+                    parametrizableValue: parametrizableValue !== 1 && parametrizableValue !== 0 ? false : parametrizableValue,
                     customFieldsSync
                 }
     
