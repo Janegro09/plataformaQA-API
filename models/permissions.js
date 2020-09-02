@@ -113,7 +113,7 @@ const Permit = {
         let route = req.method + "|" + urlBase;
 
         // Consultamos si existe registrada esa ruta en la base de datos
-        let consulta = await PermissionSchema.find({route: route});
+        let consulta = await PermissionSchema.find({route});
         if(!consulta.length) return false;
         return consulta[0]._id;
     }
