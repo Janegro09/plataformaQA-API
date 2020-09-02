@@ -201,7 +201,7 @@ const Cuartiles = {
                         let cuartil = header.split(' ');
                         let columna = "";
                         for(let col = 1; col < cuartil.length; col++){
-                            columna += cuartil[col];
+                            columna += columna ? ` ${cuartil[col]}` : cuartil[col];
                         }
                         
                         // Buscamos el valor de la columna y le asignamos un cuartil
@@ -254,7 +254,7 @@ const Cuartiles = {
                 let cuartil = headerName.split(' ');
                 let columna = "";
                 for(let col = 1; col < cuartil.length; col++){
-                    columna += cuartil[col];
+                    columna += columna ? ` ${cuartil[col]}` : cuartil[col];
                 }
                 return columna;
             }
