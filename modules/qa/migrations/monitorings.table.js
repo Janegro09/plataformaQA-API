@@ -21,6 +21,8 @@ var monitorings = new Schema({
         required: true
     },
     transactionDate: Date,
+    monitoringDate: Date,
+    devolucion: Object,
     comments: String,
     caseId: {
         type: String,
@@ -47,6 +49,10 @@ var monitorings = new Schema({
     monitoringsFields: [],
     calibrationsFields: [],
     invalidated: {
+        type: mongoose.SchemaTypes.Mixed,
+        default: false
+    },
+    disputar: {
         type: mongoose.SchemaTypes.Mixed,
         default: false
     },
