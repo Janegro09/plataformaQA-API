@@ -22,27 +22,31 @@ const controller = {
     new: async (req, res) => {
 
         if(!req.body) return includes.views.error.message(res, "Error en los parametros enviados");
+        try {
+            let data = {
+                ...req.body,
+                createdBy: ""
+            }
+
+            // Especificamos el id del usuario que esta logeado
+            if(req.authUser.length > 0) {
+                data.createdBy = req.authUser[0].id;
+            }
+
         
-        let data = {
-            ...req.body,
-            createdBy: ""
-        }
+            let mon = new monModel(data);
 
-        // Especificamos el id del usuario que esta logeado
-        if(req.authUser.length > 0) {
-            data.createdBy = req.authUser[0].id;
-        }
+            let save = await mon.save();
+            if(!save) return includes.views.error.message(res, "Error al crear monitoreo");
 
-        let mon = new monModel(data);
-        mon.save().then(v => {
+            let saveFile = await mon.saveFile(save._id, req);
+            if(!saveFile) return includes.views.error.message(res, "Error al guardar los archivos del monitoreo");
 
-            if(!v) return includes.views.error.message(res, "Error al crear monitoreo");
-            else return includes.views.success.create(res);
-
-        }).catch(e => {
+            return includes.views.success.create(res);
+        } catch (e) {
             console.log('Err: ', e);
             return includes.views.error.message(res, e.message);
-        })
+        }
 
     },
     get: async (req, res) => {

@@ -15,6 +15,7 @@ const includes = require('../../includes');
 const formsModel = require('../../forms/models/forms');
 const monSchema = require('../migrations/monitorings.table');
 const Program = require('../../programs/models/programs');
+const filesofMonitoringsTable = require('../migrations/filesofMonitorings.table');
 
 const existingStatus = ['pending', 'run', 'finished'];
 
@@ -53,9 +54,40 @@ class Monitoring {
         let c = new monSchema(this);
 
         let save = await c.save();
-        if(save) return true;
+        if(save) return c;
         else return false;
     }
+
+    async saveFile (id, req = false) {
+        if(!id) throw new Error('ID no especificado para subir el archivo, error interno');
+        else if(!req) throw new Error('No se envió ningun archivo');
+
+        // Comporbamos si existe el monitoreo
+        let exist = await monSchema.findById(id);
+        if(!exist) throw new Error('Monitoreo inexistente, error interno');
+        let file = new includes.files(req)
+        file = await file.save();
+
+        const { userId, caseId } = exist;
+
+        let insertData = {
+            fileId: file.id,
+            monitoringId: id,
+            caseId,
+            userId,
+            description: ""
+        }
+
+        let fileByMonitoring = new filesofMonitoringsTable(insertData);
+        
+        let saveFile = await fileByMonitoring.save();
+
+
+        if(saveFile) return true;
+        else return false;
+
+    }
+    
 
     static async get(id, searchParams = false, req = false) {
         let where = {
@@ -127,6 +159,8 @@ class Monitoring {
                 td.responses            = mons.responses;
                 td.monitoringsFields    = mons.monitoringsFields;
                 td.calibrationsFields   = mons.calibrationsFields;
+                
+                td.files = await filesofMonitoringsTable.find({ monitoringId: mons._id });
 
             }
 
@@ -134,6 +168,13 @@ class Monitoring {
         }
 
         return returnData;
+    }
+
+    static async modify(id, data) {
+        if(!id) throw new Error('Error en el id')
+        else if(!data) throw new Error('No se envio ningun parametro para modificar');
+
+
     }
 
 }

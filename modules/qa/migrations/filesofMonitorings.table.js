@@ -17,7 +17,6 @@ const Schema   = mongoose.Schema;
 
 var filesBymonitorings = new Schema({
     fileId: String,
-    message: String,
     monitoringId: String,
     caseId: String,
     userId: String,
