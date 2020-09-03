@@ -106,11 +106,13 @@ module.exports = class Forms {
                     }
                 }
             }
+        } else {
+            formsView = ["all"];
         }
 
         if(formsView.length === 0) throw new Error('No existe ningun formulario');
         if(!formsView[0] === 'all') {
-            where._id = id && formsView.includes(id) ? id : { $in: formsView };
+            where.programId = { $in: formsView };
         }
         let c = await FormsTable.find().where(where)
 
@@ -129,6 +131,20 @@ module.exports = class Forms {
         }
 
         return dataReturn
+    }
+
+    static async getFormByProgram(programId) {
+        if(!programId) throw new Error('ID de programa no especificado')
+
+        let c = await formsTable.find({ programId });
+        if(c.length === 0) throw new Error('No existen formularios para el programa especificado')
+        
+        const { _id } = c[0];
+
+        c = await Forms.get(_id);
+        if(c.length === 0) throw new Error('Formulario inexistente, error interno');
+
+        return c[0];
     }
 
     static async modify(id, data) {

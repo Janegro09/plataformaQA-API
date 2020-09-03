@@ -24,6 +24,7 @@ module.exports = {
             if(!v) return includes.views.error.message(res, "Error al crear el modelo de formulario");
             else return includes.views.success.create(res);
         }).catch(e => {
+            console.log('Error: ', e);
             return includes.views.error.message(res, e.message);
         })
 
@@ -35,6 +36,7 @@ module.exports = {
             if(!v) return includes.views.error.message(res, "Error al obtener el modelo de formulario");
             else return includes.views.customResponse(res, true, 200, "", v);
         }).catch(e => {
+            console.log('Error: ', e);
             return includes.views.error.message(res, e.message);
         })
     },
@@ -46,6 +48,7 @@ module.exports = {
             if(!v) return includes.views.error.message(res, "Error al modificar el modelo de formulario");
             else return includes.views.success.update(res)
         }).catch(e => {
+            console.log('Error: ', e);
             return includes.views.error.message(res, e.message);
         })
 
@@ -58,6 +61,7 @@ module.exports = {
             if(!v) return includes.views.error.message(res, "Error al modificar el modelo de formulario");
             else return includes.views.success.update(res)
         }).catch(e => {
+            console.log('Error: ', e);
             return includes.views.error.message(res, e.message);
         })
     }

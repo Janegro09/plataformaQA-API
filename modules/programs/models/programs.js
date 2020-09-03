@@ -273,6 +273,19 @@ class Program {
         return responseData;
     }
 
+    static async getProgramName(programId) {
+        let returnName = "";
+
+        if(programId){
+            let q = await Schemas.programs.find({ _id: programId });
+            if(q.length > 0){
+                returnName = q[0].name;
+            }
+        }
+
+        return returnName;
+    }
+
     static async getgroupsbyPrograms(programId) {
         let dataReturn = [];
         let c = await Schemas.groupsbyPrograms.find({programId: programId});

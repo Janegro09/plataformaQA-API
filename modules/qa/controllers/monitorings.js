@@ -12,11 +12,50 @@
  */
 const includes = require('../../includes');
 
+const monModel = require('../models/monitorings');
+
 const controller = {
+    /**
+     * Funcion para crear un nuevo monitoreo,
+     * recauda la informacion del programa y del usuario y crea un nuevo monitoreo
+     */
     new: async (req, res) => {
+
+        if(!req.body) return includes.views.error.message(res, "Error en los parametros enviados");
+        
+        let data = {
+            ...req.body,
+            createdBy: ""
+        }
+
+        // Especificamos el id del usuario que esta logeado
+        if(req.authUser.length > 0) {
+            data.createdBy = req.authUser[0].id;
+        }
+
+        let mon = new monModel(data);
+        mon.save().then(v => {
+
+            if(!v) return includes.views.error.message(res, "Error al crear monitoreo");
+            else return includes.views.success.create(res);
+
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
 
     },
     get: async (req, res) => {
+        const { id } = req.params;
+
+        monModel.get(id, req.query, req).then(v => {
+
+            if(!v) return includes.views.error.message(res, "Error al obtener monitoreos");
+            else return includes.views.customResponse(res, true, 200, "", v);
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
 
     },
     export: async (req, res) => {

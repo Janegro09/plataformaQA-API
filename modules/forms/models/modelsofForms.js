@@ -31,8 +31,10 @@ module.exports = class ModelsForms {
 
     async save() {
         const { name, section, subsection, description, parts } = this;
-
         if(!name || !section) throw new Error('Error en los parametros enviados');
+        // Chequeamos quie el nombre no se haya utilizado
+        let c = await modelsofFromsTable.find({ name });
+        if(c.length > 0) throw new Error('Ya existe un modelo con ese nombre')
 
         // Vamos a checkear la seccion
         const authorizedSections = ["M", "P"];
@@ -74,7 +76,7 @@ module.exports = class ModelsForms {
             parts: partsToSave
         });
 
-        let c = await form.save();
+        c = await form.save();
 
         if(c) return true;
         else return false;
