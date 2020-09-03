@@ -19,7 +19,6 @@ var filesBymonitorings = new Schema({
     fileId: String,
     monitoringId: String,
     caseId: String,
-    userId: String,
     description: String,
     createdAt: {
         type: Date,

@@ -68,13 +68,12 @@ class Monitoring {
         let file = new includes.files(req)
         file = await file.save();
 
-        const { userId, caseId } = exist;
+        const { caseId } = exist;
 
         let insertData = {
             fileId: file.id,
             monitoringId: id,
             caseId,
-            userId,
             description: ""
         }
 

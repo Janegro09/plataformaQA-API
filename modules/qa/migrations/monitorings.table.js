@@ -29,6 +29,7 @@ var monitorings = new Schema({
         required: true
     },
     customSections: String,
+    modifiedBy: [{userId: String, modifiedAt: Date, rol: String}],
     responses: [
         {
             section: String,
