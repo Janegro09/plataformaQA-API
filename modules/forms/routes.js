@@ -28,7 +28,7 @@ router.delete(`${customFields}/:id`, includes.permit.checkPermit, controllerCust
 
 const models = "/models";
 router.get(`${models}/:id?`, includes.permit.checkPermit, controllerModelsForms.get);
-router.post(`${models}/`,includes.permit.checkPermit, controllerModelsForms.new);
+router.post(`${models}/`, controllerModelsForms.new);
 router.put(`${models}/:id`, includes.permit.checkPermit, controllerModelsForms.modify);
 router.delete(`${models}/:id`, includes.permit.checkPermit, controllerModelsForms.delete);
 
