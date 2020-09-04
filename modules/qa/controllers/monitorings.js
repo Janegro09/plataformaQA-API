@@ -39,7 +39,7 @@ const controller = {
             let save = await mon.save();
             if(!save) return includes.views.error.message(res, "Error al crear monitoreo");
 
-            let saveFile = await mon.saveFile(save._id, req);
+            let saveFile = await monModel.saveFile(save._id, req);
             if(!saveFile) return includes.views.error.message(res, "Error al guardar los archivos del monitoreo");
 
             return includes.views.success.create(res);

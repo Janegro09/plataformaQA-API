@@ -58,7 +58,7 @@ class Monitoring {
         else return false;
     }
 
-    async saveFile (id, req = false) {
+    static async saveFile (id, req = false) {
         if(!id) throw new Error('ID no especificado para subir el archivo, error interno');
         else if(!req) throw new Error('No se envió ningun archivo');
 
@@ -98,7 +98,7 @@ class Monitoring {
             where._id = id
         } else if(searchParams) {
             // Solo usamos parametros de busqueda si no se especifico id
-            let { userId, caseId, createdBy, program, dateTransactionStart, dateTransactionEnd, responses, status } = searchParams;
+            let { userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateTransactionStart, dateTransactionEnd, responses, status } = searchParams;
 
             if(userId) { where.userId = userId; }
 
@@ -113,7 +113,20 @@ class Monitoring {
             if(dateTransactionEnd = new Date(dateTransactionEnd) && dateTransactionEnd instanceof Date) { where.transactionDate = { $lte: dateTransactionEnd }}
         
             if(status && existingStatus.includes(status)) { where.status = status; }
+
+            if(disputado) { 
+                where.disputar = disputado === 'false' ? false : { $ne: false }; 
+            }
+
+            if(invalidated) {
+                where.invalidated = invalidated === 'false' ? false : { $ne: false }; 
+            }
+
+            if(evaluated) {
+                where.evaluated = evaluated === 'false' ? false : { $ne: false };
+            }
         }
+        console.log(where)
 
         if (req) {
             // comprobamos si es administrador
@@ -137,7 +150,7 @@ class Monitoring {
             where.programId = { $in: monsViews };
         }
 
-        let query = await monSchema.find().where(where);
+        let query = await monSchema.find().where(where).limit(300);
         let returnData = []
         for(let mons of query) {
             let program = await Program.getProgramName(mons.programId);
@@ -151,7 +164,13 @@ class Monitoring {
                 caseId: mons.caseId,
                 program,
                 createdBy: mons.createdBy,
-                createdAt: mons.createdAt
+                disputado: mons.disputar,
+                dates: {
+                    monitoringDate: mons.monitoringDate,
+                    createdAt: mons.createdAt
+                },
+                devolucion: mons.devolucion,
+                modifiedBy: mons.modifiedBy
             }
             if(id) {
                 td.customSections       = JSON.parse(mons.customSections);
@@ -167,6 +186,12 @@ class Monitoring {
         }
 
         return returnData;
+    }
+
+    static async deleteFile(id, fileId) {
+        if(!id || !fileId) throw new Error('ID No especificado');
+
+
     }
 
     static async modify(id, data) {
