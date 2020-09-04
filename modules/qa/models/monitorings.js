@@ -126,7 +126,7 @@ class Monitoring {
                 where.evaluated = evaluated === 'false' ? false : { $ne: false };
             }
         }
-        console.log(where)
+
 
         if (req) {
             // comprobamos si es administrador
