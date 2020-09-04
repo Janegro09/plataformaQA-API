@@ -198,6 +198,17 @@ class Monitoring {
         if(!id) throw new Error('Error en el id')
         else if(!data) throw new Error('No se envio ningun parametro para modificar');
 
+        let dataToModify = {};
+        const authorizedColumnsToModify = ["userId", "transactionDate", "monitoringDate", "devolucion", "comments", "responses", "invalidated", "disputar","status"];
+        for(let d in data) {
+            if(!authorizedColumnsToModify.includes(d)) continue;
+            if(data[d] && typeof data[d] == 'string'){
+                dataToModify[d] = data[d];
+            } else if(data[d] instanceof Array && data[d].length > 0) {
+                dataToModify[d] = data[d]
+            }
+        }
+        console.log(id, dataToModify);
 
     }
 

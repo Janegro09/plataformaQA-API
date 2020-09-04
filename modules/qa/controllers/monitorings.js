@@ -66,6 +66,17 @@ const controller = {
 
     },
     modify: async (req, res) => {
+        const { id } = req.params;
+
+        if(!id || !req.body) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        monModel.modify(id, req.body).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al modificar el monitoreo");
+            else return includes.views.success.update(res);
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
 
     },
     delete: async (req, res) => {
