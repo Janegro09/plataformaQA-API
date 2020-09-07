@@ -81,6 +81,12 @@ const controller = {
     },
     delete: async (req, res) => {
         
+    },
+    uploadFile: async (req, res) => {
+
+    },
+    deleteFile: async (req, res) => {
+        
     }
 }
 

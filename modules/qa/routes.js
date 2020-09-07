@@ -25,8 +25,10 @@ router.get(`${monRoute}/exports`, monController.export);
 router.get(`${monRoute}/:id?`, monController.get);
 
 router.put(`${monRoute}/:id`, monController.modify);
+router.put(`${monRoute}/:id/file`, monController.uploadFile);
 
 router.delete(`${monRoute}/:id`, monController.delete);
+router.delete(`${monRoute}/:id/:file`, monController.deleteFile);
 // router.get('/')
 
 module.exports = router;
