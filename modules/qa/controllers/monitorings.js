@@ -57,6 +57,7 @@ const controller = {
         monModel.get(id, req.query, req).then(v => {
 
             if(!v) return includes.views.error.message(res, "Error al obtener monitoreos");
+            else if(v.length === 0) return includes.views.error.message(res, "No hay monitoreos para mostrar");
             else return includes.views.customResponse(res, true, 200, "", v);
         }).catch(e => {
             console.log('Err: ', e);
@@ -85,7 +86,20 @@ const controller = {
 
     },
     delete: async (req, res) => {
-        
+        const { id } = req.params;
+
+        if(!id) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        let userId   = req.authUser[0].id        || false
+        let userRole = req.authUser[0].role.role || false
+
+        monModel.delete(id, {userId, userRole}).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al eliminar el monitoreo");
+            else return includes.views.success.delete(res);
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
     },
     uploadFile: async (req, res) => {
 

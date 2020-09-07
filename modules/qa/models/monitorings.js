@@ -227,6 +227,22 @@ class Monitoring {
 
     }
 
+    static async delete(id, deletedBy = false) {
+        if(!id) throw new Error('Error en el id')
+
+        let consulta = await monSchema.findById(id).where({ deleted: false });
+        if(!consulta) throw new Error('Monitoreo inexistente');
+
+        if(consulta.responses.length > 0 || consulta.status !== 'pending') throw new Error('No se puede eliminar un monitoreo que ya se modificó');
+
+        let query = await monSchema.updateOne({ _id: id }, { deleted: true });
+        if(query.ok > 0) {
+            this.addModificationByUser(id, modifiedBy)
+            return true;
+        }else return false;
+
+    }
+
     static async modify(id, data, modifiedBy = false) {
         if(!id) throw new Error('Error en el id')
         else if(!data) throw new Error('No se envio ningun parametro para modificar');
@@ -242,7 +258,7 @@ class Monitoring {
             }
         }
 
-        let consulta = await monSchema.findById(id);
+        let consulta = await monSchema.findById(id).where({ deleted: false });;
         if(!consulta) throw new Error('Monitoreo inexistente');
 
         if(dataToModify.responses && dataToModify.responses.length > 0) {
