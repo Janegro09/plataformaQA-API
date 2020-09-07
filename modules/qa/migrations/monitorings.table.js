@@ -29,17 +29,23 @@ var monitorings = new Schema({
         required: true
     },
     customSections: String,
-    modifiedBy: [{userId: String, modifiedAt: Date, rol: String}],
+    modifiedBy: [
+        {
+            userId: String, 
+            modifiedAt: {
+                type: Date,
+                default: Date.now
+            }, 
+            rol: String
+        }
+    ],
     responses: [
         {
             section: String,
-            questions: [
-                {
-                    question: String,
-                    section: String,
-                    response: String
-                }
-            ]
+            question: String,
+            response: Object,
+            parametrizableValue: mongoose.SchemaTypes.Mixed,
+            calibrate: Boolean
 
         }
     ],
@@ -47,8 +53,6 @@ var monitorings = new Schema({
         type: String,
         required: true
     },
-    monitoringsFields: [],
-    calibrationsFields: [],
     invalidated: {
         type: mongoose.SchemaTypes.Mixed,
         default: false
@@ -73,7 +77,6 @@ var monitorings = new Schema({
         type: String,
         default: 'pending'
     },
-    updatedAt: Date,
     createdAt: {
         type: Date,
         default: Date.now

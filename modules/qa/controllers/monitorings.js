@@ -39,8 +39,10 @@ const controller = {
             let save = await mon.save();
             if(!save) return includes.views.error.message(res, "Error al crear monitoreo");
 
-            let saveFile = await monModel.saveFile(save._id, req);
-            if(!saveFile) return includes.views.error.message(res, "Error al guardar los archivos del monitoreo");
+            if(req.files) {
+                let saveFile = await monModel.saveFile(save._id, req);
+                if(!saveFile) return includes.views.error.message(res, "Error al guardar los archivos del monitoreo");
+            }
 
             return includes.views.success.create(res);
         } catch (e) {
@@ -70,7 +72,10 @@ const controller = {
 
         if(!id || !req.body) return includes.views.error.message(res, "Error en los parametros enviados");
 
-        monModel.modify(id, req.body).then(v => {
+        let userId   = req.authUser[0].id        || false
+        let userRole = req.authUser[0].role.role || false
+
+        monModel.modify(id, req.body, {userId, userRole}).then(v => {
             if(!v) return includes.views.error.message(res, "Error al modificar el monitoreo");
             else return includes.views.success.update(res);
         }).catch(e => {
