@@ -66,7 +66,17 @@ const controller = {
 
     },
     export: async (req, res) => {
+        const { monitoringsIds } = req.body;
 
+        if(!monitoringsIds) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        monModel.export(monitoringsIds).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al obtener los monitoreos monitoreos");
+            else return includes.views.customResponse(res, true, 200, "", v);
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
     },
     modify: async (req, res) => {
         const { id } = req.params;
@@ -102,10 +112,33 @@ const controller = {
         })
     },
     uploadFile: async (req, res) => {
+        const { id } = req.params;
+
+        if(!id || !req.files) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        try {
+            let saveFile = await monModel.saveFile(id, req);
+            if(!saveFile) return includes.views.error.message(res, "Error al guardar los archivos del monitoreo");
+
+            return includes.views.success.create(res);
+        } catch (e) {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        }
 
     },
     deleteFile: async (req, res) => {
-        
+        const { id, file } = req.params;
+
+        if(!id || !file) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        monModel.deleteFile(id, file).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al eliminar el archivo");
+            else return includes.views.success.delete(res);
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
     }
 }
 

@@ -198,18 +198,16 @@ class Monitoring {
                 program,
                 createdBy: mons.createdBy,
                 disputado: mons.disputar,
-                dates: {
-                    monitoringDate: mons.monitoringDate,
-                    createdAt: mons.createdAt
-                },
+                monitoringDate: mons.monitoringDate,
+                createdAt: mons.createdAt,
                 devolucion: mons.devolucion,
                 modifiedBy: mons.modifiedBy
             }
             if(id) {
-                td.customSections       = JSON.parse(mons.customSections);
-                td.responses            = mons.responses;
-                td.monitoringsFields    = mons.monitoringsFields;
-                td.calibrationsFields   = mons.calibrationsFields;
+                // td.customSections       = JSON.parse(mons.customSections);
+                // td.responses            = mons.responses;
+
+                td.responses = Monitoring.getCustomSectionsWithResponses(JSON.parse(mons.customSections), mons.responses);
                 
                 td.files = await filesofMonitoringsTable.find({ monitoringId: mons._id });
 
@@ -221,9 +219,42 @@ class Monitoring {
         return returnData;
     }
 
-    static async deleteFile(id, fileId) {
-        if(!id || !fileId) throw new Error('ID No especificado');
+    static getCustomSectionsWithResponses(customSections, responses) {
 
+        for(let c = 0; c < customSections.length; c++) {
+
+            for(let j = 0; j < customSections[c].customFields.length; j++) {
+                let cField = customSections[c].customFields[j];
+
+                let rsp = responses.find(e => e.section === customSections[c].id && e.question === cField.id);
+
+                customSections[c].customFields[j] = {
+                    ...cField,
+                    response: rsp.response
+                }
+            }
+
+        }
+        return customSections;
+    }
+
+    static async deleteFile(id, _id) {
+        if(!id || !_id) throw new Error('ID No especificado');
+
+        let c = await filesofMonitoringsTable.find({ monitoringId: id, _id });
+        if (c.length === 0) throw new Error('Registro inexistente');
+
+        if(c[0].fileId){
+            let deleteFile = new includes.files(c[0].fileId);
+            deleteFile = await deleteFile.delete();
+            if (!deleteFile) throw new Error('Error al eliminar el archivo')
+        }
+        c = await filesofMonitoringsTable.deleteOne({ _id });
+        if (c.deletedCount === 0) {
+            throw new Error('Error al eliminar el registro')
+        }
+
+        return true;
 
     }
 
@@ -237,7 +268,7 @@ class Monitoring {
 
         let query = await monSchema.updateOne({ _id: id }, { deleted: true });
         if(query.ok > 0) {
-            this.addModificationByUser(id, modifiedBy)
+            this.addModificationByUser(id, deletedBy)
             return true;
         }else return false;
 
@@ -389,6 +420,105 @@ class Monitoring {
         }
     }
 
+    static async export(monitoringIds) {
+        if(!monitoringIds) throw new Error('Error en los parametros enviados');
+        if(monitoringIds.length > 30) throw new Error('No puede exportar mas de 30 monitoreos en la misma plantilla');
+
+        const getValuesByCustomField = (cfield, responses) => {
+            let response = cfield.values.find(e => e.value == responses.data);
+            if(!response) return false;
+            
+            let td = [{
+                name: cfield.name,
+                value: response.value
+            }]
+            if(response.customFieldsSync && responses.child) {
+                let more = getValuesByCustomField(response.customFieldsSync[0], responses.child)
+                td = td.concat(more);
+            }
+
+            return td;
+        }
+
+        let dataToExcel = [];
+
+        for(let id of monitoringIds) {
+            let mon = await Monitoring.get(id);
+            if(mon.length === 0) continue;
+
+            let user = await includes.users.model.get(mon[0].userId);
+            if(user.length === 0) continue;
+            let data = {}
+
+            const viewRows = {
+                user: ["dni", "name", "lastName", "cuil", "legajo", "sexo", "status", "propiedad", "canal", "negocio", "edificioLaboral", "gerencia1", "nameG1", "gerencia2", "nameG2", "equipoEspecifico", "group", "role", "razonSocial", "jefeCoordinador", "responsable", "supervisor", "lider", "provincia", "region", "subregion", "email"],
+                mon: ["invalidated", "evaluated", "status", "transactionDate", "monitoringDate", "caseId", "program", "createdBy", "disputado", "createdAt", "devolucion", "modifiedBy", "responses"]
+            }
+            // Recorremos el objeto y modificamos
+            let string;
+            user = user[0]
+            for(let f in user) {
+                if(!viewRows.user.includes(f)) continue;
+                switch(f) {
+                    case "group": 
+                        string = "";
+                        user[f].map(v => {
+                            string = string ? string + ' - ' : "";
+                            string += `${v.name}`;
+                        })
+                        user[f] = string;
+                    break;
+                    case "role": 
+                        user[f] = user[f].role;
+                    break;
+                }
+                data[`user - ${f}`] = user[f];
+            }
+            mon = mon[0];
+            for(let c in mon) {
+                if(!viewRows.mon.includes(c)) continue;
+                switch(c) {
+                    case 'modifiedBy': 
+                        string = "";
+                        mon[c].map(v => {
+                            string = string ? string + '  |  ' : "";
+                            let date = new Date(v.modifiedAt);
+                            string += `${v.userId} - ${v.rol} - ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+                        })
+                        mon[c] = string;
+                    break;
+                    case "responses": 
+                    
+                        for(let resp of mon[c]) {
+                            let sect = resp.name;
+
+                            for(let cfield of resp.customFields) {
+                                let question = cfield.question;
+
+                                // Vamos a agregar una columna por respuesta
+                                let q = getValuesByCustomField(cfield.customField, cfield.response);
+
+                                q.forEach((v, i) => {
+                                    data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name}`] = v.value;
+                                })
+
+                            }
+
+                        }
+
+                        continue;
+                    break;
+                }
+                data[`monitoring - ${c}`] = mon[c];
+            }
+
+            dataToExcel.push(data);
+        }
+
+        console.log(dataToExcel);
+
+        return true;
+    }
 }
 
 module.exports = Monitoring;
