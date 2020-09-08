@@ -70,9 +70,14 @@ const controller = {
 
         if(!monitoringsIds) return includes.views.error.message(res, "Error en los parametros enviados");
 
-        monModel.export(monitoringsIds).then(v => {
+        let exp = await monModel.export(monitoringsIds);
+
+
+        includes.files.getTempURL(exp.id, true).then(v => {
             if(!v) return includes.views.error.message(res, "Error al obtener los monitoreos monitoreos");
-            else return includes.views.customResponse(res, true, 200, "", v);
+            return includes.views.customResponse(res, true, 200, `Monitoring Exports cant: ${monitoringsIds.length}`, {
+                tempId: v
+            });
         }).catch(e => {
             console.log('Err: ', e);
             return includes.views.error.message(res, e.message);

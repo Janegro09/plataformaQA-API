@@ -17,7 +17,6 @@ const monSchema = require('../migrations/monitorings.table');
 const Program = require('../../programs/models/programs');
 const filesofMonitoringsTable = require('../migrations/filesofMonitorings.table');
 const customFieldModel = require('../../forms/models/customfields');
-const { response } = require('express');
 
 const existingStatus = ['pending', 'run', 'finished'];
 
@@ -440,7 +439,24 @@ class Monitoring {
             return td;
         }
 
-        let dataToExcel = [];
+        /**
+         * Esta funcion agrega cada columna a un array de headers y cada registro
+         * @param {Object} data 
+         */
+        const addHeadersAndRows = (data) => {
+            this.rows.push(data)
+            for(let d in data) {
+                if(!this.headers.includes(d)) {
+                    this.headers.push(d);
+                }
+
+                
+
+            }
+        }
+
+        this.rows = [];
+        this.headers     = [];
 
         for(let id of monitoringIds) {
             let mon = await Monitoring.get(id);
@@ -457,6 +473,7 @@ class Monitoring {
             // Recorremos el objeto y modificamos
             let string;
             user = user[0]
+
             for(let f in user) {
                 if(!viewRows.user.includes(f)) continue;
                 switch(f) {
@@ -472,9 +489,13 @@ class Monitoring {
                         user[f] = user[f].role;
                     break;
                 }
-                data[`user - ${f}`] = user[f];
+
+                user[f] = user[f] ? user[f].toString() : "";
+
+                data[`user - ${f}`] = {value: user[f], style: ""};
             }
             mon = mon[0];
+
             for(let c in mon) {
                 if(!viewRows.mon.includes(c)) continue;
                 switch(c) {
@@ -499,7 +520,7 @@ class Monitoring {
                                 let q = getValuesByCustomField(cfield.customField, cfield.response);
 
                                 q.forEach((v, i) => {
-                                    data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name}`] = v.value;
+                                    data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name}`] = {value: v.value, style: ""};
                                 })
 
                             }
@@ -509,15 +530,31 @@ class Monitoring {
                         continue;
                     break;
                 }
-                data[`monitoring - ${c}`] = mon[c];
-            }
 
-            dataToExcel.push(data);
+                mon[c] = mon[c] ? mon[c].toString() : "";
+
+                data[`monitoring - ${c}`] = {value: mon[c], style: ""};
+            }
+            addHeadersAndRows(data);
         }
 
-        console.log(dataToExcel);
+        let today = new Date();
+        today = `${today.getDate()}-${today.getMonth()}-${today.getFullYear()}`;
+        let monExp = new includes.XLSX.XLSXFile('monitoring Export ' + today + '.xlsx', 'monExports');
 
-        return true;
+        let mons = new includes.XLSX.Sheet(monExp, 'monitorings');
+
+        mons.addHeaders(this.headers);
+
+        for(let d of this.rows){
+            mons.addRow(d)
+        }
+
+        mons.createSheet();
+        let save = await monExp.save();
+        if(!save) throw new Error("Error al crear el archivo");
+
+        return save;
     }
 }
 

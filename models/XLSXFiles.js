@@ -114,7 +114,7 @@ class XLSXFile {
         if(helper.files.exists(this.pathFile + this.fileName,false)){
             await helper.files.delete(this.pathFile + this.fileName);
             await workBook.write(this.pathFile + this.fileName);
-            return true
+            return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
         }else{
             await workBook.write(this.pathFile + this.fileName);
             return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
