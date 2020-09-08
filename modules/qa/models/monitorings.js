@@ -39,10 +39,23 @@ class Monitoring {
             if(requiredValues.includes(t) && !this[t]) throw new Error('Error en los parametros enviados');
         }
 
-        // Buscamos el formulario asignado a el programa
-        let customSections = await formsModel.getFormByProgram(this.programId);
-        if(!customSections) throw new Error('Formulario inexistente, error interno de api');
-        this.customSections = await Monitoring.getFormWithStr(customSections.parts);
+        // Consultamos si existe algun monitoreo con ese case id y por lo tanto ya se le asigno un formulario
+        let existForm = await monSchema.find({ caseId: this.caseId });
+        let customSections;
+        if(existForm.length === 0) {
+
+            // Entonces creamos un form nuevo segun el programa
+            // Buscamos el formulario asignado a el programa
+            customSections = await formsModel.getFormByProgram(this.programId);
+            if(!customSections) throw new Error('Formulario inexistente, error interno de api');
+            this.customSections = await Monitoring.getFormWithStr(customSections.parts);
+
+        } else {
+            // Entonces agarramos el primer caso y agarramos el formulario, total todos tienen asignado el mismo form
+            this.customSections = existForm[0].customSections
+
+        }
+
         // Chequeamos el id del usuario
         let user = await includes.users.schema.find({id: this.userId});
         if(!user) throw new Error('Usuario inexistente, verifique el ID especificado');
