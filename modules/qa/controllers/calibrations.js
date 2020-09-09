@@ -63,6 +63,19 @@ const controller = {
     },
     delete: async (req, res) => {
         // Funcion para eliminar calibraciones
+
+        const { id } = req.params;
+
+        if(!id) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        calibrationsModel.delete(id).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al eliminar la sesion de calibracion");
+            return includes.views.success.delete(res);
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
+
     },
     newCalibrationType: async (req, res) => {
         // Funcion para agregar un tipo de calibracion

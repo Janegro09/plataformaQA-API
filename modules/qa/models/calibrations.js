@@ -294,6 +294,18 @@ class Calibrations {
         else return false;
 
     }
+
+    static async delete(id) {
+        if(!id) throw new Error('Id no especificado');
+
+        // Buscamos si existe
+        let exist = await calibrationsTable.findById(id);
+        if(!exist) throw new Error('Calibracion inexistente');
+
+        let del = await calibrationsTable.deleteOne({ _id: id });
+        if(del.ok > 0) return true;
+        else return false;
+    }
 }
 
 module.exports = Calibrations;

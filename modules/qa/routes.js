@@ -20,28 +20,28 @@ const monController = require('./controllers/monitorings');
 const calibrationsController = require('./controllers/calibrations');
 
 const monRoute = '/monitoring'
-router.post(`${monRoute}/`, monController.new);
+router.post(`${monRoute}/`,includes.permit.checkPermit ,monController.new);
 
-router.get(`${monRoute}/exports`, monController.export);
-router.get(`${monRoute}/:id?`, monController.get);
+router.get(`${monRoute}/exports`,includes.permit.checkPermit ,monController.export);
+router.get(`${monRoute}/:id?`,includes.permit.checkPermit ,monController.get);
 
-router.put(`${monRoute}/:id`, monController.modify);
-router.put(`${monRoute}/:id/file`, monController.uploadFile);
+router.put(`${monRoute}/:id`,includes.permit.checkPermit ,monController.modify);
+router.put(`${monRoute}/:id/file`,includes.permit.checkPermit ,monController.uploadFile);
 
-router.delete(`${monRoute}/:id`, monController.delete);
-router.delete(`${monRoute}/:id/:file`, monController.deleteFile);
+router.delete(`${monRoute}/:id`,includes.permit.checkPermit ,monController.delete);
+router.delete(`${monRoute}/:id/:file`,includes.permit.checkPermit ,monController.deleteFile);
 // router.get('/')
 
 const calibrationsTypesRoute = '/calibration/types'
-router.get(`${calibrationsTypesRoute}`, calibrationsController.getCalibrationType);
-router.post(`${calibrationsTypesRoute}`, calibrationsController.newCalibrationType);
-router.delete(`${calibrationsTypesRoute}/:id`, calibrationsController.deleteCalibrationType);
+router.get(`${calibrationsTypesRoute}`,includes.permit.checkPermit ,calibrationsController.getCalibrationType);
+router.post(`${calibrationsTypesRoute}`,includes.permit.checkPermit ,calibrationsController.newCalibrationType);
+router.delete(`${calibrationsTypesRoute}/:id`,includes.permit.checkPermit ,calibrationsController.deleteCalibrationType);
 
 const calibrationsRoute = '/calibration'
-router.post(`${calibrationsRoute}`, calibrationsController.new);
-router.get(`${calibrationsRoute}/:id?`, calibrationsController.get);
-router.put(`${calibrationsRoute}/:id`, calibrationsController.modify);
-router.delete(`${calibrationsRoute}/:id`, calibrationsController.delete);
+router.post(`${calibrationsRoute}`,includes.permit.checkPermit ,calibrationsController.new);
+router.get(`${calibrationsRoute}/:id?`,includes.permit.checkPermit ,calibrationsController.get);
+router.put(`${calibrationsRoute}/:id`,includes.permit.checkPermit ,calibrationsController.modify);
+router.delete(`${calibrationsRoute}/:id`,includes.permit.checkPermit ,calibrationsController.delete);
 
 
 module.exports = router;
