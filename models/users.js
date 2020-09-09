@@ -345,10 +345,9 @@ class Users {
                     console.log(v);
                 })
      */
-    static async get(id = 0, allData = true, req = false){
+    static async get(id = 0, allData = true, req = false, specificData = false){
         let where = {};
         let returnData = [], roleTotal = false;
-        let specificData = false;
         /**
          * Solo listamos los usuarios que estan asignados a los mismos grupos que el usuario que consulta, salvo que sea con rol Administrator o Develop
          */

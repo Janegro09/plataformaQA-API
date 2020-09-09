@@ -17,7 +17,6 @@ const mongoose = require('mongoose');
 const Schema   = mongoose.Schema;
 
 var calibrations = new Schema({
-    name: String,
     calibrators: Array,
     expert: String,
     caseId: {
@@ -29,8 +28,6 @@ var calibrations = new Schema({
         type: Date,
         default: Date.now
     },
-    responses: String,
-    description: String,
     startDate: Date,
     endDate: Date,
     status_open: {
