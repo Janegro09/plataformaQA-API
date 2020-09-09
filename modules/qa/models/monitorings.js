@@ -219,6 +219,9 @@ class Monitoring {
                 // td.customSections       = JSON.parse(mons.customSections);
                 // td.responses            = mons.responses;
 
+                td.userInfo = await includes.users.model.get(mons.userId);
+                td.userInfo = td.userInfo.length > 0 ? td.userInfo[0]: undefined;
+
                 td.responses = Monitoring.getCustomSectionsWithResponses(JSON.parse(mons.customSections), mons.responses);
                 
                 td.files = await filesofMonitoringsTable.find({ monitoringId: mons._id });

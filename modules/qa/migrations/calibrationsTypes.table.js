@@ -18,7 +18,8 @@ const Schema   = mongoose.Schema;
 var calibrationsTypes = new Schema({
     name: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     description: String,
     createdAt: {
