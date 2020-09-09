@@ -13,6 +13,7 @@
 const includes = require('../../includes');
 
 const caltypeTable = require('../migrations/calibrationsTypes.table');
+const calibrationsTable = require('../migrations/calibrations.table');
 
 class CalibrationsTypes {
     constructor(data) {
@@ -35,13 +36,26 @@ class CalibrationsTypes {
         else return false;
     }
 
-    get = async () => {
-        console.log('e')
-        return []
+    static async get () {
+        return await caltypeTable.find();
     }
 
-    delete = async (id) => {
+    static delete = async (id) => {
+        if(!id) throw new Error('Error en los parametros enviados');
 
+        // Consultamos si existe el registro 
+        let query = await caltypeTable.findById(id);
+        if(!query) throw new Error('Registro inexistente');
+
+        let calibrationType = query.name;
+
+        // Consultamos si esta asignado a alguna calibracion
+        let isUsed = await calibrationsTable.find({ calibrationType });
+        if(isUsed.length > 0) throw new Error('No puede eliminar un tipo de calibracion con calibraciones asignadas');
+
+        let c = await caltypeTable.deleteOne({ _id: id });
+        if(c.ok > 0) return true;
+        else return false;
     }
 }
 

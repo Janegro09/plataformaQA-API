@@ -20,7 +20,6 @@ var calibrations = new Schema({
     name: String,
     calibrators: Array,
     expert: String,
-    monitoringsIds: Array,
     caseId: {
         type: String,
         required: true,
@@ -34,7 +33,7 @@ var calibrations = new Schema({
     description: String,
     startDate: Date,
     endDate: Date,
-    Status_open: {
+    status_open: {
         type: Boolean,
         default: true
     },

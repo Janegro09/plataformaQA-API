@@ -44,6 +44,17 @@ const controller = {
     },
     deleteCalibrationType: async (req, res) => {
         // Funcion para eliminar un tipo de calibracion si no tiene ninguna calibracion asignada
+        const { id } = req.params;
+
+        if(!id) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        calTypesModel.delete(id).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al eliminar el tipo de calibracion");
+            return includes.views.success.delete(res);
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
     },
     getCalibrationType: async (req, res) => {  
         // Funcion para obtener todos los tipos de calibraciones
