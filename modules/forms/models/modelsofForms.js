@@ -117,7 +117,6 @@ module.exports = class ModelsForms {
     }
 
     static async getParts(arrayOfParts) {
-        console.log(arrayOfParts)
         let returnData = [];
         for(let { customFields, name } of arrayOfParts ) {
             let td = {
@@ -126,7 +125,7 @@ module.exports = class ModelsForms {
             }
 
             for(let c of customFields) {
-                let query = await customfields.get(c);
+                let query = await customfields.get(c.customField);
                 td.customFields = [...td.customFields, ...query];
             }
 

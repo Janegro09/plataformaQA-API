@@ -115,9 +115,13 @@ module.exports = class Forms {
             where.programId = { $in: formsView };
         }
         let c = await FormsTable.find().where(where)
-
         let dataReturn = [];
         for(let { _id, name, programId, description, parts, createdAt } of c) {
+            if(id) {
+                parts = await Forms.getParts(parts)
+            } else {
+                parts = parts.length;
+            }
             let getProgram = await Program.get(programId, true)
             let tempdata = {
                 id: _id,
@@ -131,6 +135,25 @@ module.exports = class Forms {
         }
 
         return dataReturn
+    }
+
+    static async getParts(arrayOfParts) {
+        let returnData = [];
+        for(let { customFields, name } of arrayOfParts ) {
+            let td = {
+                name,
+                customFields: []
+            }
+
+            for(let c of customFields) {
+                let query = await customfields.get(c.customField);
+                td.customFields = [...td.customFields, ...query];
+            }
+
+            returnData.push(td);
+        }
+        return returnData;
+
     }
 
     static async getFormByProgram(programId) {
