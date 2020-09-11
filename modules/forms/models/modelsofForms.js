@@ -128,6 +128,7 @@ module.exports = class ModelsForms {
                 let query = await customfields.get(c.customField);
                 td.customFields = [...td.customFields, {
                     question: c.question,
+                    questionId: c._id,
                     ...query[0]
                 }];
             }
