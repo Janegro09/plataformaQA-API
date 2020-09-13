@@ -139,8 +139,9 @@ module.exports = class Forms {
 
     static async getParts(arrayOfParts) {
         let returnData = [];
-        for(let { customFields, name } of arrayOfParts ) {
+        for(let { customFields, name, _id } of arrayOfParts ) {
             let td = {
+                id: _id,
                 name,
                 customFields: []
             }
