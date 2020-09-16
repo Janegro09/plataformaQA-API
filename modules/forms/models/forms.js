@@ -187,7 +187,7 @@ module.exports = class Forms {
 
         // Chequeamos si existe el modelo
         let c = await FormsTable.find({ _id: id, deleted: false });
-        if(c.length === 0) throw new Error('Modelo de formulario inexistente');
+        if(c.length === 0) throw new Error('Formulario inexistente');
 
         if(dataToModify.parts) {
             let partsToSave = [];
@@ -234,7 +234,7 @@ module.exports = class Forms {
 
         // Chequeamos si existe el modelo
         let c = await FormsTable.find({ _id: id , deleted: false});
-        if(c.length === 0) throw new Error('Modelo de formulario inexistente');
+        if(c.length === 0) throw new Error('Formulario inexistente');
 
         c = await FormsTable.updateOne({ _id: id }, { deleted: true });
         if(c.ok) return true;
