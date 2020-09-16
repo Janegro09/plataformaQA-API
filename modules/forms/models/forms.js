@@ -67,6 +67,11 @@ module.exports = class Forms {
         if(programId) { 
             let c = await Program.get(programId.toString(), true);
             if(c.length === 0) throw new Error('Programa inexistente');
+
+            // Consultamos si existe otro form
+            c = await FormsTable.find({ programId, deleted: false });
+            if(c.length > 0) throw new Error('No puede agregar otro formulario a un programa con formulario asignado');
+
         } else throw new Error('Programa no especificado');
 
 
@@ -163,7 +168,7 @@ module.exports = class Forms {
     static async getFormByProgram(programId) {
         if(!programId) throw new Error('ID de programa no especificado')
 
-        let c = await formsTable.find({ programId });
+        let c = await formsTable.find({ programId, deleted: false });
         if(c.length === 0) throw new Error('No existen formularios para el programa especificado')
         
         const { _id } = c[0];
