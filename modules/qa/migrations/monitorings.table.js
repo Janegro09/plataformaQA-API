@@ -73,6 +73,11 @@ var monitorings = new Schema({
         type: String,
         required: true
     },
+    duracionContacto: String,
+    improvment: {
+        type: String,
+        default: "+-"
+    },
     status: {
         type: String,
         default: 'pending'

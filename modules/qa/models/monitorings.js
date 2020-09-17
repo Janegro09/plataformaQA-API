@@ -21,6 +21,8 @@ const customFieldModel = require('../../forms/models/customfields');
 const existingStatus = ['pending', 'run', 'finished'];
 
 class Monitoring {
+    _improvment = "";
+
     constructor(data) {
         const { userId, transactionDate, caseId, programId, createdBy } = data;
     
@@ -30,6 +32,20 @@ class Monitoring {
         this.programId          = programId         || false;
         this.createdBy          = createdBy         || false;
         this.customSections     = "";
+
+    }
+
+    set improvment (improvment) {
+
+        const permitedValues = ["+","+-","-"];
+
+        if(permitedValues.includes(improvment)) {
+            this._improvment = improvment;
+        }
+    }
+
+    get improvment () {
+        return this._improvment;
     }
 
     async save() {
@@ -203,6 +219,8 @@ class Monitoring {
                 id: mons._id,
                 userId: mons.userId,
                 invalidated: mons.invalidated,
+                improvment: mons.improvment,
+                duracionContacto: mons.duracionContacto,
                 evaluated: mons.evaluated,
                 status: mons.status,
                 transactionDate: mons.transactionDate,
@@ -294,7 +312,7 @@ class Monitoring {
         else if(!data) throw new Error('No se envio ningun parametro para modificar');
 
         let dataToModify = {};
-        const authorizedColumnsToModify = ["userId", "transactionDate", "monitoringDate", "devolucion", "comments", "responses", "invalidated", "disputar","status"];
+        const authorizedColumnsToModify = ["improvment", "duracionContacto", "userId", "transactionDate", "monitoringDate", "devolucion", "comments", "responses", "invalidated", "disputar","status"];
         for(let d in data) {
             if(!authorizedColumnsToModify.includes(d)) continue;
             if(data[d] && typeof data[d] == 'string'){
