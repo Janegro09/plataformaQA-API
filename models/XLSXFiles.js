@@ -114,7 +114,8 @@ class XLSXFile {
         if(helper.files.exists(this.pathFile + this.fileName,false)){
             await helper.files.delete(this.pathFile + this.fileName);
             await workBook.write(this.pathFile + this.fileName);
-            return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
+            return true;
+            // return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
         }else{
             await workBook.write(this.pathFile + this.fileName);
             return await filesModel.getIdSaveFile(this.section,this.fileType,this.fileName)
@@ -208,7 +209,7 @@ class Sheet extends XLSXFile {
                         value = data[x]
                     }
                     data[x] = { style: data[x].style || '' };
-                    data[x].value = value ? value : '0';
+                    data[x].value = value ? value : '-';
                 }
                 if(typeof data[x].value === 'string' || typeof data[x].value === 'number'){
                     dataOrdenada[c.id] = data[x]

@@ -226,7 +226,7 @@ const PerfilamientoFile = {
         for(let x = 0; x < headers.length; x++){
             if(columnsHide.indexOf(headers[x]) >= 0) continue;
             if(headers[x].indexOf('#Q') >= 0) continue;
-	    let tempData = {
+	        let tempData = {
                 columnName: headers[x],
                 VMax: 0,
                 VMin: (1000000 * 1000000),
@@ -261,6 +261,7 @@ const PerfilamientoFile = {
             for(let d = 0; d < usersCount; d++){
                 let value = rows[d][tempData.columnName];
                 value = parseFloat(value);
+                if(isNaN(value)) continue;
                 AllValues.push(value);
                 if(value > tempData.VMax){
                     tempData.VMax = value;
@@ -272,12 +273,13 @@ const PerfilamientoFile = {
                 }
             }
 
-            if(tempData.VMax !== 1 && tempData.VMin !== 0) {
+            if(tempData.VMax !== 1 || tempData.VMin !== 0) {
                 // solo divide los valores por usuarios en caso que los valores maximos y minimos no sean 0 y 1, 
                 // Si es 1 entendemos que estamos hablando de campos booleanos como sustentable o grupo_anterior
 
                 // Ordenamos los valores en desc
                 AllValues = AllValues.sort((a, b) => a - b);
+
                 let value;
                 for(let q1 = 0; q1 < usersQ1; q1++) {
                     value = AllValues[q1]
