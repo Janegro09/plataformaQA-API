@@ -66,6 +66,7 @@ class Monitoring {
             if(!customSections) throw new Error('Formulario inexistente, error interno de api');
             this.customSections = await Monitoring.getFormWithStr(customSections.parts);
 
+
         } else {
             // Entonces agarramos el primer caso y agarramos el formulario, total todos tienen asignado el mismo form
             this.customSections = existForm[0].customSections
@@ -89,34 +90,37 @@ class Monitoring {
 
     static async getFormWithStr(customSections) {
         if(!customSections) throw new Error('CustomSections undefined');
-        let returnData = [];
+        
+        
+        return JSON.stringify(customSections)
         // Buscamos cada custom section
-        for(let section of customSections) {
-            let td = {
-                name: section.name,
-                id: section._id,
-                customFields: [] 
-            }
 
-            for(let cf of section.customFields) {
-                let question = {
-                    question: cf.question,
-                    id: cf._id,
-                    customField: ""
-                }
+        // for(let section of customSections) {
+        //     let td = {
+        //         name: section.name,
+        //         id: section._id,
+        //         customFields: [] 
+        //     }
 
-                let customField = await customFieldModel.get(cf.customField);
-                if(customField.length === 0) continue;
+        //     for(let cf of section.customFields) {
+        //         console.log(cf.customField);
+        //         let question = {
+        //             question: cf.question,
+        //             id: cf._id,
+        //             customField: ""
+        //         }
 
-                question.customField = customField[0]
+        //         let customField = await customFieldModel.get(cf.customField);
+        //         if(customField.length === 0) continue;
 
-                td.customFields.push(question);
-            }
+        //         question.customField = customField[0]
 
-            returnData.push(td);
-        }
-
-        return JSON.stringify(returnData);
+        //         // console.log(question)
+        //         td.customFields.push(question);
+        //     }
+        //     returnData.push(td);
+        // }
+        // return JSON.stringify(returnData);
     }
 
     static async saveFile (id, req = false) {
