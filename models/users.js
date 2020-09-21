@@ -467,7 +467,8 @@ class Users {
                     idDB: respuesta[y]._id,
                     id: respuesta[y].id,
                     name: respuesta[y].name,
-                    lastName: respuesta[y].lastName
+                    lastName: respuesta[y].lastName,
+                    legajo: respuesta[y].legajo
                 }
             }
             returnData.push(userObject)

@@ -165,7 +165,10 @@ class Monitoring {
 
             if(caseId) { where.caseId = caseId; }
 
-            if(program) { where.programId = program; }
+            if(program) { 
+                program = program.split(',');
+                where.programId = { $in: program }; 
+            }
 
             if(createdBy) { where.createdBy = createdBy; }
 
