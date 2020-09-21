@@ -237,20 +237,19 @@ class Monitoring {
                 disputado: mons.disputar,
                 monitoringDate: mons.monitoringDate,
                 createdAt: mons.createdAt,
-                devolucion: {
-                    comentariosDevolucion: mons.comentariosDevolucion,
-                    fortalezasUsuario: mons.fortalezasUsuario,
-                    pasosMejora: mons.pasosMejora
-                },
                 modifiedBy: mons.modifiedBy
             }
             if(id) {
                 // td.customSections       = JSON.parse(mons.customSections);
                 // td.responses            = mons.responses;
-
+                td.comments = mons.comments;
                 td.userInfo = await includes.users.model.get(mons.userId);
                 td.userInfo = td.userInfo.length > 0 ? td.userInfo[0]: undefined;
-
+                td.devolucion = {
+                    comentariosDevolucion: mons.comentariosDevolucion,
+                    fortalezasUsuario: mons.fortalezasUsuario,
+                    pasosMejora: mons.pasosMejora
+                }
                 td.responses = Monitoring.getCustomSectionsWithResponses(JSON.parse(mons.customSections), mons.responses);
                 
                 td.files = await filesofMonitoringsTable.find({ monitoringId: mons._id });
