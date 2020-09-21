@@ -262,7 +262,9 @@ class Monitoring {
                 let rsp = responses.find(e => e.section === customSections[c].id && e.question === cField.id);
 
                 customSections[c].customFields[j] = {
-                    ...cField,
+                    questionId: cField.id,
+                    question: cField.question,
+                    ...cField.customField,
                     response: {}
                 }
 
