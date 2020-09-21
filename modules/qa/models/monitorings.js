@@ -166,7 +166,7 @@ class Monitoring {
             if(caseId) { where.caseId = caseId; }
 
             if(program) { 
-                program = program.split(',');
+                program = program.split('%%');
                 where.programId = { $in: program }; 
             }
 
