@@ -269,7 +269,7 @@ class Monitoring {
 
             for(let j = 0; j < customSections[c].customFields.length; j++) {
                 let cField = customSections[c].customFields[j];
-                let rsp = responses.find(e => e.section === customSections[c].id && e.question === cField.id);
+                let rsp = responses.find(e => e.section === customSections[c].id && e.question === cField.questionId);
 
                 customSections[c].customFields[j] = {
                     ...cField,
@@ -411,17 +411,17 @@ class Monitoring {
             let section = customSections.find(element => element.id == r.section);
             if(!section) continue; // Es porque no existe la seccion
 
-            let question = section.customFields.find(e => e.id == r.question);
+            let question = section.customFields.find(e => e.questionId == r.question);
             if(!question) continue; // es porque no existe la pregunta0
 
             // Consultamos el tipo de pregunta
-            const { type } = question.customField;
+            const { type } = question;
             if(type === 'text' || type === 'area') {
                 // Agregamos la pregunta directamente, ya que no es calibrable ni monitoreable
                 questionToPush.response = r.response.data;
 
             } else {
-                let d = checkResponse(question.customField, r.response);
+                let d = checkResponse(question, r.response);
                 if(!d) continue;
 
                 let { calibrable, parametrizableValue } = d;
