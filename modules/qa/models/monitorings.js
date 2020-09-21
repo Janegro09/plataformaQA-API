@@ -230,7 +230,11 @@ class Monitoring {
                 disputado: mons.disputar,
                 monitoringDate: mons.monitoringDate,
                 createdAt: mons.createdAt,
-                devolucion: mons.devolucion,
+                devolucion: {
+                    comentariosDevolucion: mons.comentariosDevolucion,
+                    fortalezasUsuario: mons.fortalezasUsuario,
+                    pasosMejora: mons.pasosMejora
+                },
                 modifiedBy: mons.modifiedBy
             }
             if(id) {
@@ -318,7 +322,7 @@ class Monitoring {
         else if(!data) throw new Error('No se envio ningun parametro para modificar');
 
         let dataToModify = {};
-        const authorizedColumnsToModify = ["improvment", "duracionContacto", "userId", "transactionDate", "monitoringDate", "devolucion", "comments", "responses", "invalidated", "disputar","status"];
+        const authorizedColumnsToModify = ["improvment", "duracionContacto", "userId", "transactionDate", "monitoringDate", "comentariosDevolucion", "fortalezasUsuario", "pasosMejora", "comments", "responses", "invalidated", "disputar","status"];
         for(let d in data) {
             if(!authorizedColumnsToModify.includes(d)) continue;
             if(data[d] && typeof data[d] == 'string'){
@@ -508,7 +512,7 @@ class Monitoring {
 
             const viewRows = {
                 user: ["dni", "name", "lastName", "cuil", "legajo", "sexo", "status", "propiedad", "canal", "negocio", "edificioLaboral", "gerencia1", "nameG1", "gerencia2", "nameG2", "equipoEspecifico", "group", "role", "razonSocial", "jefeCoordinador", "responsable", "supervisor", "lider", "provincia", "region", "subregion", "email"],
-                mon: ["invalidated", "evaluated", "status", "transactionDate", "monitoringDate", "caseId", "program", "createdBy", "disputado", "createdAt", "devolucion", "modifiedBy", "responses"]
+                mon: ["invalidated", "evaluated", "status", "transactionDate", "monitoringDate", "caseId", "program", "createdBy", "disputado", "createdAt", "comentariosMejora", "fortalezasUsuario", "pasosMejora", "modifiedBy", "responses"]
             }
             // Recorremos el objeto y modificamos
             let string;

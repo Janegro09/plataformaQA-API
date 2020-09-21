@@ -22,7 +22,9 @@ var monitorings = new Schema({
     },
     transactionDate: Date,
     monitoringDate: Date,
-    devolucion: Object,
+    comentariosDevolucion: String,
+    fortalezasUsuario: String,
+    pasosMejora: String,
     comments: String,
     caseId: {
         type: String,
