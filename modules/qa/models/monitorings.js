@@ -269,15 +269,13 @@ class Monitoring {
 
             for(let j = 0; j < customSections[c].customFields.length; j++) {
                 let cField = customSections[c].customFields[j];
-
                 let rsp = responses.find(e => e.section === customSections[c].id && e.question === cField.id);
 
                 customSections[c].customFields[j] = {
-                    questionId: cField.id,
-                    question: cField.question,
-                    ...cField.customField,
+                    ...cField,
                     response: {}
                 }
+
 
                 if(rsp && rsp.response) {
                     customSections[c].customFields[j].response = rsp.response;
