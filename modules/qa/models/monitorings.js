@@ -263,7 +263,11 @@ class Monitoring {
 
                 customSections[c].customFields[j] = {
                     ...cField,
-                    response: rsp.response
+                    response: {}
+                }
+
+                if(rsp && rsp.response) {
+                    customSections[c].customFields[j].response = rsp.response;
                 }
             }
 
