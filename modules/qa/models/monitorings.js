@@ -565,7 +565,7 @@ class Monitoring {
                                 let question = cfield.question;
 
                                 // Vamos a agregar una columna por respuesta
-                                let q = getValuesByCustomField(cfield.customField, cfield.response);
+                                let q = getValuesByCustomField(cfield, cfield.response);
 
                                 q.forEach((v, i) => {
                                     data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name}`] = {value: v.value, style: ""};
