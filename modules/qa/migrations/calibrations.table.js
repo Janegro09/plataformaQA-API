@@ -17,7 +17,7 @@ const mongoose = require('mongoose');
 const Schema   = mongoose.Schema;
 
 var calibrations = new Schema({
-    calibrators: Array,.
+    calibrators: Array,
     expert: String,
     caseId: {
         type: String,
