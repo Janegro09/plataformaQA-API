@@ -364,14 +364,18 @@ class Monitoring {
 
         /** Esta funcion retorna los valores para incluir a los arrays
          */
-        const checkResponse = (cfield, response) => {
+        const checkResponse = (cfield, response, calibrable = false) => {
             let responseData = {
                 parametrizableValue: false,
-                calibrable: false
+                calibrable: calibrable
             }
             if(response.child === undefined) {
                 // Es porque responde directamente sin importarle los childs
-                responseData.calibrable = cfield.calibrable;
+
+                // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
+                if(!responseData.calibrable) {
+                    responseData.calibrable = cfield.calibrable;
+                }
 
                 let v = cfield.values.find(e => e.value == response.data);
                 if(!v) return false;
@@ -381,14 +385,17 @@ class Monitoring {
                 for(let v of cfield.values) {
                     if(v.value === response.data) {
                         if(!v.customFieldsSync) {
-                            responseData.calibrable = cfield.calibrable;
+                            // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
+                            if(!responseData.calibrable) {
+                                responseData.calibrable = cfield.calibrable;
+                            }
                             responseData.parametrizableValue = v.parametrizableValue;
                             return responseData;
                         }
                         let customFieldSync = v.customFieldsSync[0];
                         if(customFieldSync.type !== 'text' || customFieldsSync.type !== 'area') {
                             // Solo revisamos los valores si no es text o text area
-                            return checkResponse(customFieldSync, response.child);
+                            return checkResponse(customFieldSync, response.child, responseData.calibrable);
                         } else {
                             return responseData;
                         }
