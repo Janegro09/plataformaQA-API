@@ -87,7 +87,9 @@ class Calibrations {
                 caseId: c.caseId,
                 calibrationType: c.calibrationType,
                 expert: c.expert,
-                createdAt: c.createdAt
+                createdAt: c.createdAt,
+                startDate: c.startDate,
+                endDate: c.endDate
             }
 
             if(id) {
