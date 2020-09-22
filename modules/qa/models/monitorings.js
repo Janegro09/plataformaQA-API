@@ -367,15 +367,13 @@ class Monitoring {
         const checkResponse = (cfield, response, calibrable = false) => {
             let responseData = {
                 parametrizableValue: false,
-                calibrable: calibrable
+                calibrable: cfield.calibrable || calibrable
             }
             if(response.child === undefined) {
                 // Es porque responde directamente sin importarle los childs
 
                 // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
-                if(!responseData.calibrable) {
-                    responseData.calibrable = cfield.calibrable;
-                }
+                responseData.calibrable = responseData.calibrable || cfield.calibrable;
 
                 let v = cfield.values.find(e => e.value == response.data);
                 if(!v) return false;
@@ -386,9 +384,7 @@ class Monitoring {
                     if(v.value === response.data) {
                         if(!v.customFieldsSync) {
                             // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
-                            if(!responseData.calibrable) {
-                                responseData.calibrable = cfield.calibrable;
-                            }
+                            responseData.calibrable = responseData.calibrable || cfield.calibrable;
                             responseData.parametrizableValue = v.parametrizableValue;
                             return responseData;
                         }

@@ -164,6 +164,7 @@ class Calibrations {
             // Analizamos las respuestas y solo traemos las que sob calibrables
             let responses = m.responses;
             for(let e of responses) {
+                console.log(e);
                 if(e.calibrate) {
                     let td = {
                         response: e.response,
