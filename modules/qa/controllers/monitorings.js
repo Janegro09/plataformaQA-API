@@ -72,9 +72,8 @@ const controller = {
 
         let exp = await monModel.export(monitoringsIds);
 
-
         includes.files.getTempURL(exp.id, true).then(v => {
-            if(!v) return includes.views.error.message(res, "Error al obtener los monitoreos monitoreos");
+            if(!v) return includes.views.error.message(res, "Error al obtener los monitoreos");
             return includes.views.customResponse(res, true, 200, `Monitoring Exports cant: ${monitoringsIds.length}`, {
                 tempId: v
             });

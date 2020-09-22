@@ -21,6 +21,7 @@ const tempURLs   = require('../database/migrations/tempURLs');
 const cfile     = helper.configFile();
 const views     = require('../views');
 const { files } = require('./helper');
+const { where } = require('../database/migrations/Files');
 
 const authorizedSections = ['filesLibraryPartitures'];
 
@@ -123,6 +124,28 @@ class uploadFile {
         }else {
             return false;
         }
+    }
+
+    static async get (section = false, fileType = false, fileName = false) {
+        let where = {}
+
+        if(section) {
+            where.section = section;
+        }
+        if(fileType) {
+            where.type = fileType;
+        }
+        if(fileName) {
+            where.name = fileName;
+        }
+
+        let c = await filesModel.find().where(where);
+
+        if(c.length > 0) {
+            return c[0];
+        } else return false
+
+        
     }
 
     /**
