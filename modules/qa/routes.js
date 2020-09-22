@@ -22,7 +22,7 @@ const calibrationsController = require('./controllers/calibrations');
 const monRoute = '/monitoring'
 router.post(`${monRoute}/new`,includes.permit.checkPermit ,monController.new);
 
-router.get(`${monRoute}/exports`,includes.permit.checkPermit ,monController.export);
+router.head(`${monRoute}/exports`,includes.permit.checkPermit ,monController.export);
 router.get(`${monRoute}/:id?`,includes.permit.checkPermit ,monController.get);
 
 router.put(`${monRoute}/:id`,includes.permit.checkPermit ,monController.modify);
