@@ -38,7 +38,7 @@ router.post(`${calibrationsTypesRoute}`,includes.permit.checkPermit ,calibration
 router.delete(`${calibrationsTypesRoute}/:id`,includes.permit.checkPermit ,calibrationsController.deleteCalibrationType);
 
 const calibrationsRoute = '/calibration'
-router.post(`${calibrationsRoute}`,includes.permit.checkPermit ,calibrationsController.new);
+router.post(`${calibrationsRoute}/new`,includes.permit.checkPermit ,calibrationsController.new);
 router.get(`${calibrationsRoute}/:id?`,includes.permit.checkPermit ,calibrationsController.get);
 router.put(`${calibrationsRoute}/:id`,includes.permit.checkPermit ,calibrationsController.modify);
 router.delete(`${calibrationsRoute}/:id`,includes.permit.checkPermit ,calibrationsController.delete);
