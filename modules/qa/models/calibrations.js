@@ -197,7 +197,7 @@ class Calibrations {
 
             if(section) {
                 // Buscamos la pregunta
-                let question = section.customFields.find(e => e.id === rspGroup.question);
+                let question = section.customFields.find(e => e.questionId === rspGroup.question);
                 if(question) {
 
                     rspGroup.questionName = question.question;
