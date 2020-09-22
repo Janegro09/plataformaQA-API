@@ -54,7 +54,8 @@ class Calibrations {
             caseId,
             calibrationType,
             calibrators: calibratorsToAdd,
-            expert
+            expert,
+            status_open: true
         })
 
         let c = await newSession.save();
