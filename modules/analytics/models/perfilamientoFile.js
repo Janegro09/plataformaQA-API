@@ -319,9 +319,9 @@ const PerfilamientoFile = {
                 tempData.VMin = 0;
             } else if(tempData.VMax === tempData.VMin) {
                 tempData.VMax = tempData.VMin + 1;
-                tempData.DefaultValues.Q1.VMax = tempData.VMin * 0.25;
-                tempData.DefaultValues.Q2.VMax = tempData.VMin * 0.50;
-                tempData.DefaultValues.Q3.VMax = tempData.VMin * 0.75;
+                tempData.DefaultValues.Q1.VMax = tempData.VMin + 0.25;
+                tempData.DefaultValues.Q2.VMax = tempData.VMin + 0.50;
+                tempData.DefaultValues.Q3.VMax = tempData.VMin + 0.75;
                 
             }
 
