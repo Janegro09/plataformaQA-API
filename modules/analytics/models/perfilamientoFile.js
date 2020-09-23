@@ -315,14 +315,16 @@ const PerfilamientoFile = {
             // tempData.VMax = parseFloat(tempData.VMax.toFixed(4))
             // tempData.VMin = parseFloat(tempData.VMin.toFixed(4))
 
-            if(tempData.VMin >= tempData.VMax) {
+            if(tempData.VMin > tempData.VMax) {
                 tempData.VMin = 0;
+            } else if(tempData.VMax === tempData.VMin) {
+                tempData.VMax = 1;
             }
 
             tempData.DefaultValues.Q4.VMax = tempData.VMax;
             tempData.DefaultValues.Q1.VMin = tempData.VMin;
 
-            if(tempData.VMin >= tempData.VMax) continue;
+            // if(tempData.VMin >= tempData.VMax) continue;
 
             returnData.push(tempData)
         }
