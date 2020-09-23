@@ -318,7 +318,7 @@ const PerfilamientoFile = {
             if(tempData.VMin > tempData.VMax) {
                 tempData.VMin = 0;
             } else if(tempData.VMax === tempData.VMin) {
-                tempData.VMax = 1;
+                tempData.VMax = tempData.VMin + 1;
             }
 
             tempData.DefaultValues.Q4.VMax = tempData.VMax;
