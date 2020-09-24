@@ -101,9 +101,10 @@ class XLSXFile {
                     if(actualSheet.rows[r][c].style){
                         style = actualSheet.rows[r][c].style
                     }
-                    if(typeof value === 'number'){
+                    if(typeof value === 'number' && !isNaN(value)){
                         sheet.cell(row, col).number(value).style(style)
                     }else{
+                        value = value.toString();
                         sheet.cell(row, col).string(value).style(style)
                     }
                     col++
@@ -203,7 +204,7 @@ class Sheet extends XLSXFile {
         // Creamos un objeto ordenado segun los headers
         for(let x in data){
             let c
-            if(c = this.getColData(x)){
+            if(c = this.getColData(x)){ 
                 if(data[x].value === undefined){
                     let value = false;
                     if(data[x] && typeof data[x] !== 'object') {
