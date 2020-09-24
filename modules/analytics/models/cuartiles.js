@@ -70,12 +70,12 @@ const Cuartiles = {
                     VMax: cuartilActual.Q4.VMax
                 }
             }
-            tempData.Q1.VMax = cuartilActual.Q1.VMax ? cuartilActual.Q1.VMax : tempData.Q1.VMin + bloques;
-            tempData.Q2.VMin = tempData.Q1.VMax;
-            tempData.Q2.VMax = cuartilActual.Q2 && (cuartilActual.Q2.VMax && cuartilActual.Q2.VMax > tempData.Q2.VMin) ? cuartilActual.Q2.VMax : tempData.Q2.VMin + bloques;
-            tempData.Q3.VMin = tempData.Q2.VMax;
-            tempData.Q3.VMax = cuartilActual.Q2 && cuartilActual.Q2.VMax ? cuartilActual.Q3.VMax : tempData.Q3.VMin + bloques;
-            tempData.Q4.VMin = tempData.Q3.VMax;
+            tempData.Q1.VMax = parseFloat(cuartilActual.Q1.VMax ? cuartilActual.Q1.VMax : tempData.Q1.VMin + bloques);
+            tempData.Q2.VMin = parseFloat(tempData.Q1.VMax);
+            tempData.Q2.VMax = parseFloat(cuartilActual.Q2 && (cuartilActual.Q2.VMax && cuartilActual.Q2.VMax > tempData.Q2.VMin) ? cuartilActual.Q2.VMax : tempData.Q2.VMin + bloques);
+            tempData.Q3.VMin = parseFloat(tempData.Q2.VMax);
+            tempData.Q3.VMax = parseFloat(cuartilActual.Q2 && cuartilActual.Q2.VMax ? cuartilActual.Q3.VMax : tempData.Q3.VMin + bloques);
+            tempData.Q4.VMin = parseFloat(tempData.Q3.VMax);
 
             this.cuartiles.push(tempData)
         }  
