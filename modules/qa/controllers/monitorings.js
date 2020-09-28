@@ -44,7 +44,7 @@ const controller = {
                 if(!saveFile) return includes.views.error.message(res, "Error al guardar los archivos del monitoreo");
             }
 
-            return includes.views.success.create(res);
+            return includes.views.customResponse(res, true, 200, "Monitoreo creado exitosamente", save);
         } catch (e) {
             console.log('Err: ', e);
             return includes.views.error.message(res, e.message);
