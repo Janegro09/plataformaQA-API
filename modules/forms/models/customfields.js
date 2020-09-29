@@ -122,7 +122,6 @@ module.exports = class customFields {
             where = {_id: id}
         }
         let query = await customFieldsSchema.find().where(where);
-        if(query.length === 0) throw new Error('No existen registros en nuestra base de datos');
 
         for(let cf of query){
             let values = await customFields.getValues(cf.values);
