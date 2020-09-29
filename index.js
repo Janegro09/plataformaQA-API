@@ -29,7 +29,7 @@ mongoose.connect(`mongodb://${dbConfig.mongodb.host}:${dbConfig.mongodb.port}/${
     console.log("-------------------------------------------------- ");
     console.log("DATABASES CONNECTIONS");
     console.log("");
-    console.log(`Conexion a MongoDB realizada correctamente mediante puerto: ${dbConfig.mongodb.port}`);
+    console.log(`Conexion a MongoDB realizada correctamente mediante puerto: ${dbConfig.mongodb.port} a la base: ${dbConfig.mongodb.database}`);
     console.log("-------------------------------------------------- ");
     console.log("-------------------------------------------------- ");
     console.log("MAIN SERVER CONNECTION");
