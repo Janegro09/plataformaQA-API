@@ -592,8 +592,6 @@ class Monitoring {
                 } else {
                     mon[c] = mon[c] ? mon[c].toString() : "";
                 }
-
-
                 data[`monitoring - ${c}`] = {value: mon[c], style: ""};
             }
             addHeadersAndRows(data);
