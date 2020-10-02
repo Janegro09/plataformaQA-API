@@ -477,10 +477,10 @@ class Monitoring {
         const getValuesByCustomField = (cfield, responses) => {
             let response = cfield.values.find(e => e.value == responses.data);
             if(!response) return false;
-            
             let td = [{
                 name: cfield.name,
-                value: response.value
+                value: response.value,
+                parametrizableValue: response.parametrizableValue
             }]
             if(response.customFieldsSync && responses.child) {
                 let more = getValuesByCustomField(response.customFieldsSync[0], responses.child)
@@ -572,18 +572,27 @@ class Monitoring {
                                 if(q && q.length > 0) {
                                     q.forEach((v, i) => {
                                         data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name}`] = {value: v.value, style: ""};
+                                        if(v.parametrizableValue !== false) {
+                                            data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name} | value`] = v.parametrizableValue;
+                                        }
                                     })
                                 }
 
                             }
 
                         }
-
+                        
                         continue;
                     break;
                 }
 
-                mon[c] = mon[c] ? mon[c].toString() : "";
+                if(mon[c] instanceof Date) {
+                    let d = new Date(mon[c]);
+                    mon[c] = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
+                } else {
+                    mon[c] = mon[c] ? mon[c].toString() : "";
+                }
+
 
                 data[`monitoring - ${c}`] = {value: mon[c], style: ""};
             }

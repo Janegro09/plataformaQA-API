@@ -79,6 +79,8 @@ class Calibrations {
         let calibrations = await calibrationsTable.find().where(where);
         let returnData = [];
 
+        calibrations = calibrations.sort((a, b) => b.createdAt - a.createdAt)
+
         for(let c of calibrations) {
 
             let td = {
