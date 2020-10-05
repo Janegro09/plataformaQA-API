@@ -364,16 +364,16 @@ class Monitoring {
 
         /** Esta funcion retorna los valores para incluir a los arrays
          */
-        const checkResponse = (cfield, response, calibrable = false) => {
+        const checkResponse = (cfield, response) => {
             let responseData = {
                 parametrizableValue: false,
-                calibrable: cfield.calibrable || calibrable
+                calibrable: cfield.calibrable
             }
             if(response.child === undefined) {
                 // Es porque responde directamente sin importarle los childs
 
                 // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
-                responseData.calibrable = responseData.calibrable || cfield.calibrable;
+                responseData.calibrable = cfield.calibrable;
 
                 let v = cfield.values.find(e => e.value == response.data);
                 if(!v) return false;
@@ -384,14 +384,14 @@ class Monitoring {
                     if(v.value === response.data) {
                         if(!v.customFieldsSync) {
                             // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
-                            responseData.calibrable = responseData.calibrable || cfield.calibrable;
+                            responseData.calibrable = cfield.calibrable;
                             responseData.parametrizableValue = v.parametrizableValue;
                             return responseData;
                         }
                         let customFieldSync = v.customFieldsSync[0];
                         if(customFieldSync.type !== 'text' || customFieldsSync.type !== 'area') {
                             // Solo revisamos los valores si no es text o text area
-                            return checkResponse(customFieldSync, response.child, responseData.calibrable);
+                            return checkResponse(customFieldSync, response.child);
                         } else {
                             return responseData;
                         }
