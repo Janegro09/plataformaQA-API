@@ -150,6 +150,7 @@ class Calibrations {
     }
 
     static async getMonitoringsComparation(monitorings) {
+        const respuestasRequeridas = monitorings.length; // Dara el numero de respuestas que debe haber
 
         let responsesGroups = [];
 
@@ -191,10 +192,14 @@ class Calibrations {
             }
         }
 
-        // Buscamos los nombres de las preguntas en uno de los forms
+        // Buscamos los nombres de las preguntas en uno de los forms y eliminamos las respuestas que no tengan un total igual a la cantidad de monitoreos
         let customSection = JSON.parse(monitorings[0].customSections);
+        let tempArray = [];
+        for(let i = 0; i < responsesGroups.length; i++){
+            let rspGroup = responsesGroups[i];
 
-        for(let rspGroup of responsesGroups){
+            if(rspGroup.responses.length !== respuestasRequeridas) continue;
+
             let section = customSection.find(elem => elem.id === rspGroup.section);
 
             if(section) {
@@ -207,7 +212,10 @@ class Calibrations {
                 }
             }
 
+            tempArray.push(rspGroup);
         }
+
+        responsesGroups = tempArray; // Igualamos los arrays ya que eliminamos los que no cumplen con las respuestas minimas
         
         // Analizamos las respuestas de cada pregunta y damos los resultados
         for(let rspGroup of responsesGroups) {
