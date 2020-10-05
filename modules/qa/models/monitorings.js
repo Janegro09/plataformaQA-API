@@ -373,7 +373,10 @@ class Monitoring {
                 // Es porque responde directamente sin importarle los childs
 
                 // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
-                responseData.calibrable = cfield.calibrable;
+                /**
+                 * Comentamos los valores de calibrables para los hijos, ya que solamente me insteresa saber si es calibrable el padre 
+                 */
+                // responseData.calibrable = cfield.calibrable;
 
                 let v = cfield.values.find(e => e.value == response.data);
                 if(!v) return false;
@@ -383,8 +386,7 @@ class Monitoring {
                 for(let v of cfield.values) {
                     if(v.value === response.data) {
                         if(!v.customFieldsSync) {
-                            // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
-                            responseData.calibrable = cfield.calibrable;
+                            // responseData.calibrable = cfield.calibrable;
                             responseData.parametrizableValue = v.parametrizableValue;
                             return responseData;
                         }
