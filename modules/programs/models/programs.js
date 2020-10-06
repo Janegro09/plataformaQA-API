@@ -20,7 +20,8 @@ const Schemas = {
     groupsbyPrograms: require('../migrations/programsByGroups.table'),
     programsGroups: require('../migrations/programsGroups.table'),
     usersbyprograms: require('../migrations/groupsByUsers.table'),
-    programsbyPerfilamientos: require('../migrations/programsbyPerfilamientos')
+    programsbyPerfilamientos: require('../migrations/programsbyPerfilamientos'),
+    forms: require('../../forms/migrations/forms.table')
 }
 const programsGroupsModel = require('./programsGroups');
 const programsbyPerfilamientos = require('../migrations/programsbyPerfilamientos');
@@ -131,6 +132,10 @@ class Program {
         // Consultamos si tiene grupos asignados
         c = await Schemas.groupsbyPrograms.find({programId: id});
         if(c.length > 0) throw new Error('No se puede eliminar un programa con grupos asignados');
+
+        // Consultamos si tiene formularios asignados
+        c = await Schemas.forms.find({ programId: id });
+        if(c.length > 0) throw new Error('No se puede eliminar un programa con formularios asignados');
 
         // Modificamos el paramétro deleted
         c = await Schemas.programs.deleteOne({_id: id});
