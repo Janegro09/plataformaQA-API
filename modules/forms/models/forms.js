@@ -122,21 +122,27 @@ module.exports = class Forms {
         let c = await FormsTable.find().where(where)
         let dataReturn = [];
         for(let { _id, name, programId, description, parts, createdAt } of c) {
-            if(id) {
-                parts = await Forms.getParts(parts)
-            } else {
-                parts = parts.length;
+            try {
+                    
+                if(id) {
+                    parts = await Forms.getParts(parts)
+                } else {
+                    parts = parts.length;
+                }
+                let getProgram = await Program.get(programId, true)
+                let tempdata = {
+                    id: _id,
+                    name,
+                    description,
+                    parts,
+                    createdAt,
+                    program: getProgram
+                }
+                dataReturn.push(tempdata);
+
+            } catch (e) {
+                continue;
             }
-            let getProgram = await Program.get(programId, true)
-            let tempdata = {
-                id: _id,
-                name,
-                description,
-                parts,
-                createdAt,
-                program: getProgram
-            }
-            dataReturn.push(tempdata);
         }
 
         return dataReturn
