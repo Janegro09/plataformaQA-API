@@ -53,7 +53,9 @@ module.exports = class customFields {
         }
 
         if(this.values) {
-            for(let { customFieldsSync, parametrizableValue } of this.values) {
+            let tempValues = [];
+            for(let { customFieldsSync, parametrizableValue, value } of this.values) {
+                if(value === "") continue; 
                 if (customFieldsSync) {
                     if(customFieldsSync === this.id) throw new Error('No puede agregar como campo condicional el mismo campo personalizado que esta modificando')
                     let c = await customFieldsSchema.find({ _id: customFieldsSync })
@@ -62,7 +64,10 @@ module.exports = class customFields {
                 if(parametrizableValue !== 0 && parametrizableValue !== 1) {
                     parametrizableValue = false;
                 }
+                tempValues.push({ customFieldsSync, parametrizableValue, value });
             }
+
+            this.values = tempValues;
         }
 
         const authorizedValuesofSection = ['M', 'P']
