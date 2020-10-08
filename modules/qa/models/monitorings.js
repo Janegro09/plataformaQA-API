@@ -474,7 +474,7 @@ class Monitoring {
 
     static async export(monitoringIds) {
         if(!monitoringIds) throw new Error('Error en los parametros enviados');
-        if(monitoringIds.length > 30) throw new Error('No puede exportar mas de 30 monitoreos en la misma plantilla');
+        // if(monitoringIds.length > 30) throw new Error('No puede exportar mas de 30 monitoreos en la misma plantilla');
 
         const getValuesByCustomField = (cfield, responses) => {
             let response = cfield.values.find(e => e.value == responses.data);
