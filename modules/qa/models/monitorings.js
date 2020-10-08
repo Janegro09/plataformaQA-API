@@ -477,19 +477,23 @@ class Monitoring {
         // if(monitoringIds.length > 30) throw new Error('No puede exportar mas de 30 monitoreos en la misma plantilla');
 
         const getValuesByCustomField = (cfield, responses) => {
-            let response = cfield.values.find(e => e.value == responses.data);
-            if(!response) return false;
-            let td = [{
-                name: cfield.name,
-                value: response.value,
-                parametrizableValue: response.parametrizableValue
-            }]
-            if(response.customFieldsSync && responses.child) {
-                let more = getValuesByCustomField(response.customFieldsSync[0], responses.child)
-                td = td.concat(more);
+            if(cfield.values) {
+                let response = cfield.values.find(e => e.value == responses.data);
+                if(!response) return false;
+                let td = [{
+                    name: cfield.name,
+                    value: response.value,
+                    parametrizableValue: response.parametrizableValue
+                }]
+                if(response.customFieldsSync && responses.child) {
+                    let more = getValuesByCustomField(response.customFieldsSync[0], responses.child)
+                    td = td.concat(more);
+                }
+    
+                return td;
+            } else {
+                return false;
             }
-
-            return td;
         }
 
         /**
