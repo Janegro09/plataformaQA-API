@@ -14,9 +14,22 @@ const includes = require('../../includes');
 
 const model    = require('../models/reporting');
 
+const sectionPermitted = ["analytics"]
+
+
 const controller = {
     getReport: async (req, res) => {
+        const { s } = req.query;
 
+        let report = new model(s, req.body, req.authUser);
+
+        report.create().then(v => {
+            if(!v) return includes.views.error.message(res, "Error al generar el reporte");
+            else return includes.views.customResponse(res, true, 200, "Reporte", v);
+        }).catch(e => {
+            console.log("Err: ", e);
+            return includes.views.error.message(res, e.message);
+        })
     }
 }
 

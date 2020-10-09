@@ -20,7 +20,7 @@ const controller       = require('./controllers/reporting');
 
 // ------------------------------------------ REPORTING ---------------------------------------------------------
 // Perfilamiento Routes
-router.get('/', controller.getReport);
+router.post('/', controller.getReport);
 
 
 module.exports = router;

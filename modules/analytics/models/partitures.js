@@ -252,7 +252,7 @@ class Partitures {
         let usersInfo  = await partituresInfoByUsersTable.find().where(wherePartiture);
         if(usersInfo.length === 0) throw new Error('No existen usuarios en esta partitura');
 
-        usersInfo.map(v => data.clusters.includes(v.cluster) || data.clusters.push(v.cluster));
+        usersInfo.map(v => (data.clusters.includes(v.detallePA) || !v.detallePA) || data.clusters.push(v.detallePA));
 
         // Guardamos las instancias
         let instances = await instancesOfPartituresTable.find().where(whereInstance);
