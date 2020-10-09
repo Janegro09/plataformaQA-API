@@ -337,7 +337,7 @@ class Partitures {
                     let rowFromPartiture = "";
                     if (partitureInfoByUser) {
                         // Traemos la informacion agregada de la partitura
-                        rowFromPartiture = partitureFileusers.filter(v => v.DNI == temp[0].id)
+                        rowFromPartiture = partitureFileusers && partitureFileusers.filter(v => v.DNI == temp[0].id)
                         rowFromPartiture = rowFromPartiture.length > 0 ? rowFromPartiture[0] : false;
                     }
 

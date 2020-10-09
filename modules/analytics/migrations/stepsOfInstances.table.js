@@ -51,7 +51,10 @@ var stepsOfInstances = new Schema({
     accountAdministratorComments: String,
     coachingComments: String,
     resultadosRepresentante: String,
-    improvment: String
+    improvment: {
+        type: String,
+        default: '+-'
+    }
 });
 
 module.exports = mongoose.model('stepsOfInstances',stepsOfInstances);
