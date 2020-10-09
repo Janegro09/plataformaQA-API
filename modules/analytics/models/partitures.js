@@ -228,6 +228,42 @@ class Partitures {
         return false;
     }
 
+    /**
+     * Funcion que devuleve los datos necesarios para armar un reporte
+     * @returns { Object } Retorna toda la informacion sobre la partitura
+     *  - Clusters disponibles
+     *  - Instancias disponibles
+     * @param {Number} id 
+     */
+    static async getPartitureInfo(id) {
+        if(!id) throw new Error('Error en los parametros enviados');
+        
+        const where = { _id: id };
+        const wherePartiture = { partitureId: id };
+        const whereInstance = { partitureId: id }
+        let data = {
+            clusters: [],
+            instances: []
+        }
+        // Consultamos si existe la partitura
+        let partitures = await partituresSchema.find().where(where);
+        if (partitures.length === 0) throw new Error('No existen registros en nuestra base de datos');
+
+        let usersInfo  = await partituresInfoByUsersTable.find().where(wherePartiture);
+        if(usersInfo.length === 0) throw new Error('No existen usuarios en esta partitura');
+
+        usersInfo.map(v => data.clusters.includes(v.cluster) || data.clusters.push(v.cluster));
+
+        // Guardamos las instancias
+        let instances = await instancesOfPartituresTable.find().where(whereInstance);
+
+        for(let { _id:id, partitureId, name } of instances) {
+            data.instances.push({ id, partitureId, name })
+        }
+
+        return data;
+    }
+
     static async get(req) {
         const { id, userId, stepId } = req.params;
         let ReturnData = [];

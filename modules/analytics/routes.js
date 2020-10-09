@@ -45,6 +45,7 @@ router.get('/file/:fileId/perfilamiento', controllerPerfilamiento.getGroups);
 
 // Partitures
 router.post('/partitures/new',includes.permit.checkPermit, controllerPartitures.new);
+router.get('/partitures/dataReporting/:id?', controllerPartitures.getPartitureInfo);
 router.get('/partitures/:id?/:userId?/:stepId?', includes.permit.checkPermit, controllerPartitures.get);
 router.delete('/partitures/:id',includes.permit.checkPermit, controllerPartitures.delete);
 router.put('/partitures/:id?/:userId?/:stepId?',includes.permit.checkPermit, controllerPartitures.update);

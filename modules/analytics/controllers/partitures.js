@@ -35,6 +35,23 @@ const controller = {
             return includes.views.error.message(res, e.message);
         })
     },
+    /**
+     * Funcion que devuelve los datos de una partitura, necesarios para la reporteria
+     * @param {Object} req 
+      @param {Object} res 
+     */
+    async getPartitureInfo(req, res) {
+        const { id } = req.params;
+
+        if(!id) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        partituresModel.getPartitureInfo(id).then(v => {
+            if(!v) return includes.views.error.message(res, 'Error al mostrar los datos de la partitura')
+            else return includes.views.customResponse(res, true, 200, "", v)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
+    },
     async get(req, res){
         let message = "";
         if(req.params.id !== undefined && req.params.userId !== undefined && req.params.stepId !== undefined){
