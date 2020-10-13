@@ -211,7 +211,7 @@ class Sheet extends XLSXFile {
                         value = data[x]
                     }
                     data[x] = { style: data[x].style || '' };
-                    data[x].value = value ? value : '-';
+                    data[x].value = value || value === 0 ? value : '-';
                 }
                 if(typeof data[x].value === 'string' || typeof data[x].value === 'number'){
                     dataOrdenada[c.id] = data[x]

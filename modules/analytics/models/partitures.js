@@ -642,8 +642,6 @@ class Partitures {
             if(vencido && blockingDate) throw new Error('No puede modificar ya que la fecha de vencimiento es bloqueante');
 
 
-
-
             if(!c[0].fechaInforme){
                 // Si no tiene fecha de informe se la agregamos
                 modify.fechaInforme = Date.now();
@@ -675,6 +673,8 @@ class Partitures {
 
                 modify.customFilesSync = files;
             }
+
+            modify.last_modification = today;
 
             c = await stepsSchema.updateOne({ _id: stepId, userId: userId }, modify)
             if (c.ok === 0) {

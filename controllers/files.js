@@ -273,7 +273,7 @@ class uploadFile {
                 // Buscamos el archivo correspondiente a la url temporal
                 let c = await filesModel.find({_id: idFile});
                 if(c.length == 0) {
-                    views.success.file.download(res,'public/notFound.jpg');
+                    return views.success.file.download(res,'public/notFound.jpg');
                 }
                 url = c[0].path;
                 if(helper.files.exists(url)){
@@ -286,11 +286,11 @@ class uploadFile {
                    }
                 }else{
                    await filesModel.deleteOne({_id: id});
-                   views.success.file.download(res,'public/notFound.jpg');
+                   return views.success.file.download(res,'public/notFound.jpg');
                 }
             } catch (e){
 		        console.log(e)
-                views.success.file.download(res,'public/notFound.jpg');
+                return views.success.file.download(res,'public/notFound.jpg');
             }
         }else {
             // Entonces buscamos archivos

@@ -21,15 +21,24 @@ const controller = {
     getReport: async (req, res) => {
         const { s } = req.query;
 
-        let report = new model(s, req.body, req.authUser);
+        
+        try {
+            let report = new model(s, req.body, req.authUser);
 
-        report.create().then(v => {
-            if(!v) return includes.views.error.message(res, "Error al generar el reporte");
-            else return includes.views.customResponse(res, true, 200, "Reporte", v);
-        }).catch(e => {
+            let exp = await report.create();
+            includes.files.getTempURL(exp.id, true).then(v => {
+                if(!v) return includes.views.error.message(res, "Error al obtener el reporte");
+                return includes.views.customResponse(res, true, 200, `Reporting Export`, {
+                    tempId: v
+                });
+            }).catch(e => {
+                console.log('Err: ', e);
+                return includes.views.error.message(res, e.message);
+            })
+        } catch (e) {
             console.log("Err: ", e);
-            return includes.views.error.message(res, e.message);
-        })
+            return includes.views.error.message(res, "Error al exportar reporte");
+        }
     }
 }
 

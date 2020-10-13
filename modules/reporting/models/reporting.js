@@ -19,8 +19,19 @@ const Schemas = {
         partitures:     require('../../analytics/migrations/partitures.table'),
         infoByUsers:    require('../../analytics/migrations/partituresInfoByUsers.table'),
         instances:      require('../../analytics/migrations/instancesOfPartitures.table'),
-        steps:          require('../../analytics/migrations/stepsOfInstances.table')
+        steps:          require('../../analytics/migrations/stepsOfInstances.table'),
+        files:          require('../../analytics/migrations/filesByPartitures.table')
     }
+}
+
+const rows_order = {
+    1: "G1",
+    2: "G2",
+    3: "coordinador",
+    4: "responsable",
+    5: "supervisor",
+    6: "lider"
+
 }
 
 
@@ -31,10 +42,18 @@ class Reporting {
         this.partiture          = partitureId   || false;
         this.clusters           = clusters      || false;
         this.instances          = instances     || false;
+        this.instancesDetail    = [];
         this.authUser           = AuthUser[0]   || false;
         this.users              = [];
+        this.usersByPartitures  = [];
         this.usersIds           = [];
         this.viewPermissions    = { company: false, role: false };
+        this.informes = [];
+        this.informesJerarquicos = {};
+        this.sheet = {
+            data: [],
+            headers: ["1","2","3","4","5","6","7"]
+        }
     }
 
     async check_values() {
@@ -47,29 +66,23 @@ class Reporting {
         } else throw new Error('Error en los parametros enviados');
 
         if(this.clusters) {
-            let clusters = await Schemas.partitures.infoByUsers.find().where({ detallePA: { $in: this.clusters } });
+            let clusters = await Schemas.partitures.infoByUsers.find().where({ cluster: { $in: this.clusters } });
             for(let { userId } of clusters) {
                 if(this.usersIds.includes(userId)) continue;
                 this.usersIds.push(userId);
             }
-            this.users = clusters;
+
+            // Buscamos los usuarios
+            let users = await includes.users.schema.find().where({ _id: { $in: this.usersIds } });
+
+            users.map(v => this.users.push(Reporting.createUser(v)));
+
+            this.usersByPartitures  = clusters;
         } else throw new Error('Error en los parametros enviados');
 
         if(this.instances) {
             let instances = await Schemas.partitures.instances.find().where({ _id: { $in: this.instances }, partitureId: this.id });
-            this.instances = [];
-
-            for(let i = 0; i < instances.length; i++) {
-                let temp = {
-                    id: instances[i]._id,
-                    partitureId: instances[i].partitureId,
-                    name: instances[i].name,
-                    createdAt: instances[i].createdAt,
-                    steps: []
-                }
-                temp.steps = await Schemas.partitures.steps.find({ partitureId: this.id, instanceId: instances[i]._id, userId: { $in: this.usersIds } });
-                this.instances.push(temp);
-            }
+            this.instancesDetail = instances;
         } else throw new Error('Error en los parametros enviados');
 
         if(this.authUser) {
@@ -85,9 +98,398 @@ class Reporting {
     async create() {
         await this.check_values();
 
-        console.log(this.viewPermissions)
-        return true;
+        await this.getInformes();
+        // console.log(this.users, this.usersIds)
 
+        await this.generar_rangos_jerarquicos();
+
+        await this.create_data_to_excel();
+        // console.log(this.informes)
+
+        // Creamos el archivo xlsx
+        let today = new Date();
+        today = `${today.getDate()}-${today.getMonth()}-${today.getFullYear()}`;
+
+        let report = new includes.XLSX.XLSXFile(`reporting ${today}.xlsx`, 'reporting');
+
+        let reportSheet = new includes.XLSX.Sheet(report, "report");
+
+        reportSheet.addHeaders(this.sheet.headers);
+
+        for(let d of this.sheet.data) {
+            reportSheet.addRow(d);
+        }
+
+        reportSheet.createSheet();
+
+        let save = await report.save();
+        if(!save) throw new Error("Error al crear el reporte");
+
+        return save;
+
+    }
+
+    save_headers(headers) {
+        if(typeof headers == 'object'){
+            for(let index in headers) {
+                if(!this.sheet.headers.includes(index)) {
+                    this.sheet.headers.push(index);
+                }
+            }
+        }
+    }
+
+    async getInformes() {
+        // Iteramos sobre los usuarios y y guardamos la data y las metricas
+        for(let user of this.users) {
+            
+            let partiture = this.usersByPartitures.find(e => e.userId == user.idDB);
+            if(!partiture) continue;
+
+            let informe = {
+                ...user,
+                monitoreos_requeridos: 0,
+                monitoreos_audios: 0,
+                monitoreos_messages: 0,
+                monitoreos_totales: 0,
+                monitoreos_faltantes: 0,
+                messages: "",
+                instancias: this.instances.length,
+                pasos_in_date: 0,
+                pasos_out_date: 0,
+                pasos: 0,
+                pasos_completados: 0,
+                pasos_incompletos: 0,
+                interviene_mando: 0,
+                cumplimiento: 0
+            }
+
+            let improvments = [];
+
+            // Obtenemos las instancias y los pasos
+            let steps = await Schemas.partitures.steps.find({ userId: user.idDB, instanceId: { $in: this.instances }, partitureId: this.id });
+
+            informe.pasos = steps.length;
+            
+            for(let step of steps) {
+                informe.monitoreos_requeridos += step.requestedMonitorings;
+
+                const this_instance = this.instancesDetail.find(e => e._id == step.instanceId);
+                if(!this_instance) continue;
+
+                let improvmentIndex = improvments.findIndex(e => e.instanceId == step.instanceId);
+                if(improvmentIndex === -1) {
+                    improvments.push({ instanceId: step.instanceId, instance: this_instance.name, improvment: step.improvment });
+                } else {
+                    improvments[improvmentIndex].improvment = step.improvment;
+                }
+
+                // Informamos si el paso se completo
+                if(step.completed) {
+                    informe.pasos_completados += 1;
+                } else {
+                    informe.pasos_incompletos += 1;
+                }
+
+                // Buscamos los archivos para este step
+                let files = await Schemas.partitures.files.find({ partitureId: this.id, userId: user.idDB, stepId: step._id });
+
+                for (let f of files) {
+                    if(f.fileId){
+                        informe.monitoreos_audios += 1;
+                    } else if(f.message) {
+                        informe.monitoreos_messages += 1;
+                        informe.messages = informe.messages ? ` | ${f.message}` : f.message;
+                    }
+                }
+
+                if(step.responsibleComments || step.managerComments || step.coordinatorOnSiteComments || step.accountAdministratorComments) {
+                    informe.interviene_mando += 1;
+                }   
+
+                if(this_instance.expirationDate && step.last_modification > this_instance.expirationDate) {
+                    informe.pasos_out_date += 1;
+                } else {
+                    informe.pasos_in_date += 1;
+                }
+
+                
+            }
+            // Sacamos los totales
+            informe.monitoreos_totales = informe.monitoreos_audios + informe.monitoreos_messages;
+            informe.monitoreos_faltantes = informe.monitoreos_requeridos - informe.monitoreos_totales;
+
+            informe.cumplimiento = parseFloat(informe.pasos_completados / informe.pasos);
+
+            // Agregamos los improvments
+            for(let { instance, improvment } of improvments) {
+                if(improvment === '+') {
+                    improvment = "Mejora";
+                } else if(improvment === '+-') {
+                    improvment = "Mantiene";
+                } else if(improvment === '-') {
+                    improvment = "Empeora";
+                }
+                informe[`improvment [I:${instance}]`] = improvment;
+            }
+            this.save_headers(informe);
+            this.informes.push(informe)
+        }
+    }
+
+    async check_permisions(permission) {
+        const { company, role } = this.viewPermissions;
+
+        const allPermitedRoles = ["ADMINISTRATOR","SUPERVISOR", "COORDINADOR"];
+
+        if(company !== 'telecom' && role && !allPermitedRoles.includes(role)) {
+
+            if(permission !== 'G1' && permission !== 'G2') {
+                switch(role) {
+                    case "GERENTE":
+                        if(permission == 'responsable' || permission == "supervisor" || permission == 'lider') return true;
+                        else return false;
+                    case "RESPONSABLE":
+                        if(permission == "supervisor" || permission == 'lider') return true;
+                        else return false;
+                    case "LIDER":
+                        if(permission == 'lider') return true;
+                        else return false;
+                    default:
+                        return false;
+                }
+            } else return false;
+
+        } else if(company == 'telecom' && allPermitedRoles.includes(role)) return true; 
+        else return false;
+    }
+
+    async create_data_to_excel() {
+        // Comenzamos a armar el archivo de excel
+
+        const search_childs = (section, name_parent) => {
+            if(section !== 'representante') {
+                for(let index in rows_order){
+                    if(section !== rows_order[index]) continue;
+                    for(let r2 of this.informesJerarquicos[rows_order[index]]) {
+                        if(r2[rows_order[parseInt(index) - 1]] !== name_parent) continue;
+                            let row2 = {
+                                "1": "-",
+                                "2": "-",
+                                "3": "-",
+                                "4": "-",
+                                "5": "-",
+                                "6": "-",
+                                "7": "-",
+                            }
+
+                            if(this.check_permisions(rows_order[index])) {
+                                row2 = {
+                                    ...row2,
+                                    ...r2
+                                }
+                            } else{
+                                row2.name = r2.name
+                            }
+        
+                            row2[index] = rows_order[index].toUpperCase();
+                            this.sheet.data.push(row2);
+
+                            if(section === "lider") {
+                                for(let r3 of this.informes) {
+                                    if(r3.lider !== row2.name) continue;
+                                    let row3 = {
+                                        "1": "-",
+                                        "2": "-",
+                                        "3": "-",
+                                        "4": "-",
+                                        "5": "-",
+                                        "6": "-",
+                                        "7": "REPRESENTANTE",
+                                        ...r3
+                                    }
+                                    this.sheet.data.push(row3);
+                                }
+                            } else {
+                                search_childs(rows_order[parseInt(index) + 1], row2.name)
+                            }
+
+
+                    }
+
+                }
+            }
+        }
+
+        for(let r of this.informesJerarquicos['G1']){
+            let row = {
+                "1": "G1",
+                "2": "-",
+                "3": "-",
+                "4": "-",
+                "5": "-",
+                "6": "-",
+                "7": "-",
+            }
+
+            if(this.check_permisions('G1')) {
+                row = {
+                    ...row,
+                    ...r
+                }
+            } else {
+                row.name = r.name;
+            }
+
+            this.sheet.data.push(row);
+
+            search_childs('G2', r.name);
+        }
+    }   
+
+    async generar_rangos_jerarquicos() {
+        // Generamos informes de lider
+        for(let representante of this.informes) {
+            await this.addOrModifyInforme(representante, 'lider');
+            await this.calculate_cumplimiento('lider');
+        }
+        // Generamos informes de supervisor
+        const sections = ["lider","supervisor", "responsable","coordinador","G2","G1"];
+        for(let j = 0; j < sections.length; j++) {
+            let from        = sections[j];
+            const create    = sections[j + 1];
+            if(!create) break;
+
+            for(let i of this.informesJerarquicos[from]) {
+                await this.addOrModifyInforme(i, create);
+                await this.calculate_cumplimiento(create);
+            }
+
+        }
+
+    }
+
+    async calculate_cumplimiento(row_name) {
+        if(!row_name) return false;
+
+        // Buscamos si existe el array
+        if(!this.informesJerarquicos[row_name]) return false;
+
+        for(let i = 0; i < this.informesJerarquicos[row_name].length; i++) {
+            let cumplimiento = parseFloat(this.informesJerarquicos[row_name][i].pasos_completados / this.informesJerarquicos[row_name][i].pasos);
+
+            this.informesJerarquicos[row_name][i].cumplimiento = cumplimiento;
+        }
+    }
+    /**
+     * 
+     * @param {String} name Nombre del lider, supervisor, etc
+     * @param {Object} data data del informe a inyectar
+     * @param {String} row_name nombre del rango a generar
+     */
+
+    async addOrModifyInforme(data, row_name) {
+        if(!row_name || !data)  return false;
+
+        let name = data[row_name];
+        if(!name)   { name = "Sin definir"; }
+        // Buscamos si ya tiene un informe creado
+        let informeIndex = -1;
+        if( this.informesJerarquicos[row_name]){
+            informeIndex = this.informesJerarquicos[row_name].findIndex(elem => elem.name === name);
+        } else {
+            this.informesJerarquicos[row_name] = [];
+        }
+
+        if(informeIndex === -1) {
+            // Significa que no tiene un informe creado
+            let informe = {
+                name: name,
+                monitoreos_requeridos: data.monitoreos_requeridos,
+                monitoreos_audios: data.monitoreos_audios,
+                monitoreos_messages: data.monitoreos_messages,
+                monitoreos_totales: data.monitoreos_totales,
+                monitoreos_faltantes: data.monitoreos_faltantes,
+                instancias: data.instancias,
+                pasos_in_date: data.pasos_in_date,
+                pasos_out_date: data.pasos_out_date,
+                pasos: data.pasos,
+                pasos_completados: data.pasos_completados,
+                pasos_incompletos: data.pasos_incompletos,
+                interviene_mando: data.interviene_mando,
+            }
+
+            const { supervisor, responsable, coordinador, G2, G1 } = data;
+            switch(row_name) {
+                case "lider":
+                    informe.supervisor  = supervisor    || 'Sin definir';
+                    informe.responsable = responsable   || 'Sin definir';
+                    informe.coordinador = coordinador   || 'Sin definir';
+                    informe.G2          = G2            || 'Sin definir';
+                    informe.G1          = G1            || 'Sin definir';
+                    break;
+                case "supervisor":
+                    informe.responsable = responsable   || 'Sin definir';
+                    informe.coordinador = coordinador   || 'Sin definir';
+                    informe.G2          = G2            || 'Sin definir';
+                    informe.G1          = G1            || 'Sin definir';
+                    break;
+                case "responsable":
+                    informe.coordinador = coordinador   || 'Sin definir';
+                    informe.G2          = G2            || 'Sin definir';
+                    informe.G1          = G1            || 'Sin definir';
+                    break;
+                case "coordinador":
+                    informe.G2          = G2            || 'Sin definir';
+                    informe.G1          = G1            || 'Sin definir';
+                    break;
+                case "G2":
+                    informe.G1          = G1            || 'Sin definir';
+                    break;
+            }
+
+            this.informesJerarquicos[row_name].push(informe);
+        } else {
+            // Significa que tiene un informe creado
+
+            this.informesJerarquicos[row_name][informeIndex].monitoreos_requeridos  += data.monitoreos_requeridos;
+            this.informesJerarquicos[row_name][informeIndex].monitoreos_audios      += data.monitoreos_audios;
+            this.informesJerarquicos[row_name][informeIndex].monitoreos_messages    += data.monitoreos_messages;
+            this.informesJerarquicos[row_name][informeIndex].monitoreos_totales     += data.monitoreos_totales;
+            this.informesJerarquicos[row_name][informeIndex].monitoreos_faltantes   += data.monitoreos_faltantes;
+            this.informesJerarquicos[row_name][informeIndex].instancias             += data.instancias;
+            this.informesJerarquicos[row_name][informeIndex].pasos_in_date          += data.pasos_in_date;
+            this.informesJerarquicos[row_name][informeIndex].pasos_out_date         += data.pasos_out_date;
+            this.informesJerarquicos[row_name][informeIndex].pasos                  += data.pasos;
+            this.informesJerarquicos[row_name][informeIndex].pasos_completados      += data.pasos_completados;
+            this.informesJerarquicos[row_name][informeIndex].pasos_incompletos      += data.pasos_incompletos;
+            this.informesJerarquicos[row_name][informeIndex].interviene_mando       += data.interviene_mando;
+        }
+
+    }
+
+    static createUser(user_data) {
+        const { 
+            id: user_id, 
+            _id:idDB, 
+            name, 
+            lastName, 
+            razonSocial:company, 
+            email,
+            legajo,
+            status,
+            propiedad,
+            canal,
+            nameG1: G1,
+            nameG2: G2,
+            jefeCoordinador: coordinador,
+            responsable,
+            supervisor,
+            lider
+        } = user_data;
+
+        return { user_id, idDB, name, lastName, company, email, legajo, status, propiedad, canal, G1, G2, coordinador, responsable, supervisor, lider
+        }
     }
 }
 

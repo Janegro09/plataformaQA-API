@@ -54,7 +54,8 @@ var stepsOfInstances = new Schema({
     improvment: {
         type: String,
         default: '+-'
-    }
+    },
+    last_modification: Date
 });
 
 module.exports = mongoose.model('stepsOfInstances',stepsOfInstances);
