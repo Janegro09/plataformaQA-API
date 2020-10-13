@@ -208,7 +208,9 @@ class Sheet extends XLSXFile {
                 if(data[x].value === undefined){
                     let value = false;
                     if(data[x] && typeof data[x] !== 'object') {
-                        value = data[x]
+                        value = data[x];
+                    } else if(data[x] === 0) {
+                        value = data[x];
                     }
                     data[x] = { style: data[x].style || '' };
                     data[x].value = value || value === 0 ? value : '-';
