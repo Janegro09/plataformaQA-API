@@ -204,6 +204,7 @@ class Sheet extends XLSXFile {
         // Creamos un objeto ordenado segun los headers
         for(let x in data){
             let c
+            if(data[x] === undefined) continue;
             if(c = this.getColData(x)){ 
                 if(data[x].value === undefined){
                     let value = false;
