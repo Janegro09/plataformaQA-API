@@ -161,7 +161,10 @@ class Reporting {
                 pasos_completados: 0,
                 pasos_incompletos: 0,
                 interviene_mando: 0,
-                cumplimiento: 0
+                cumplimiento: 0,
+                cluster: "",
+                detallePA: "",
+                GCAssigned: ""
             }
 
             let improvments = [];
@@ -220,6 +223,14 @@ class Reporting {
             informe.monitoreos_faltantes = informe.monitoreos_requeridos - informe.monitoreos_totales;
 
             informe.cumplimiento = parseFloat(informe.pasos_completados / informe.pasos);
+
+            let partitureByUser = await Schemas.partitures.infoByUsers.find({ userId: user.idDB, partitureId: this.id });
+
+            if(partitureByUser) {
+                informe.cluster     = partitureByUser.cluster       || undefined;
+                informe.detallePA   = partitureByUser.detallePA     || undefined;
+                informe.GCAssigned  = partitureByUser.GCAssigned    || undefined;
+            }
 
             // Agregamos los improvments
             for(let { instance, improvment } of improvments) {
