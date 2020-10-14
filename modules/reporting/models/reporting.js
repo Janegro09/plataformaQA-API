@@ -226,10 +226,10 @@ class Reporting {
 
             let partitureByUser = await Schemas.partitures.infoByUsers.find({ userId: user.idDB, partitureId: this.id });
 
-            if(partitureByUser) {
-                informe.cluster     = partitureByUser.cluster       || undefined;
-                informe.detallePA   = partitureByUser.detallePA     || undefined;
-                informe.GCAssigned  = partitureByUser.GCAssigned    || undefined;
+            if(partitureByUser.length > 0) {
+                informe.cluster     = partitureByUser[0].cluster       || undefined;
+                informe.detallePA   = partitureByUser[0].detallePA     || undefined;
+                informe.GCAssigned  = partitureByUser[0].GCAssigned    || undefined;
             }
 
             // Agregamos los improvments
