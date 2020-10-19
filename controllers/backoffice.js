@@ -145,6 +145,9 @@ const controller = {
         log.save().then(ok => {ok}).catch(err => {err})
 
     },
+    /**
+     * Funcion para exportar bases de datos
+     */
     exports: async (req, res) => {
         const { type, name } = req.query;
         if(!type || !name) return views.error.message(res, "Error en los parametros enviados");

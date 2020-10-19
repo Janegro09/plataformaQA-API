@@ -20,7 +20,7 @@ Plataforma QA API usa las siguientes tecnologias:
 
 ### Install
 
-- Diorama requiere [Node.js](https://nodejs.org/) v10+ to run.
+- Requiere [Node.js](https://nodejs.org/) v10+ to run.
 - Requiere de una base de datos MongoDB.
 - Requiere un archivo .env con los valores de las variables de entorno
 - Todas las configuracion de conexiones se encuentran en config.json
