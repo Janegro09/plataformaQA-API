@@ -37,7 +37,7 @@ class Monitoring {
 
     set improvment (improvment) {
 
-        const permitedValues = ["+","+-","-"];
+        const permitedValues = ["++","+","+-","-"];
 
         if(permitedValues.includes(improvment)) {
             this._improvment = improvment;
