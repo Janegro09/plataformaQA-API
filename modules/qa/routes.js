@@ -28,6 +28,7 @@ router.get(`${monRoute}/:id?`,includes.permit.checkPermit ,monController.get);
 router.put(`${monRoute}/:id`,includes.permit.checkPermit ,monController.modify);
 router.put(`${monRoute}/:id/file`,includes.permit.checkPermit ,monController.uploadFile);
 
+router.delete(`${monRoute}/:id/neverUsed`, monController.delete_never_used);
 router.delete(`${monRoute}/:id`,includes.permit.checkPermit ,monController.delete);
 router.delete(`${monRoute}/:id/:file`,includes.permit.checkPermit ,monController.deleteFile);
 // router.get('/')

@@ -120,6 +120,20 @@ const controller = {
             return includes.views.error.message(res, e.message);
         })
     },
+    delete_never_used: async (req, res) => {
+        const { id } = req.params;
+
+        if(!id) return includes.views.error.message(res, "Error en los parametros enviados");
+
+        monModel.delete_never_used(id).then(v => {
+            if(!v) return includes.views.error.message(res, "Error al eliminar el monitoreo");
+            else return includes.views.success.delete(res);
+        }).catch(e => {
+            console.log('Err: ', e);
+            return includes.views.error.message(res, e.message);
+        })
+
+    },
     uploadFile: async (req, res) => {
         const { id } = req.params;
 

@@ -320,6 +320,23 @@ class Monitoring {
 
     }
 
+    /**
+     * Esta funcion elimina un monitoreo si nunca fue contestado
+     * @param {String} id 
+     */
+    static async delete_never_used(id) {
+        if(!id) throw new Error('Error en el id')
+
+        let consulta = await monSchema.findById(id);
+        if(!consulta) throw new Error('Monitoreo inexistente');
+
+        if(consulta.responses && consulta.responses.length > 0) throw new Error('No puede eliminar un formulario que ya fue respondido, comuniquesé con su superior');
+        
+        consulta = await monSchema.deleteOne({ _id: id });
+        if(consulta.ok == 1 && consulta.deletedCount == 1) return true;
+        else return false;        
+    }
+
     static async modify(id, data, modifiedBy = false) {
         if(!id) throw new Error('Error en el id')
         else if(!data) throw new Error('No se envio ningun parametro para modificar');
