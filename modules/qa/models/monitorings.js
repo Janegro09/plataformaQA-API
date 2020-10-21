@@ -63,8 +63,6 @@ class Monitoring {
             // Entonces creamos un form nuevo segun el programa
             // Buscamos el formulario asignado a el programa
             customSections = await formsModel.getFormByProgram(this.programId);
-            console.log(customSections);
-            return;
             if(!customSections) throw new Error('Formulario inexistente, error interno de api');
             this.customSections = await Monitoring.getFormWithStr(customSections.parts);
 
@@ -74,7 +72,6 @@ class Monitoring {
             this.customSections = existForm[0].customSections
 
         }
-        return;
         // Chequeamos el id del usuario
         let user = await includes.users.schema.find({id: this.userId});
         if(!user) throw new Error('Usuario inexistente, verifique el ID especificado');
