@@ -171,13 +171,31 @@ module.exports = class Forms {
 
     }
 
+    /**
+     * Esta función buscara el formulario del programa especificado, y si no existe, bus
+     * @param {String} programId 
+     */
     static async getFormByProgram(programId) {
         if(!programId) throw new Error('ID de programa no especificado')
 
-        let c = await formsTable.find({ programId, deleted: false });
-        if(c.length === 0) throw new Error('No existen formularios para el programa especificado')
-        
-        const { _id } = c[0];
+        const get_form = async (programId) => {
+            if(!programId) return false;
+
+            let c = await formsTable.find({ programId, deleted: false });
+            if(c.length === 0) {
+                // Si no existe formulario entonces buscamos el id del padre, y buscamos si el padre tiene form
+                const { parentProgram } = await programs.get_parent_program(programId);
+                if(!parentProgram) return false;
+
+                return await get_form(parentProgram);
+            }
+            else return c[0];
+        }
+
+        let c = await get_form(programId);
+        if(!c) throw new Error('Este programa ni sus parientes tienen un formulario asignado');
+
+        const { _id } = c;
 
         c = await Forms.get(_id);
         if(c.length === 0) throw new Error('Formulario inexistente, error interno');

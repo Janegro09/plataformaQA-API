@@ -349,6 +349,18 @@ class Program {
             name: c[0].name
         }
     }
+
+    static async get_parent_program(programId) {
+        if(!programId) return false;
+
+        let c = await Schemas.programs.find({ _id: programId });
+        if(c.length === 0) return false;
+
+        const { _id:this_program, parentProgram } = c[0];
+        let dataReturn = { this_program, parentProgram };
+
+        return dataReturn;
+    }
 }
 
 
