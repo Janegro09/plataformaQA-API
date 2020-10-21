@@ -25,7 +25,7 @@ const formsTable = require('../migrations/forms.table');
 module.exports = class Forms {
     constructor(data) {
         const { name, programId, description, parts } = data;
-        this.name           = name          || false;
+        this.name           = name          || 'Not Used';
         this.description    = description   || "";
         this.programId      = programId     || false;
         this.parts          = parts         || [];

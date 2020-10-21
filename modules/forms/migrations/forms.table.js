@@ -17,8 +17,7 @@ const Schema   = mongoose.Schema;
 
 var forms = new Schema({
     name: {
-        type: String,
-        required: true
+        type: String
     },
     parts: [
         {
