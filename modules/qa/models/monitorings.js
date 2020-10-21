@@ -330,7 +330,7 @@ class Monitoring {
         let consulta = await monSchema.findById(id);
         if(!consulta) throw new Error('Monitoreo inexistente');
 
-        if(consulta.responses && consulta.responses.length > 0) throw new Error('No puede eliminar un formulario que ya fue respondido, comuniquesé con su superior');
+        if(consulta.modifiedBy && consulta.modifiedBy.length > 0) throw new Error('No puede eliminar un formulario que ya fue editado, comuniquesé con su superior');
         
         consulta = await monSchema.deleteOne({ _id: id });
         if(consulta.ok == 1 && consulta.deletedCount == 1) return true;
