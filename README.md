@@ -1,6 +1,6 @@
 # Plataforma QA
 
-Plataforma QA fue desarrollada especificamente para el uso de Telecom Argentina S.A.
+Plataforma QA fue desarrollada especificamente para el uso de Telecom Argentina S.A
 
 Plataforma QA es un servicio REST utilizado para:
 - Realizar control de calidad de los agentes tanto internos como externos que representan a la compañia, por los distintos medios de comunicación disponibles (telefonico, RRSS, Oficinas comerciales)
