@@ -10,7 +10,10 @@
  * History:
  * 1.0 - Version principal
  */
+const Users = require('../../../models/users');
+const { views } = require('../../includes');
 const includes = require('../../includes');
+const Program = require('../../programs/models/programs');
 
 const monModel = require('../models/monitorings');
 
@@ -162,6 +165,23 @@ const controller = {
             console.log('Err: ', e);
             return includes.views.error.message(res, e.message);
         })
+    },
+    get_search_filters: async (req, res) => {
+
+        if(!req.body || req.body.length === 0 || !req.body instanceof Array) return views.error.message(res, "Error en los parametros enviados");
+
+        try {
+            let returnData = {};
+            returnData.programs = await Program.get_programs_by_groups(req.body);
+            
+            return views.customResponse(res, true, 200, "", returnData);
+        } catch (e) {
+            console.log('Err: ', e);
+            return views.error.message(res, e.message);
+        }
+
+
+
     }
 }
 

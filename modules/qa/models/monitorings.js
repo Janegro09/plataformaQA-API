@@ -195,11 +195,17 @@ class Monitoring {
         }
 
 
+        /**
+         * Esto permmitira que los usuarios vean los monitoreos asignados a los programas que tienen permitidos
+         */
         if (req) {
             // comprobamos si es administrador
             let user = await includes.users.model.getUsersperGroup(req.authUser[0].id);
+            const empresa = req.authUser[0].razonSocial;
             if (user.indexOf('all') >= 0 || req.authUser[0].role.role === 'ADMINISTRATOR') {
                 monsViews = ['all'];
+            } else if(empresa === "TELECOM") {
+                monsViews = ["all"];
             } else {
                 let programasPermitidos = await Program.get(req);
                 for(let pp of programasPermitidos) {

@@ -25,6 +25,9 @@ const Schemas = {
 }
 const programsGroupsModel = require('./programsGroups');
 const programsbyPerfilamientos = require('../migrations/programsbyPerfilamientos');
+const programsByGroupsTable = require('../migrations/programsByGroups.table');
+const programsGroupsTable = require('../migrations/programsGroups.table');
+const programsTable = require('../migrations/programs.table');
 
 class Program {
     constructor(program){
@@ -307,7 +310,6 @@ class Program {
         return dataReturn;
 
     }
-
     /**
      * Funcion para asignar programas a perfilamiento
      * @param {String} filePerfilamientoId 
@@ -360,6 +362,34 @@ class Program {
         let dataReturn = { this_program, parentProgram };
 
         return dataReturn;
+    }
+
+    /** Esta funcion devuelve los programas asignados a grupos
+     * 
+     * @param {Array} groups
+     * 
+     */
+    static async get_programs_by_groups (groups) {
+        if(!groups instanceof Array || groups.length === 0) throw new Error('Error en los parametros enviados');
+
+        let programsId      = [];
+        let programsReturn  = [];
+        
+        // Buscamos por los nombrs de los grupos
+        let c = await programsGroupsTable.find({ name: { $in: groups } });
+        
+        for(let g of c) {
+            let temp = await programsByGroupsTable.find({ groupId: g._id });
+            for (let { programId } of temp) {
+                if(programsId.includes(programId)) continue;
+
+                programsId.push(programId);
+
+            }
+        }
+
+        programsReturn = await programsTable.find({ _id: { $in: programsId } } );
+        return programsReturn;
     }
 }
 

@@ -20,6 +20,7 @@ const Roles                 = require('../models/roles');
 const Groups                = require('../models/groups');
 const groupsSchema          = require('../database/migrations/groups');
 const userLoginSchema       = require('../database/migrations/usersLogin');
+const groupsperuser = require('../database/migrations/groupsperuser');
 
 
 
@@ -126,6 +127,7 @@ class Users {
             }
         }
     }
+    
 
     /**
      * Guarda un usuario
