@@ -17,7 +17,8 @@ const views         = require('../views');
 const Users         = require('../models/users');
 const Auth          = require('../middlewares/authentication');
 const Roles         = require('../models/roles')
-const Groups        = require('../models/groups')
+const Groups        = require('../models/groups');
+const ProgramsGroups = require('../modules/programs/models/programsGroups');
 
 module.exports = {
     principalView: (req, res) => {
@@ -39,6 +40,9 @@ module.exports = {
         returnData.groups   = await Groups.get();
         // Enviamos Roles
         returnData.roles    = await Roles.get();
+
+        // Enviamos Grupos de programas
+        returnData.programsGroups = await ProgramsGroups.get();
 
         return views.customResponse(res,true,202,"",returnData)
     },
