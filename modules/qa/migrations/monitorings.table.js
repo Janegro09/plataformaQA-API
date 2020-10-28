@@ -63,6 +63,10 @@ var monitorings = new Schema({
         type: mongoose.SchemaTypes.Mixed,
         default: false
     },
+    disputar_response: {
+        type: String,
+        default: ""
+    },
     deleted: {
         type: Boolean,
         default: false

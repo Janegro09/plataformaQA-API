@@ -240,6 +240,7 @@ class Monitoring {
                 program,
                 createdBy: mons.createdBy,
                 disputado: mons.disputar,
+                disputar_response: mons.disputar_response,
                 monitoringDate: mons.monitoringDate,
                 createdAt: mons.createdAt,
                 modifiedBy: mons.modifiedBy
@@ -348,7 +349,7 @@ class Monitoring {
         else if(!data) throw new Error('No se envio ningun parametro para modificar');
 
         let dataToModify = {};
-        const authorizedColumnsToModify = ["improvment", "duracionContacto", "userId", "transactionDate", "monitoringDate", "comentariosDevolucion", "fortalezasUsuario", "pasosMejora", "comments", "responses", "invalidated", "disputar","status"];
+        const authorizedColumnsToModify = ["improvment", "duracionContacto", "userId", "transactionDate", "monitoringDate", "comentariosDevolucion", "fortalezasUsuario", "pasosMejora", "comments", "responses", "invalidated", "disputar", "disputar_response","status"];
         for(let d in data) {
             if(!authorizedColumnsToModify.includes(d)) continue;
             if(data[d] && typeof data[d] == 'string'){
@@ -399,10 +400,13 @@ class Monitoring {
                  * Comentamos los valores de calibrables para los hijos, ya que solamente me insteresa saber si es calibrable el padre 
                  */
                 // responseData.calibrable = cfield.calibrable;
+                
+                if(!response.data.includes('~~')) { // Si incluye ~~ significa que es una repuesta de opcion multiple
+                    let v = cfield.values.find(e => e.value == response.data);
+                    if(!v) return false;
+                    responseData.parametrizableValue = v.parametrizableValue || false;
+                }
 
-                let v = cfield.values.find(e => e.value == response.data);
-                if(!v) return false;
-                responseData.parametrizableValue = v.parametrizableValue;
                 return responseData
             } else {
                 for(let v of cfield.values) {
