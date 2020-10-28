@@ -448,7 +448,7 @@ class Monitoring {
             const { type } = question;
             if(type === 'text' || type === 'area') {
                 // Agregamos la pregunta directamente, ya que no es calibrable ni monitoreable
-                questionToPush.response = r.response.data;
+                questionToPush.response = r.response;
 
             } else {
                 let d = checkResponse(question, r.response);
