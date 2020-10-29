@@ -401,7 +401,7 @@ class Monitoring {
                  */
                 // responseData.calibrable = cfield.calibrable;
                 
-                if(!response.data.includes('~~')) { // Si incluye ~~ significa que es una repuesta de opcion multiple
+                if(response.data && !response.data.includes('~~')) { // Si incluye ~~ significa que es una repuesta de opcion multiple
                     let v = cfield.values.find(e => e.value == response.data);
                     if(!v) return false;
                     responseData.parametrizableValue = v.parametrizableValue || false;
