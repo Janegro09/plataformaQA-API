@@ -170,10 +170,34 @@ const controller = {
 
         if(!req.body || req.body.length === 0 || !req.body instanceof Array) return views.error.message(res, "Error en los parametros enviados");
 
+        let companies = [];
+
+        // Filtramos las empresas solicitadas segun el usuario ue consulta
+        let empresa_consulta = req.authUser[0].razonSocial || false;
+        if(empresa_consulta) {
+            // Si pregunta alguien de telecom mostramos todo lo que consulta
+            if(empresa_consulta === 'TELECOM'){
+                companies = req.body;
+            } else{
+                companies = [empresa_consulta]; // Si no es de TELECOM, solamente pregutaremos por su propia empresa
+            }
+        } else return views.error.message(res, "Error en la empresa de quien consulta")
+
         try {
             let returnData = {};
-            returnData.programs = await Program.get_programs_by_groups(req.body);
-            
+            let programs = await Program.get_programs_by_groups(companies);
+            returnData.programs = [];
+            for (let { _id:id, name, description, section } of programs){
+                if(section !== 'M') continue;
+                let td = {
+                    id,
+                    name,
+                    description,
+                    section
+                }
+                returnData.programs.push(td);
+            }
+
             return views.customResponse(res, true, 200, "", returnData);
         } catch (e) {
             console.log('Err: ', e);

@@ -43,6 +43,7 @@ module.exports = {
 
         // Enviamos Grupos de programas
         returnData.programsGroups = await ProgramsGroups.get();
+        
 
         return views.customResponse(res,true,202,"",returnData)
     },
