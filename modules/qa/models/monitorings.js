@@ -219,7 +219,7 @@ class Monitoring {
         }
 
         if(monsViews.length === 0) throw new Error('No existe ningun monitoreo');
-        if(!monsViews[0] === 'all') {
+        if(monsViews[0] !== 'all') {
             where.programId = { $in: monsViews };
         }
 
