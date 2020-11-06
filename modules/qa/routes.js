@@ -24,9 +24,11 @@ router.post(`${monRoute}/new`,includes.permit.checkPermit ,monController.new);
 router.post(`${monRoute}/exports`,monController.export);
 router.post(`${monRoute}/filters`, monController.get_search_filters);
 
-router.get(`${monRoute}/:id?`,includes.permit.checkPermit ,monController.get);
+// router.get(`${monRoute}/:id?`,includes.permit.checkPermit ,monController.get);
+router.get(`${monRoute}/:id?` ,monController.get);
 
-router.put(`${monRoute}/:id`,includes.permit.checkPermit ,monController.modify);
+router.put(`${monRoute}/:id`,monController.modify);
+// router.put(`${monRoute}/:id`,includes.permit.checkPermit ,monController.modify);
 router.put(`${monRoute}/:id/file`,includes.permit.checkPermit ,monController.uploadFile);
 
 router.delete(`${monRoute}/:id/neverUsed`, monController.delete_never_used);

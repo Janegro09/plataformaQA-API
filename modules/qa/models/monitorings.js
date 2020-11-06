@@ -348,8 +348,34 @@ class Monitoring {
         if(!id) throw new Error('Error en el id')
         else if(!data) throw new Error('No se envio ningun parametro para modificar');
 
+        let consulta = await monSchema.findById(id).where({ deleted: false });;
+        if(!consulta) throw new Error('Monitoreo inexistente');
+
+        /**
+         * Un externo no puede modificar monitoreos cargados por telecom, lo unico que puede es disputar y la respuesta a disputar
+         * 
+         */
         let dataToModify = {};
-        const authorizedColumnsToModify = ["improvment", "duracionContacto", "userId", "transactionDate", "monitoringDate", "comentariosDevolucion", "fortalezasUsuario", "pasosMejora", "comments", "responses", "invalidated", "disputar", "disputar_response","status"];
+        let authorizedColumnsToModify = [];
+
+        if(!modifiedBy || !modifiedBy.userCompany) throw new Error('Error en "modifiedBy" models/monitorins.js');
+        else if(modifiedBy.userCompany !== 'TELECOM'){
+            // Buscamos el creador del monitoreo
+            let { createdBy } = consulta;
+            if(!createdBy) throw new Error('Usuario creador erroneo. Error interno');
+            createdBy = await includes.users.schema.find({ id: createdBy });
+            if(createdBy.length === 0) throw new Error('Usuario creador inexistente. Error interno');
+            createdBy = createdBy[0].razonSocial;
+
+            if(createdBy === 'TELECOM') {
+                authorizedColumnsToModify = ["disputar", "disputar_response"];
+            } else if(createdBy === modifiedBy.userCompany) {
+                authorizedColumnsToModify = ["improvment", "duracionContacto", "userId", "transactionDate", "monitoringDate", "comentariosDevolucion", "fortalezasUsuario", "pasosMejora", "comments", "responses", "invalidated", "disputar", "disputar_response","status"];
+            } else return false;
+        } else {
+            authorizedColumnsToModify = ["improvment", "duracionContacto", "userId", "transactionDate", "monitoringDate", "comentariosDevolucion", "fortalezasUsuario", "pasosMejora", "comments", "responses", "invalidated", "disputar", "disputar_response","status"];
+        }
+
         for(let d in data) {
             if(!authorizedColumnsToModify.includes(d)) continue;
             if(data[d] && typeof data[d] == 'string'){
@@ -359,11 +385,7 @@ class Monitoring {
             }
         }
 
-        let consulta = await monSchema.findById(id).where({ deleted: false });;
-        if(!consulta) throw new Error('Monitoreo inexistente');
-
         if(dataToModify.responses && dataToModify.responses.length > 0) {
-
             // Analizamos las respuestas segun el formulario
             let { responses } = this.checkResponsesWithQuestions(consulta.customSections, dataToModify.responses)
             
