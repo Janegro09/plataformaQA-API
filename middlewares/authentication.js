@@ -30,34 +30,68 @@ module.exports = class Auth {
 
     constructor(user) {
         this.user = user;
+        this.expiration_token = (60 * 60) * 12;
         return true;
+    }
+
+    /**
+     * 
+     * Esta funcion elimina todos los tokens que ya no tienen validez
+     *  
+     */
+    async deleteOldTokens() {
+
+        let c = await Tokens.find({ userId: this.user.id });
+        let deleteToken = [];
+        let now = Date.parse(new Date);
+        for(let token of c) {
+            try {
+                await jwt.verify(token.token,cert, { algorithms: ["RS256"] });
+
+            } catch (e) {
+                deleteToken.push(token.id)
+            }
+            
+        }
+        await Tokens.deleteMany({ _id: { $in: deleteToken } });
     }
 
     /**
      * Esta funcion genera un token con los datos de usuario, con una valides de 1 hora (60*60) y almacena el token referido a un userID, o sino lo actualiza
      */
-    async generarToken() {
+    async generarToken(sessionId = false) {
         let tokenData = {
             id: this.user.id,
-            email: this.user.email
+            email: this.user.email,
+            sessionId: sessionId || (Date.parse(new Date)).toString() + this.user.id
         }
         let token = jwt.sign(tokenData,TOKEN_PASS,{
             algorithm: 'RS256',
-            expiresIn: ((60 * 60) * 12) // Expires in 4 hour
+            expiresIn: ((60 * 60) * 16) // Expires in 4 hour
         })
-        let consulta = await Tokens.findOne({userId: this.user.id});
+        let consulta = await Tokens.findOne({ userId: this.user.id, sessionId: tokenData.sessionId });
+        
+        if(!sessionId) { // Eliminamos los tokens invalidos solo cuando inicia sesión
+            await this.deleteOldTokens();
+        }
+        
         if(!consulta){
             // generamos un registro nuevo
             let c = new Tokens({
                 userId: this.user.id,
-                token: token
+                token: token,
+                sessionId: tokenData.sessionId
             })
-            c.save()
+            c.save();
         }else{
             // Actualizamos el existente
-            let c = await Tokens.updateOne({_id: consulta.id},{
-                token: token
-            })
+            token = consulta.token;
+            /**
+             * Vamos a dejar de actualizar el token por cada request por pedido de multipestaña
+             */
+            // await Tokens.updateOne({ _id: consulta.id },{
+            //     token: token
+            // })
         }
         return token;
     }
@@ -86,7 +120,7 @@ module.exports = class Auth {
 
                 // Asignamos un nuevo token
                 let newToken    = new Auth(user[0]);
-                user[0].token   = await newToken.generarToken();
+                user[0].token   = await newToken.generarToken(t.sessionId);
                 req.authUser = user;
                 res.authUser = user;
                 next();            

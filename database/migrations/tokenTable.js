@@ -18,8 +18,12 @@ const Schema   = mongoose.Schema;
 var Tokens = new Schema({
     userId: {
         type: Object,
-        required: true,
-        unique: true
+        required: true
+    },
+    sessionId: {
+        type: String,
+        unique: true,
+        required: true
     },
     token: {
         type: String,
