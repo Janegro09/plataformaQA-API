@@ -38,7 +38,8 @@ var monitorings = new Schema({
                 type: Date,
                 default: Date.now
             }, 
-            rol: String
+            rol: String,
+            actions: []
         }
     ],
     responses: [

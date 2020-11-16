@@ -168,6 +168,7 @@ class Reporting {
             }
 
             let improvments = [];
+            let messages    = [];
 
             // Obtenemos las instancias y los pasos
             let steps = await Schemas.partitures.steps.find({ userId: user.idDB, instanceId: { $in: this.instances }, partitureId: this.id });
@@ -196,13 +197,14 @@ class Reporting {
 
                 // Buscamos los archivos para este step
                 let files = await Schemas.partitures.files.find({ partitureId: this.id, userId: user.idDB, stepId: step._id });
-
+                
                 for (let f of files) {
                     if(f.fileId){
                         informe.monitoreos_audios += 1;
                     } else if(f.message) {
                         informe.monitoreos_messages += 1;
-                        informe.messages = informe.messages ? ` | ${f.message}` : f.message;
+                        informe.messages = informe.messages !== "" ? ` | ${f.message}` : f.message;
+                        messages.push(f.message);
                     }
                 }
 
@@ -242,6 +244,10 @@ class Reporting {
                     improvment = "Empeora";
                 }
                 informe[`improvment [I:${instance}]`] = improvment;
+            }
+
+            for(let i = 0; i < messages.length; i++) {
+                informe[`Message N°: ${i+1}`] = messages[i]; 
             }
             this.save_headers(informe);
             this.informes.push(informe)

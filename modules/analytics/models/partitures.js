@@ -63,20 +63,20 @@ class Partitures {
                 if(!partitureExists) throw new Error('Error con el grupo de cuartiles que intenta agregar, puede ser que no exista o que ya este usandose para otra partitura.')
             }
 
-
-
             let partitureObject = {
                 name: this.file.name,
                 fileId: this.file.id,
                 perfilamientos: this.perfilamientosAssignados
             }
 
-
-
             if (this.expirationDate) {
                 partitureObject.expirationDate = this.expirationDate;
             }
 
+
+            // Verificamos que no exista otra partitura con el mismo nombre
+            let findOtherPartitures = await partituresSchema.find({ name: partitureObject.name });
+            if(findOtherPartitures.length > 0) throw new Error('Ya existe otra partitura coin el archivo especificado');
 
             // Preparamos el registro
             partitureObject = new partituresSchema(partitureObject);
