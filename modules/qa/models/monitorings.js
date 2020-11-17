@@ -162,7 +162,7 @@ class Monitoring {
             where._id = id
         } else if(searchParams) {
             // Solo usamos parametros de busqueda si no se especifico id
-            let { userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateTransactionStart, dateTransactionEnd, responses, status } = searchParams;
+            let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateTransactionStart, dateTransactionEnd, responses, status } = searchParams;
 
             if(userId) { where.userId = userId; }
 
@@ -183,6 +183,10 @@ class Monitoring {
 
             if(disputado) { 
                 where.disputar = disputado === 'false' ? false : { $ne: false }; 
+            }
+
+            if(disputar_response) {
+                where.disputar_response = disputar_response === 'false' ? false : { $nin: ["", undefined] };
             }
 
             if(invalidated) {
@@ -223,7 +227,7 @@ class Monitoring {
             where.programId = { $in: monsViews };
         }
 
-        let query = await monSchema.find().where(where).limit(300);
+        let query = await monSchema.find().where(where).limit(100);
         let returnData = []
         for(let mons of query) {
             let program = await Program.getProgramName(mons.programId);
@@ -240,7 +244,7 @@ class Monitoring {
                 program,
                 createdBy: mons.createdBy,
                 disputado: mons.disputar,
-                disputar_response: mons.disputar_response,
+                disputar_response: mons.disputar_response || "",
                 monitoringDate: mons.monitoringDate,
                 createdAt: mons.createdAt,
                 modifiedBy: mons.modifiedBy
@@ -394,7 +398,7 @@ class Monitoring {
 
         let query = await monSchema.updateOne({ _id: id }, dataToModify);
         if(query.ok > 0) {
-            this.addModificationByUser(id, modifiedBy)
+            this.addModificationByUser(id, modifiedBy, dataToModify);
             return true;
         }else return false;
     }
@@ -491,12 +495,18 @@ class Monitoring {
 
     }
 
-    static async addModificationByUser(id, modifiedData){
+    static async addModificationByUser(id, modifiedData, action){
         if(!id || !modifiedData) return false;
 
         try {
             let userData = this.generateModificateObject(modifiedData);
     
+            // Agregamos todos los campos que se modificaron
+            userData.actions = [];
+            for(let m in action) {
+                userData.actions.push(m);
+            }
+
             let consulta = await monSchema.findById(id);
             if(!consulta) return false;
     
@@ -526,7 +536,11 @@ class Monitoring {
 
         const getValuesByCustomField = (cfield, responses) => {
             if(cfield.values) {
-                let response = cfield.values.find(e => e.value == responses.data);
+                if(!responses.data.includes('~~')){
+                    let response = cfield.values.find(e => e.value == responses.data);
+                } else {
+                    response = responses.data;
+                }
                 if(!response) return false;
                 let td = [{
                     name: cfield.name,
@@ -539,9 +553,41 @@ class Monitoring {
                 }
     
                 return td;
-            } else {
-                return false;
+            } else if(cfield.type === 'text' || cfield.type === 'area') {
+                return [{
+                    name: cfield.name,
+                    value: responses.data || "",
+                    parametrizableValue: false
+                }]
+            } else return false;
+        }
+
+        const get_last_modification = (modifiedByArray, columnName) => {
+
+            /**
+             * Hardcodeo el nombre de disputado por disputar ya que, una modificacion de nombres llevaria a multiples modificaciones de front y back-
+             * 
+             */
+            if(columnName === 'disputado'){
+                columnName = "disputar";
             }
+
+            let addRow = {
+                label: "<-- Ult. Modificación " + columnName,
+                value: "Never"
+            };
+            modifiedByArray = modifiedByArray && modifiedByArray.length > 0 ? modifiedByArray.sort((a,b) => b.modifiedAt - a.modifiedAt) : [];
+
+            for(let m of modifiedByArray) {
+                if(m.actions.includes(columnName)){
+                    let d = new Date(m.modifiedAt);
+                    addRow.value = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`;
+                    addRow.value += ` | By: ${m.userId}`;
+                    break;
+                }
+            }
+
+            return addRow;
         }
 
         /**
@@ -554,14 +600,11 @@ class Monitoring {
                 if(!this.headers.includes(d)) {
                     this.headers.push(d);
                 }
-
-                
-
             }
         }
 
-        this.rows = [];
-        this.headers     = [];
+        this.rows       = [];
+        this.headers    = [];
 
         for(let id of monitoringIds) {
             let mon = await Monitoring.get(id);
@@ -573,7 +616,7 @@ class Monitoring {
 
             const viewRows = {
                 user: ["dni", "name", "lastName", "cuil", "legajo", "sexo", "status", "propiedad", "canal", "negocio", "edificioLaboral", "gerencia1", "nameG1", "gerencia2", "nameG2", "equipoEspecifico", "group", "role", "razonSocial", "jefeCoordinador", "responsable", "supervisor", "lider", "provincia", "region", "subregion", "email"],
-                mon: ["invalidated", "evaluated", "status", "transactionDate", "monitoringDate", "caseId", "program", "createdBy", "disputado", "createdAt", "comentariosMejora", "fortalezasUsuario", "pasosMejora", "modifiedBy", "responses"]
+                mon: ["fortalezasUsuario", "pasosMejora" ,"comentariosDevolucion","disputar_response" ,"invalidated", "evaluated", "status", "transactionDate", "monitoringDate", "caseId", "program", "createdBy", "disputado", "createdAt", "comentariosMejora", "fortalezasUsuario", "pasosMejora", "modifiedBy", "responses"]
             }
             // Recorremos el objeto y modificamos
             let string;
@@ -599,10 +642,25 @@ class Monitoring {
 
                 data[`user - ${f}`] = {value: user[f], style: ""};
             }
+
+            
+            // Arranca a preparar la informacion del monitoreo
             mon = mon[0];
 
+            /**
+             * Hardcodeamos los nombres de devolucion porque vienen dentro de un objeto.
+             */
+            const { fortalezasUsuario, pasosMejora, comentariosDevolucion } = mon.devolucion;
+            mon.fortalezasUsuario       = fortalezasUsuario     || "";
+            mon.pasosMejora             = pasosMejora           || "";
+            mon.comentariosDevolucion   = comentariosDevolucion || "";
+            const Array_Modificaciones  = mon.modifiedBy;
             for(let c in mon) {
+
+                let addRow = false;
                 if(!viewRows.mon.includes(c)) continue;
+                let columnName = c;
+
                 switch(c) {
                     case 'modifiedBy': 
                         string = "";
@@ -638,6 +696,19 @@ class Monitoring {
                         
                         continue;
                     break;
+                    case 'disputado':
+                        // Obtenemos la fecha de modificacion de esta columna
+                        addRow = get_last_modification(Array_Modificaciones, c);
+                        columnName = "Observaciones del monitoreo";
+                        break;
+                    case 'disputar_response':
+                        addRow = get_last_modification(Array_Modificaciones, c);
+                        columnName = "Rta. Observaciones del monitoreo";
+                    break;
+                    case "comentariosDevolucion":
+                        addRow = get_last_modification(Array_Modificaciones, c);
+                        columnName = "Devolucion al representante";
+                        break;
                 }
 
                 if(mon[c] instanceof Date) {
@@ -646,7 +717,15 @@ class Monitoring {
                 } else {
                     mon[c] = mon[c] ? mon[c].toString() : "";
                 }
-                data[`monitoring - ${c}`] = {value: mon[c], style: ""};
+                data[`monitoring - ${columnName}`] = {value: mon[c], style: ""};
+            
+                /**
+                 * Si es true, agregamos una columna mas siuendo
+                 */
+                if(addRow) {
+                    data[`monitoring - ${addRow.label}`] = {value: addRow.value, style: ""};
+                }
+                
             }
             addHeadersAndRows(data);
         }
