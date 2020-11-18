@@ -122,7 +122,7 @@ class Partitures {
                             partitureId: partitureObject._id,
                             completed: false,
                             name: instance.steps[p].name,
-                            requestedMonitorings: instance.steps[p].requiredMonitorings
+                            requestedMonitorings: instance.steps[p].requiredMonitorings || 0
                         })
 
                         steps.push(b)
