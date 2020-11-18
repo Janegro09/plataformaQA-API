@@ -164,7 +164,10 @@ class Reporting {
                 cumplimiento: 0,
                 cluster: "",
                 detallePA: "",
-                GCAssigned: ""
+                GCAssigned: "",
+                compromisoRepresentante: "",
+                patronMejora: "",
+                audioCoaching: 0
             }
 
             let improvments = [];
@@ -188,6 +191,14 @@ class Reporting {
                     improvments[improvmentIndex].improvment = step.improvment;
                 }
 
+                //Agregamos pasos de mejora 20-11-2020
+                if(step.patronMejora ) {
+                    informe.patronMejora = informe.patronMejora !== "" ? ` | ${step.patronMejora}` : step.patronMejora;
+                }
+                if(step.compromisoRepresentante ){
+                    informe.compromisoRepresentante = informe.compromisoRepresentante !== "" ? ` | ${step.compromisoRepresentante}` : step.compromisoRepresentante;
+                }
+
                 // Informamos si el paso se completo
                 if(step.completed) {
                     informe.pasos_completados += 1;
@@ -199,12 +210,16 @@ class Reporting {
                 let files = await Schemas.partitures.files.find({ partitureId: this.id, userId: user.idDB, stepId: step._id });
                 
                 for (let f of files) {
-                    if(f.fileId){
-                        informe.monitoreos_audios += 1;
-                    } else if(f.message) {
-                        informe.monitoreos_messages += 1;
-                        informe.messages = informe.messages !== "" ? ` | ${f.message}` : f.message;
-                        messages.push(f.message);
+                    if(f.section == "monitorings"){
+                        if(f.fileId){
+                            informe.monitoreos_audios += 1;
+                        } else if(f.message) {
+                            informe.monitoreos_messages += 1;
+                            informe.messages = informe.messages !== "" ? ` | ${f.message}` : f.message;
+                            messages.push(f.message);
+                        }
+                    }else{
+                        informe.audioCoaching += 1;
                     }
                 }
 

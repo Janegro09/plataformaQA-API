@@ -19,9 +19,14 @@ const sectionPermitted = ["analytics"]
 
 const controller = {
     getReport: async (req, res) => {
-        const { s } = req.query;
+        let { s } = req.query;
 
+        if(!s) return includes.views.error.message(res, "Error al obtener el reporte");
+
+        s = s.trim().toLowerCase();
         
+        if(!sectionPermitted.includes(s)) return includes.views.error.message(res, "Error al obtener el reporte");
+
         try {
             let report = new model(s, req.body, req.authUser);
 
