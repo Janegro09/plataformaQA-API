@@ -167,7 +167,8 @@ class Reporting {
                 GCAssigned: "",
                 compromisoRepresentante: "",
                 patronMejora: "",
-                audioCoaching: 0
+                audioCoaching: 0,
+                modificaciones: ""
             }
 
             let improvments = [];
@@ -247,6 +248,12 @@ class Reporting {
                 informe.cluster     = partitureByUser[0].cluster       || undefined;
                 informe.detallePA   = partitureByUser[0].detallePA     || undefined;
                 informe.GCAssigned  = partitureByUser[0].GCAssigned    || undefined;
+                    for(let modification of partitureByUser[0].modifications){
+                        let d = new Date(parseInt(modification.date));
+                        let dataString = `${d.getUTCDate()}/${d.getUTCMonth()}/${d.getUTCFullYear()}`;
+                        let mensaje = `${modification.id} / ${modification.section} / ${dataString}`;
+                        informe.modificaciones += informe.modificaciones ? " | " + mensaje : mensaje;
+                }
             }
 
             // Agregamos los improvments
