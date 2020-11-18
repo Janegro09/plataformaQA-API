@@ -457,7 +457,8 @@ class Partitures {
                             fechaInforme: st.fechaInforme,
                             improvment: st.improvment,
                             audioFiles: file,
-                            customFilesSync: st.customFilesSync
+                            customFilesSync: st.customFilesSync,
+                            resultadosRepresentante: st.resultadosRepresentante
                         }
 
                         if (viewresponsibleComments) {
