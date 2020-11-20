@@ -247,7 +247,8 @@ class Monitoring {
                 disputar_response: mons.disputar_response || "",
                 monitoringDate: mons.monitoringDate,
                 createdAt: mons.createdAt,
-                modifiedBy: mons.modifiedBy
+                modifiedBy: mons.modifiedBy,
+                devolucionRepresentante: !!mons.comentariosDevolucion
             }
             if(id) {
                 // td.customSections       = JSON.parse(mons.customSections);
@@ -536,8 +537,9 @@ class Monitoring {
 
         const getValuesByCustomField = (cfield, responses) => {
             if(cfield.values) {
+                let response;
                 if(!responses.data.includes('~~')){
-                    let response = cfield.values.find(e => e.value == responses.data);
+                    response = cfield.values.find(e => e.value == responses.data);
                 } else {
                     response = responses.data;
                 }
