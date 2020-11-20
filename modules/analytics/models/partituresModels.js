@@ -40,7 +40,7 @@ class PartituresModels {
 
             for(let o = 0; o < inst.steps.length; o++){
                 const step = inst.steps[o];
-                if(!step.name || !step.requiredMonitorings) throw new Error('Error en los parametros enviados')
+                if(!step.name || step.requiredMonitorings === undefined) throw new Error('Error en los parametros enviados')
             }
             instances.push(inst);
         }
