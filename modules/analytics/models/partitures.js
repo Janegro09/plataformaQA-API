@@ -75,8 +75,8 @@ class Partitures {
 
 
             // Verificamos que no exista otra partitura con el mismo nombre
-            let findOtherPartitures = await partituresSchema.find({ name: partitureObject.name });
-            if(findOtherPartitures.length > 0) throw new Error('Ya existe otra partitura coin el archivo especificado');
+            // let findOtherPartitures = await partituresSchema.find({ name: partitureObject.name });
+            // if(findOtherPartitures.length > 0) throw new Error('Ya existe otra partitura coin el archivo especificado');
 
             // Preparamos el registro
             partitureObject = new partituresSchema(partitureObject);
