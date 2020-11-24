@@ -38,8 +38,12 @@ class cuartilesModels {
         else return false;
     }
 
-    static async get(){
-        return await perfilamientoModelstable.find();
+    static async get(id){
+        let where = {}
+        if(id){
+            where._id = id;
+        }
+        return await perfilamientoModelstable.find(where);
 
 
     }

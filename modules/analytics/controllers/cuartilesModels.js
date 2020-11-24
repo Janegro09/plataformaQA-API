@@ -31,8 +31,9 @@ const controller = {
         })
     },
     get: async (req, res) => {
+        const {id} = req.params;
         // Obtenemos todas o algun modelo de cuartiles
-        cuartilesModels.get().then(v => {
+        cuartilesModels.get(id).then(v => {
             if(!v) return views.error.message(res, "Error al mostrar las platanillas");
             else return views.customResponse(res, true, 200, "Modelos de cuartiles", v);
         }).catch(e => {
