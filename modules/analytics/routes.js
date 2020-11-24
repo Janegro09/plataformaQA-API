@@ -64,13 +64,13 @@ router.delete('/partituresModels/:id',includes.permit.checkPermit, controllerPar
 
 // Cuartiles models
 router.post('/cuartilesModels', controllerCuartilesModels.new);
-router.get('/cuartilesModels', controllerCuartilesModels.get);
+router.get('/cuartilesModels/:id?', controllerCuartilesModels.get);
 router.put('/cuartilesModels/:id', controllerCuartilesModels.modify);
 router.delete('/cuartilesModels/:id', controllerCuartilesModels.delete);
 
 // Perfilamientos models
 router.post('/perfilamientosModel', controllerPerfilamientosModels.new);
-router.get('/perfilamientosModel', controllerPerfilamientosModels.get);
+router.get('/perfilamientosModel/:id?', controllerPerfilamientosModels.get);
 router.put('/perfilamientosModel/:id', controllerPerfilamientosModels.modify);
 router.delete('/perfilamientosModel/:id', controllerPerfilamientosModels.delete);
 
