@@ -541,7 +541,8 @@ class Monitoring {
                 if(responses.data && !responses.data.includes('~~')){
                     response = cfield.values.find(e => e.value == responses.data);
                 } else {
-                    response = responses.data || "";
+                    response = {};
+                    response.value = responses.data || "";
                 }
                 if(!response) return false;
                 let td = [{
@@ -553,7 +554,6 @@ class Monitoring {
                     let more = getValuesByCustomField(response.customFieldsSync[0], responses.child)
                     td = td.concat(more);
                 }
-    
                 return td;
             } else if(cfield.type === 'text' || cfield.type === 'area') {
                 return [{
