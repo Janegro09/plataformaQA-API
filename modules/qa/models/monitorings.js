@@ -227,7 +227,7 @@ class Monitoring {
             where.programId = { $in: monsViews };
         }
 
-        let query = await monSchema.find().where(where).limit(100);
+        let query = await monSchema.find().where(where).limit(50);
         let returnData = []
         for(let mons of query) {
             let program = await Program.getProgramName(mons.programId);
