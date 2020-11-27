@@ -536,7 +536,7 @@ class Monitoring {
         // if(monitoringIds.length > 30) throw new Error('No puede exportar mas de 30 monitoreos en la misma plantilla');
 
         const getValuesByCustomField = (cfield, responses) => {
-            if(cfield.values) {
+            if(cfield.values && cfield.type !== 'text' && cfield.type !== 'area') {
                 let response;
                 if(responses.data && !responses.data.includes('~~')){
                     response = cfield.values.find(e => e.value == responses.data);
