@@ -583,7 +583,7 @@ class Monitoring {
             for(let m of modifiedByArray) {
                 if(m.actions.includes(columnName)){
                     let d = new Date(m.modifiedAt);
-                    addRow.value = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`;
+                    addRow.value = `${d.getUTCDate()}/${d.getUTCMonth()}/${d.getUTCFullYear()}`;
                     addRow.value += ` | By: ${m.userId}`;
                     break;
                 }
