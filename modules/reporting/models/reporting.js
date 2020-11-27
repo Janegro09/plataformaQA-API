@@ -108,7 +108,7 @@ class Reporting {
 
         // Creamos el archivo xlsx
         let today = new Date();
-        today = `${today.getDate()}-${today.getMonth()}-${today.getFullYear()}`;
+        today = `${today.getDate()}-${today.getMonth()  + 1}-${today.getFullYear()}`;
 
         let report = new includes.XLSX.XLSXFile(`reporting ${today}.xlsx`, 'reporting');
 

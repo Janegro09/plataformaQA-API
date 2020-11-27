@@ -583,7 +583,7 @@ class Monitoring {
             for(let m of modifiedByArray) {
                 if(m.actions.includes(columnName)){
                     let d = new Date(m.modifiedAt);
-                    addRow.value = `${d.getUTCDate()}/${d.getUTCMonth()}/${d.getUTCFullYear()}`;
+                    addRow.value = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
                     addRow.value += ` | By: ${m.userId}`;
                     break;
                 }
@@ -669,7 +669,7 @@ class Monitoring {
                         mon[c].map(v => {
                             string = string ? string + '  |  ' : "";
                             let date = new Date(v.modifiedAt);
-                            string += `${v.userId} - ${v.rol} - ${date.getDate()}/${date.getMonth()}/${date.getFullYear()}`;
+                            string += `${v.userId} - ${v.rol} - ${date.getDate()}/${date.getMonth()  + 1}/${date.getFullYear()}`;
                         })
                         mon[c] = string;
                     break;
@@ -715,7 +715,7 @@ class Monitoring {
 
                 if(mon[c] instanceof Date) {
                     let d = new Date(mon[c]);
-                    mon[c] = `${d.getDate()}/${d.getMonth()}/${d.getFullYear()}`
+                    mon[c] = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`
                 } else {
                     mon[c] = mon[c] ? mon[c].toString() : "";
                 }
@@ -733,7 +733,7 @@ class Monitoring {
         }
 
         let today = new Date();
-        today = `${today.getDate()}-${today.getMonth()}-${today.getFullYear()}`;
+        today = `${today.getDate()}-${today.getMonth()  + 1}-${today.getFullYear()}`;
         let monExp = new includes.XLSX.XLSXFile('monitoring Export ' + today + '.xlsx', 'monExports');
 
         let mons = new includes.XLSX.Sheet(monExp, 'monitorings');
