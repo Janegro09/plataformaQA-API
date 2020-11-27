@@ -538,10 +538,10 @@ class Monitoring {
         const getValuesByCustomField = (cfield, responses) => {
             if(cfield.values) {
                 let response;
-                if(!responses.data.includes('~~')){
+                if(responses.data && !responses.data.includes('~~')){
                     response = cfield.values.find(e => e.value == responses.data);
                 } else {
-                    response = responses.data;
+                    response = responses.data || "";
                 }
                 if(!response) return false;
                 let td = [{
