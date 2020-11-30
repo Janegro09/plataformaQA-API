@@ -52,7 +52,7 @@ const PerfilamientoFile = {
             if(!this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL'] || !this.baseConsolidada[x]['INFORME'] || !this.baseConsolidada[x]['ENTIDAD'] || !this.baseConsolidada[x]['PROVEEDOR']){
                 continue;
             }
-            let FileToPush = `${this.baseConsolidada[x]['ENTIDAD'] == 'No Aplica'? '' : this.baseConsolidada[x]['ENTIDAD']} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
+            let FileToPush = `${this.baseConsolidada[x]['INFORME'] == 'No Aplica'? '' : this.baseConsolidada[x]['INFORME']} ${this.baseConsolidada[x]['PROVEEDOR']} ${this.baseConsolidada[x]['PERFILAMIENTO_MES_ACTUAL']} ${date}`
             let tempData = {};
             for(let h in this.baseConsolidada[x]){
                 tempData[h] = {
