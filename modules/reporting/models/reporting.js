@@ -248,11 +248,14 @@ class Reporting {
                 informe.cluster     = partitureByUser[0].cluster       || undefined;
                 informe.detallePA   = partitureByUser[0].detallePA     || undefined;
                 informe.GCAssigned  = partitureByUser[0].GCAssigned    || undefined;
-                    for(let modification of partitureByUser[0].modifications){
-                        let d = new Date(parseInt(modification.date));
-                        let dataString = `${d.getUTCDate()}/${d.getUTCMonth()}/${d.getUTCFullYear()}`;
-                        let mensaje = `${modification.id} / ${modification.section} / ${dataString}`;
-                        informe.modificaciones += informe.modificaciones ? " | " + mensaje : mensaje;
+                let savedSection = [];
+                for(let modification of partitureByUser[0].modifications){
+                    if(savedSection.includes(modification.section)) continue;
+                    let d = new Date(parseInt(modification.date));
+                    let dataString = `${d.getUTCDate()}/${d.getUTCMonth()}/${d.getUTCFullYear()}`;
+                    let mensaje = `${modification.id} / ${modification.section} / ${dataString}`;
+                    informe.modificaciones += informe.modificaciones ? " | " + mensaje : mensaje;
+                    savedSection.push(modification.section)
                 }
             }
 
