@@ -176,8 +176,8 @@ class Groups {
                     id: consulta[x].groupId,
                     name: c[0].group
                 }
+                ReturnData.push(tempData);
             }
-            ReturnData.push(tempData);
         }
         return ReturnData;
     }
