@@ -171,9 +171,11 @@ class Groups {
         let ReturnData = [], tempData,c;
         for(let x = 0; x < consulta.length; x++){
             c = await groupsSchema.find({_id: consulta[x].groupId});
-            tempData = {
-                id: consulta[x].groupId,
-                name: c[0].group
+            if(c.length > 0) {
+                tempData = {
+                    id: consulta[x].groupId,
+                    name: c[0].group
+                }
             }
             ReturnData.push(tempData);
         }
