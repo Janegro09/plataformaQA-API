@@ -55,7 +55,7 @@ if(process.env.ENVRIORMENT == 'development'){
         }
         callback(null, corsOptions) // callback expects two parameters: error and options
     }
-    // app.use(cors())
+    app.use(cors(crs))
 }
 
 app.use(fileUpload()); // Permito la posibilidad de enviar archivos por formularios, si la desactivo, los formularios dejaran de ser form-data y sera xxx-form-data/urlencoded
