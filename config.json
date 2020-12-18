@@ -65,5 +65,5 @@
         "project": "Plataforma QA"
     },
     "routesNotToken": ["test", "login", "frontUtilities", "permissions", "downloadFile"],
-    "whiteListCors": ["https://plataformaqa.solucionesdigitalesteco.com.ar"]
+    "whiteListCors": ["https://plataformaeqa.solucionesdigitalesteco.com.ar"]
 }
