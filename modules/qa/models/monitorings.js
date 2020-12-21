@@ -17,6 +17,7 @@ const monSchema = require('../migrations/monitorings.table');
 const Program = require('../../programs/models/programs');
 const filesofMonitoringsTable = require('../migrations/filesofMonitorings.table');
 const customFieldModel = require('../../forms/models/customfields');
+const helper = require('../../../controllers/helper');
 
 const existingStatus = ['pending', 'run', 'finished'];
 
@@ -175,9 +176,20 @@ class Monitoring {
 
             if(createdBy) { where.createdBy = createdBy; }
 
-            if(dateTransactionStart = new Date(dateTransactionStart) && dateTransactionStart instanceof Date) { where.transactionDate = { $gte: dateTransactionStart }}
+            if(dateTransactionStart) {
+                dateTransactionStart = helper.date_to_UTCDate(dateTransactionStart);
+                if(dateTransactionStart instanceof Date) { 
+                    where.transactionDate = { $gte: dateTransactionStart }
+                }
+            }
 
-            if(dateTransactionEnd = new Date(dateTransactionEnd) && dateTransactionEnd instanceof Date) { where.transactionDate = { $lte: dateTransactionEnd }}
+            if(dateTransactionEnd) {
+                dateTransactionEnd = helper.date_to_UTCDate(dateTransactionEnd);
+                if(dateTransactionEnd instanceof Date) { 
+                    where.transactionDate = where.transactionDate ? { ...where.transactionDate, $lte: dateTransactionEnd } : { $lte: dateTransactionEnd };
+                }
+            }
+
         
             if(status && existingStatus.includes(status)) { where.status = status; }
 
@@ -197,6 +209,8 @@ class Monitoring {
                 where.evaluated = evaluated === 'false' ? false : { $ne: false };
             }
         }
+
+        console.log(where);
 
 
         /**

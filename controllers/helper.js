@@ -55,6 +55,20 @@ module.exports = {
             break;
         }
     },
+    /**
+     * Funcion que envia una fecha y convienrte en GMT 0
+     * @param {*} date 
+     */
+    date_to_UTCDate: (date) => {
+        date = new Date(date);
+        
+        const horas_resta = date.getUTCHours();
+        const resta = (((60 * 60) * horas_resta) * 1000);
+
+        date = Date.parse(date);
+
+        return new Date(date - resta);
+    },
     objectSize: (obj) => {
         return Object.keys(obj).length
     },
