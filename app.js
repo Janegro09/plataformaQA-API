@@ -47,6 +47,7 @@ if(process.env.ENVRIORMENT == 'development'){
 
     let crs = function (req, callback) {
         var corsOptions;
+        // if (whiteListURLS.indexOf(req.header('Origin')) !== -1) {
         if (whiteListURLS.indexOf(req.header('Origin')) !== -1) {
           corsOptions = { origin: true } // reflect (enable) the requested origin in the CORS response
         } else {
