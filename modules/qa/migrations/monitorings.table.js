@@ -34,6 +34,9 @@ var monitorings = new Schema({
     modifiedBy: [
         {
             userId: String, 
+            name: String,
+            lastName: String,
+            legajo: String,
             modifiedAt: {
                 type: Date,
                 default: Date.now

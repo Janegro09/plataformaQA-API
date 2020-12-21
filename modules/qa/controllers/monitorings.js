@@ -98,8 +98,9 @@ const controller = {
         let userId      = req.authUser[0].id           || false;
         let userRole    = req.authUser[0].role.role    || false;
         let userCompany = req.authUser[0].razonSocial  || false;
+        let userData    = req.authUser[0]  || false;
 
-        monModel.modify(id, req.body, {userId, userRole, userCompany }).then(v => {
+        monModel.modify(id, req.body, {userId, userRole, userCompany, userData }).then(v => {
             if(!v) return includes.views.error.message(res, "Error al modificar el monitoreo");
             else return includes.views.success.update(res);
         }).catch(e => {

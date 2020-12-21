@@ -520,7 +520,6 @@ class Monitoring {
 
         try {
             let userData = this.generateModificateObject(modifiedData);
-    
             // Agregamos todos los campos que se modificaron
             userData.actions = [];
             for(let m in action) {
@@ -542,10 +541,16 @@ class Monitoring {
         }
     }
 
-    static generateModificateObject({ userId, userRole }) {
+    static generateModificateObject({ userId, userRole, userData }) {
         if(!userId || !userRole) return false;
+
+        const { name, lastName, legajo } = userData
+
         return {
             userId,
+            name,
+            lastName,
+            legajo,
             rol: userRole
         }
     }
@@ -602,8 +607,12 @@ class Monitoring {
             for(let m of modifiedByArray) {
                 if(m.actions.includes(columnName)){
                     let d = new Date(m.modifiedAt);
+                    
                     addRow.value = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
-                    addRow.value += ` | By: ${m.userId}`;
+
+                    const user_identification = m.name && m.lastName ? `${m.name} ${m.lastName}` : m.legajo ? m.legajo ? m.userId;
+
+                    addRow.value += ` | By: ${user_identification}`;
                     break;
                 }
             }
@@ -637,7 +646,7 @@ class Monitoring {
 
             const viewRows = {
                 user: ["dni", "name", "lastName", "cuil", "legajo", "sexo", "status", "propiedad", "canal", "negocio", "edificioLaboral", "gerencia1", "nameG1", "gerencia2", "nameG2", "equipoEspecifico", "group", "role", "razonSocial", "jefeCoordinador", "responsable", "supervisor", "lider", "provincia", "region", "subregion", "email"],
-                mon: ["fortalezasUsuario", "pasosMejora" ,"comentariosDevolucion","disputar_response" ,"invalidated", "evaluated", "status", "transactionDate", "monitoringDate", "caseId", "program", "createdBy", "disputado", "createdAt", "comentariosMejora", "fortalezasUsuario", "pasosMejora", "modifiedBy", "responses"]
+                mon: ["comentariosDevolucion","disputar_response" ,"invalidated", "evaluated", "status", "transactionDate", "monitoringDate", "caseId", "program", "createdBy", "disputado", "createdAt", "comentariosMejora", "modifiedBy", "responses"]
             }
             // Recorremos el objeto y modificamos
             let string;
@@ -688,7 +697,9 @@ class Monitoring {
                         mon[c].map(v => {
                             string = string ? string + '  |  ' : "";
                             let date = new Date(v.modifiedAt);
-                            string += `${v.userId} - ${v.rol} - ${date.getDate()}/${date.getMonth()  + 1}/${date.getFullYear()}`;
+                            const user_identification = v.name && v.lastName ? `${v.name} ${v.lastName}` : v.legajo ? v.legajo ? v.userId;
+
+                            string += `${user_identification} - ${v.rol} - ${date.getDate()}/${date.getMonth()  + 1}/${date.getFullYear()}`;
                         })
                         mon[c] = string;
                     break;
