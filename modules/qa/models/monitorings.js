@@ -157,13 +157,22 @@ class Monitoring {
         let where = {
             deleted: false
         };
+        let limit = 50;
+        let skip  = 0;
         let monsViews = [];
 
         if(id) {
             where._id = id
         } else if(searchParams) {
             // Solo usamos parametros de busqueda si no se especifico id
-            let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateTransactionStart, dateTransactionEnd, responses, status } = searchParams;
+            let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateTransactionStart, dateTransactionEnd, limit:limit_of_get, offset:offset_of_get, status } = searchParams;
+            
+            if(limit_of_get && limit_of_get < 200 && limit_of_get > 0 ) {
+                limit = parseInt(limit_of_get)
+            } 
+            if(offset_of_get && offset_of_get > 0) {
+                skip = parseInt(offset_of_get);
+            }
 
             if(userId) { where.userId = userId; }
 
@@ -209,10 +218,6 @@ class Monitoring {
                 where.evaluated = evaluated === 'false' ? false : { $ne: false };
             }
         }
-
-        console.log(where);
-
-
         /**
          * Esto permmitira que los usuarios vean los monitoreos asignados a los programas que tienen permitidos
          */
@@ -241,7 +246,7 @@ class Monitoring {
             where.programId = { $in: monsViews };
         }
 
-        let query = await monSchema.find().where(where).limit(50);
+        let query = await monSchema.find(where).skip(skip).limit(limit).sort({ transactionDate: -1 });
         let returnData = []
         for(let mons of query) {
             let program = await Program.getProgramName(mons.programId);
