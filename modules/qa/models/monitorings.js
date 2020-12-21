@@ -610,7 +610,7 @@ class Monitoring {
                     
                     addRow.value = `${d.getDate()}/${d.getMonth() + 1}/${d.getFullYear()}`;
 
-                    const user_identification = m.name && m.lastName ? `${m.name} ${m.lastName}` : m.legajo ? m.legajo ? m.userId;
+                    const user_identification = m.name && m.lastName ? `${m.name} ${m.lastName}` : m.legajo ? m.legajo : m.userId;
 
                     addRow.value += ` | By: ${user_identification}`;
                     break;
@@ -697,7 +697,7 @@ class Monitoring {
                         mon[c].map(v => {
                             string = string ? string + '  |  ' : "";
                             let date = new Date(v.modifiedAt);
-                            const user_identification = v.name && v.lastName ? `${v.name} ${v.lastName}` : v.legajo ? v.legajo ? v.userId;
+                            const user_identification = v.name && v.lastName ? `${v.name} ${v.lastName}` : v.legajo ? v.legajo : v.userId;
 
                             string += `${user_identification} - ${v.rol} - ${date.getDate()}/${date.getMonth()  + 1}/${date.getFullYear()}`;
                         })

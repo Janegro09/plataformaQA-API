@@ -22,7 +22,7 @@ const controllerGroups = require('./controllers/groups');
 // Programs groups
 const baseProgramsGroups = "/groups";
 router.post(`${baseProgramsGroups}/new`, includes.permit.checkPermit , controllerGroups.create);
-router.get(`${baseProgramsGroups}/:id?`, includes.permit.checkPermit , controllerGroups.get);
+router.get(`${baseProgramsGroups}/:id?`, controllerGroups.get);
 router.put(`${baseProgramsGroups}/:id?`, includes.permit.checkPermit , controllerGroups.modify);
 router.delete(`${baseProgramsGroups}/:id?`, includes.permit.checkPermit , controllerGroups.delete);
 router.delete(`${baseProgramsGroups}/:groupId/:userId`, includes.permit.checkPermit , controllerGroups.unassignUser);
