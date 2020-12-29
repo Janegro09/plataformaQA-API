@@ -158,7 +158,6 @@ class ProgramsGroups {
             where._id = id;
         }
 
-        const authorizedIds = [];
         if(req) {
             // Buscamos los grupos del usuario 
             const user_groups = await Schemas.usersGroups.find({ userId: req.authUser[0].idDB });
