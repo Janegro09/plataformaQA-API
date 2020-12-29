@@ -18,7 +18,8 @@ const helper = require('../helper');
 const { response } = require('express');
 const Schemas = {
     programsGroups: require('../migrations/programsGroups.table'),
-    usersByGroups: require('../migrations/groupsByUsers.table')
+    usersByGroups: require('../migrations/groupsByUsers.table'),
+    usersGroups: require('../../../database/migrations/groupsperuser')
 }
 
 class ProgramsGroups {
@@ -142,20 +143,48 @@ class ProgramsGroups {
         // Si ID es un objeto entonces estamos recibiendo REQ y significa que el usuario esta logeado
         const req = id;
         if(id != 0 && (typeof id != 'string' && typeof id == 'object')){
-            id = id.params.id;
+            if(id.params.id) {
+                id = id.params.id;
+            } else {
+                id = false;
+            }
         }
         
         let responseData = [];
         let where = {
             deleted: false
         }
-        if(id != 0){
+        if(id != 0 && typeof id != 'object'){
             where._id = id;
         }
 
+        const authorizedIds = [];
+        if(req) {
+            // Buscamos los grupos del usuario 
+            const user_groups = await Schemas.usersGroups.find({ userId: req.authUser[0].idDB });
+            const id_grupos_usuarios = [];
+
+            for(const { groupId } of user_groups) {
+                id_grupos_usuarios.push(groupId);
+            }
+
+            // Buscamos los grupos de programas pertenecientes a ese grupo de usuarios
+            const grupos_programas_por_usuario = await Schemas.usersByGroups.find({ userGroupId: { $in: id_grupos_usuarios } });
+            const grupos_programas_ids = [];
+            for(const { groupId } of grupos_programas_por_usuario) {
+                grupos_programas_ids.push(groupId);
+            }
+
+            if(where._id) {
+                // Buscamos si el id pertenece al usuario
+                if(!grupos_programas_ids.includes(where._id)) throw new Error("No tienes permitido ver este grupo");
+            } else {
+                where._id = { $in: grupos_programas_ids };
+            }
+        } else throw new Error("Error en los parametros enviados");
+
         let response = await Schemas.programsGroups.find().where(where);
         if(response.length === 0) throw new Error('No existen registros en nuestra base de datos');
-
         for(let i = 0; i < response.length; i++){
             const tempData = {
                 id: response[i]._id,
@@ -166,6 +195,7 @@ class ProgramsGroups {
                     created: response[i].createdAt
                 }
             }
+
             if(id) {
                 // Traemos data de los usuarios asignados
                 tempData.assignedGroups = [];
@@ -206,7 +236,6 @@ class ProgramsGroups {
 
             responseData.push(tempData);
         }
-
         return responseData;
     }
 
@@ -214,7 +243,7 @@ class ProgramsGroups {
         if(!id) throw new Error('Error en los parametros enviados');
         let tempData = [];
 
-        let consulta = await Schemas.usersByGroups.find({userId: id});
+        let consulta = await Schemas.usersByGroups.find({ userId: id });
         for(let x = 0; x < consulta.length; x++){
             tempData.push(consulta[x].groupId);
         }

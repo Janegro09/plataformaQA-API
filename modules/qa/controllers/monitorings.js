@@ -205,9 +205,6 @@ const controller = {
             console.log('Err: ', e);
             return views.error.message(res, e.message);
         }
-
-
-
     }
 }
 

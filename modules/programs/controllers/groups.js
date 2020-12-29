@@ -36,25 +36,13 @@ const controller = {
         })
     },
     get: (req, res) => {
-        if(req.params.id){
-            return groupsModel.get(req).then(response => {
-                if(!response) return includes.views.error.message(res, "Error al mostrar los grupos de programas");
-                else {
-                    includes.views.customResponse(res, true, 200, "", response);
-                }
-            }, err => {
-                return includes.views.error.message(res, err.message);
-            })
-        }else{
-            return groupsModel.get().then(response => {
-                if(!response) return includes.views.error.message(res, "Error al mostrar los grupos de programas");
-                else {
-                    includes.views.customResponse(res, true, 200, "", response);
-                }
-            }, err => {
-                return includes.views.error.message(res, err.message);
-            })
-        }
+        groupsModel.get(req).then(response => {
+            if(!response) return includes.views.error.message(res, "Error al mostrar los grupos de programas");
+            else return includes.views.customResponse(res, true, 200, "", response);
+        }, err => {
+            // console.log(err)
+            return includes.views.error.message(res, err.message);
+        })
     },
     delete: (req, res) => {
         return groupsModel.delete(req.params.id).then(response => {
