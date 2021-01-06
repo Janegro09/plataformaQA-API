@@ -180,7 +180,7 @@ class ProgramsGroups {
             } else {
                 where._id = { $in: grupos_programas_ids };
             }
-        } else throw new Error("Error en los parametros enviados");
+        }
 
         let response = await Schemas.programsGroups.find().where(where);
         if(response.length === 0) throw new Error('No existen registros en nuestra base de datos');

@@ -36,16 +36,21 @@ module.exports = {
             groups: [],
             roles: []
         }
-        // Enviamos Grupos
-        returnData.groups   = await Groups.get();
-        // Enviamos Roles
-        returnData.roles    = await Roles.get();
+        try {
+            // Enviamos Grupos
+            returnData.groups   = await Groups.get();
+            // Enviamos Roles
+            returnData.roles    = await Roles.get();
 
-        // Enviamos Grupos de programas
-        returnData.programsGroups = await ProgramsGroups.get();
+            // Enviamos Grupos de programas
+            returnData.programsGroups = await ProgramsGroups.get();
+            return views.customResponse(res,true,202,"",returnData)
+        } catch(e) {
+            console.log(e);
+            return views.error.message(res,e.message);
+        }
         
 
-        return views.customResponse(res,true,202,"",returnData)
     },
     login: async (req, res) => {
         const {user, password} = req.body;
