@@ -18,7 +18,7 @@ const migrations    = require('./database/migrations/migrations');
 const dotenv        = require('dotenv').config();
 const fileUpload    = require('express-fileupload');
 const Auth          = require('./middlewares/authentication');
-const cors          = require('cors');
+// const cors          = require('cors');
 const helper        = require('./controllers/helper');
 const cfile         = helper.configFile();
 
@@ -39,7 +39,7 @@ try {
     console.log(e);
 }
 
-app.use(cors()) // Permitimos todos los request sin importar providencia
+// app.use(cors()) // Permitimos todos los request sin importar providencia
 // Definimos los cors segun el envriorment
 // if(process.env.ENVRIORMENT == 'development'){
 //     app.use(cors()) // Permitimos todos los request sin importar providencia
