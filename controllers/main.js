@@ -41,7 +41,6 @@ module.exports = {
         // Enviamos Roles
         returnData.roles    = await Roles.get();
 
-        console.log(returnData);
         // Enviamos Grupos de programas
         returnData.programsGroups = await ProgramsGroups.get();
         
