@@ -389,7 +389,7 @@ class Monitoring {
             if(!createdBy) throw new Error('Usuario creador erroneo. Error interno');
             createdBy = await includes.users.schema.find({ id: createdBy });
             if(createdBy.length === 0) throw new Error('Usuario creador inexistente. Error interno');
-            createdBy = createdBy[0].razonSocial;
+            createdBy = createdBy[0];
 
             if(createdBy === 'TELECOM') {
                 authorizedColumnsToModify = ["disputar", "disputar_response"];
