@@ -33,6 +33,7 @@ const controller = {
 
             // Especificamos el id del usuario que esta logeado
             if(req.authUser.length > 0) {
+                console.log(req.authUser[0]);
                 data.createdBy = req.authUser[0].id;
             }
 
