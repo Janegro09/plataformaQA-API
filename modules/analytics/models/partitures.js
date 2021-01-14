@@ -701,9 +701,7 @@ class Partitures {
             let audiosRequeridos = await this.getAudiosCountbyUser(userId, id, stepId )
             if(stepStatus.length > 0) {
                 let s = stepStatus[0];
-                if(s.compromisoRepresentante &&
-                    s.detalleTransaccion &&
-                    s.patronMejora && audiosRequeridos.audioFilesRequired === audiosRequeridos.audioFilesActually) {
+                if(s.detalleTransaccion && audiosRequeridos.audioFilesRequired === audiosRequeridos.audioFilesActually) {
                         c = await stepsSchema.updateOne({ _id: stepId, userId: userId }, {completed: true})
                     }
             }
