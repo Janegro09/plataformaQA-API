@@ -312,17 +312,16 @@ const cuartilesGroups = {
                 for(let u = 0; u < v.data.rows.length; u++){
                     let actualUser = v.data.rows[u];
 
-                    let groups = actualUser['Grupos de cuartiles Asignados'].split(' + '); // Separamos los grupos en caso que tenga mas de uno
-                    
-                    groups.map(e => {
-                        if(e === group){
+                    let groups = actualUser['Grupos de cuartiles Asignados']; // Separamos los grupos en caso que tenga mas de uno
+                    //groups.map(e => {
+                        if(groups === group){
                             if(getUserInfo){
                                 returnData.push(actualUser);
                             }else{
                                 returnData.push(actualUser.DNI)
                             }
                         }
-                    })
+                    //})
                 }
             }
         })

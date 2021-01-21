@@ -51,7 +51,6 @@ class Partitures {
                     this.fileData.push(v);
                 })
             }
-
             // Chequeamos la existencia de los perfilamientos asignados
             await this.getFileName();
             if (this.perfilamientosAssignados.lenth === 0 || !this.perfilamientosAssignados) throw new Error('No asigno perfilamientos')
@@ -149,6 +148,7 @@ class Partitures {
 
             return true;
         } catch (e) {
+	    console.log(e);
             throw e;
         }
     }
