@@ -48,6 +48,8 @@ var stepsOfInstances = new Schema({
     responsibleComments: String,
     managerComments: String,
     coordinatorOnSiteComments: String,
+    coordinatorComments: String,
+    coordinatorOCComments: String,
     accountAdministratorComments: String,
     coachingComments: String,
     resultadosRepresentante: String,
