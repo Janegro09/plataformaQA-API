@@ -338,8 +338,11 @@ class Reporting {
                     case "LIDER":
                         if(permission == 'lider') return true;
                         else return false;
+                    case "LIDER ON SITE":
+                        if(permission == 'lider') return true;
+                        else return false;
                     default:
-                        return false;
+                    return false;
                 }
             } else return false;
 
@@ -505,6 +508,13 @@ class Reporting {
             const { supervisor, responsable, coordinador, G2, G1 } = data;
             switch(row_name) {
                 case "lider":
+                    informe.supervisor  = supervisor    || 'Sin definir';
+                    informe.responsable = responsable   || 'Sin definir';
+                    informe.coordinador = coordinador   || 'Sin definir';
+                    informe.G2          = G2            || 'Sin definir';
+                    informe.G1          = G1            || 'Sin definir';
+                    break;
+                case "lider on site":
                     informe.supervisor  = supervisor    || 'Sin definir';
                     informe.responsable = responsable   || 'Sin definir';
                     informe.coordinador = coordinador   || 'Sin definir';

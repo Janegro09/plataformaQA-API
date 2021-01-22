@@ -320,6 +320,15 @@ class Partitures {
                 viewaccountAdministratorComments    = false;
                 viewcoachingComments                = false;
                 break;
+            case 'LIDER ON SITE':
+                viewresponsibleComments             = true;
+                viewmanagerComments                 = true;
+                viewcoordinatorOnSiteComments       = true;
+                viewcoordinatorComments             = true;
+                viewcoordinatorOCComments           = true;
+                viewaccountAdministratorComments    = false;
+                viewcoachingComments                = false;
+                break;
         }
 
         // Solo traemos las partituras disponibles por programa segun usuario
