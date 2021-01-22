@@ -180,6 +180,7 @@ class Reporting {
             let improvments         = [];
             let messages            = [];
             let textosPorInstancias = [];
+            let audiosPorInstancias = [];
 
             // Obtenemos las instancias y los pasos
             let steps = await Schemas.partitures.steps.find({ userId: user.idDB, instanceId: { $in: this.instances }, partitureId: this.id });
@@ -206,6 +207,8 @@ class Reporting {
                     detalleTransaccion:"",
                     resultadosRepresentante:""
                 }
+
+
 
                 //Agregamos pasos de mejora 20-11-2020
                 if(step.patronMejora ) {
@@ -240,19 +243,31 @@ class Reporting {
                 // Buscamos los archivos para este step
                 let files = await Schemas.partitures.files.find({ partitureId: this.id, userId: user.idDB, stepId: step._id });
                 
+                let step_audios = {
+                    requeridos: step.requestedMonitorings,
+                    audios_mon: 0,
+                    msg_mon: 0,
+                    audios_coach: 0
+                }
+
                 for (let f of files) {
                     if(f.section == "monitorings"){
                         if(f.fileId){
                             informe.monitoreos_audios += 1;
+                            step_audios.audios_mon += 1;
                         } else if(f.message) {
+                            step_audios.msg_mon += 1;
                             informe.monitoreos_messages += 1;
                             informe.messages = informe.messages !== "" ? ` | ${f.message}` : f.message;
                             messages.push(f.message);
                         }
                     }else{
                         informe.audioCoaching += 1;
+                        step_audios.audios_coach += 1; 
                     }
                 }
+
+                audiosPorInstancias.push(step_audios);
 
                 if(step.responsibleComments || step.managerComments || step.coordinatorOnSiteComments || step.coordinatorComments || step.coordinatorOCComments || step.accountAdministratorComments) {
                     informe.interviene_mando += 1;
@@ -310,6 +325,16 @@ class Reporting {
                         informe[`Compromiso del representante [I:${contador}]`] = compromisoRepresentante;
                         informe[`Detalle de transacción [I:${contador}]`] = detalleTransaccion;
                         informe[`Resultados del representante de todas las instancias [I:${contador}]`] = resultadosRepresentante;
+                        contador++;
+            }
+            
+            contador = 1;
+            for(let { requeridos, audios_coach, audios_mon, msg_mon } of audiosPorInstancias) {
+                informe[`Audios Requeridos [S:${contador}]`] = requeridos;
+                informe[`Audios de monitoreos [S:${contador}]`] = audios_mon;
+                informe[`Mensajes de monitoreos [S:${contador}]`] = msg_mon;
+                informe[`Audios de Coaching [S:${contador}]`] = audios_coach;
+                contador++;
             }
 
             for(let i = 0; i < messages.length; i++) {
