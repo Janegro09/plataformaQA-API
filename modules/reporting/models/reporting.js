@@ -66,7 +66,7 @@ class Reporting {
         } else throw new Error('Error en los parametros enviados');
 
         if(this.clusters) {
-            let clusters = await Schemas.partitures.infoByUsers.find().where({ cluster: { $in: this.clusters }, partitureId: this.partiture });
+            let clusters = await Schemas.partitures.infoByUsers.find().where({ cluster: { $in: this.clusters }, partitureId: this.partiture._id });
             for(let { userId } of clusters) {
                 if(this.usersIds.includes(userId)) continue;
                 this.usersIds.push(userId);
