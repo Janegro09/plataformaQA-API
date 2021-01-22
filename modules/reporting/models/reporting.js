@@ -254,7 +254,7 @@ class Reporting {
                     }
                 }
 
-                if(step.responsibleComments || step.managerComments || step.coordinatorOnSiteComments || step.accountAdministratorComments) {
+                if(step.responsibleComments || step.managerComments || step.coordinatorOnSiteComments || step.coordinatorComments || step.coordinatorOCComments || step.accountAdministratorComments) {
                     informe.interviene_mando += 1;
                 }   
 

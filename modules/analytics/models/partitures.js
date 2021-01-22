@@ -51,7 +51,6 @@ class Partitures {
                     this.fileData.push(v);
                 })
             }
-
             // Chequeamos la existencia de los perfilamientos asignados
             await this.getFileName();
             if (this.perfilamientosAssignados.lenth === 0 || !this.perfilamientosAssignados) throw new Error('No asigno perfilamientos')
@@ -149,6 +148,7 @@ class Partitures {
 
             return true;
         } catch (e) {
+	    console.log(e);
             throw e;
         }
     }
@@ -280,7 +280,7 @@ class Partitures {
 
         // Permisos de visualizacion de contenido
         if (!userLogged.role.role) throw new Error('Error en el rol del usuario logeado')
-        let viewresponsibleComments = false, viewmanagerComments = false, viewcoordinatorOnSiteComments = false, viewaccountAdministratorComments = false, viewcoachingComments = false;
+        let viewresponsibleComments = false, viewmanagerComments = false, viewcoordinatorOnSiteComments = false, viewcoordinatorComments = false, viewcoordinatorOCComments = false, viewaccountAdministratorComments = false, viewcoachingComments = false;
         switch (userLogged.role.role) {
             case 'ADMINISTRATOR':
             case 'SUPERVISOR':
@@ -288,6 +288,8 @@ class Partitures {
                 viewresponsibleComments             = true;
                 viewmanagerComments                 = true;
                 viewcoordinatorOnSiteComments       = true;
+                viewcoordinatorComments             = true;
+                viewcoordinatorOCComments           = true;
                 viewaccountAdministratorComments    = true;
                 viewcoachingComments                = true;
                 break;
@@ -295,6 +297,8 @@ class Partitures {
                 viewresponsibleComments             = true;
                 viewmanagerComments                 = true;
                 viewcoordinatorOnSiteComments       = true;
+                viewcoordinatorComments             = true;
+                viewcoordinatorOCComments           = true;
                 viewaccountAdministratorComments    = false;
                 viewcoachingComments                = false;
                 break;
@@ -302,6 +306,8 @@ class Partitures {
                 viewresponsibleComments             = true;
                 viewmanagerComments                 = true;
                 viewcoordinatorOnSiteComments       = false;
+                viewcoordinatorComments             = false;
+                viewcoordinatorOCComments           = false;
                 viewaccountAdministratorComments    = false;
                 viewcoachingComments                = false;
                 break;
@@ -309,6 +315,8 @@ class Partitures {
                 viewresponsibleComments             = true;
                 viewmanagerComments                 = false;
                 viewcoordinatorOnSiteComments       = false;
+                viewcoordinatorComments             = false;
+                viewcoordinatorOCComments           = false;
                 viewaccountAdministratorComments    = false;
                 viewcoachingComments                = false;
                 break;
@@ -472,6 +480,12 @@ class Partitures {
                         }
                         if (viewcoordinatorOnSiteComments) {
                             tData.coordinatorOnSiteComments = st.coordinatorOnSiteComments;
+                        }
+                        if (viewcoordinatorComments) {
+                            tData.coordinatorComments = st.coordinatorComments;
+                        }
+                        if (viewcoordinatorOCComments) {
+                            tData.coordinatorOCComments = st.coordinatorOCComments;
                         }
                         if (viewmanagerComments) {
                             tData.managerComments = st.managerComments;
