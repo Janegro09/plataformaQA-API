@@ -145,7 +145,10 @@ class Reporting {
             
             let partiture = this.usersByPartitures.find(e => e.userId == user.idDB);
             if(!partiture) continue;
-
+            //Inicializar los valores solicitados: 
+            //Detalle de transacción - step.detalleTransaccion
+            //Oportunidades indentificadas - step.patronMejora
+            //Resultados del representante de todas las instancias - step.resultadosRepresentante
             let informe = {
                 ...user,
                 monitoreos_requeridos: 0,
@@ -168,11 +171,15 @@ class Reporting {
                 compromisoRepresentante: "",
                 patronMejora: "",
                 audioCoaching: 0,
-                modificaciones: ""
+                modificaciones: "",
+                resultadosRepresentante: "",
+                patronMejora: "",
+                detalleTransaccion: "",
             }
 
-            let improvments = [];
-            let messages    = [];
+            let improvments         = [];
+            let messages            = [];
+            let textosPorInstancias = [];
 
             // Obtenemos las instancias y los pasos
             let steps = await Schemas.partitures.steps.find({ userId: user.idDB, instanceId: { $in: this.instances }, partitureId: this.id });
@@ -192,13 +199,36 @@ class Reporting {
                     improvments[improvmentIndex].improvment = step.improvment;
                 }
 
+                let indiceTextoPorInstancias = {
+                    id:step._id,
+                    patronMejora:"",
+                    compromisoRepresentante:"",
+                    detalleTransaccion:"",
+                    resultadosRepresentante:""
+                }
+
                 //Agregamos pasos de mejora 20-11-2020
                 if(step.patronMejora ) {
-                    informe.patronMejora = informe.patronMejora !== "" ? ` | ${step.patronMejora}` : step.patronMejora;
+                    informe.patronMejora += informe.patronMejora !== "" ? ` | ${step.patronMejora}` : step.patronMejora;
+                    indiceTextoPorInstancias.patronMejora = step.patronMejora;
                 }
+
                 if(step.compromisoRepresentante ){
-                    informe.compromisoRepresentante = informe.compromisoRepresentante !== "" ? ` | ${step.compromisoRepresentante}` : step.compromisoRepresentante;
+                    informe.compromisoRepresentante += informe.compromisoRepresentante !== "" ? ` | ${step.compromisoRepresentante}` : step.compromisoRepresentante;
+                    indiceTextoPorInstancias.compromisoRepresentante = step.compromisoRepresentante;
                 }
+
+                //Agregamos pasos de mejora 19-01-2021
+                if(step.detalleTransaccion ){
+                    informe.detalleTransaccion += informe.detalleTransaccion !== "" ? ` | ${step.detalleTransaccion}` : step.detalleTransaccion;
+                    indiceTextoPorInstancias.detalleTransaccion = step.detalleTransaccion;
+                }
+                if(step.resultadosRepresentante ){
+                    informe.resultadosRepresentante += informe.resultadosRepresentante !== "" ? ` | ${step.resultadosRepresentante}` : step.resultadosRepresentante;
+                    indiceTextoPorInstancias.resultadosRepresentante = step.resultadosRepresentante;
+                }
+
+                textosPorInstancias.push(indiceTextoPorInstancias);
 
                 // Informamos si el paso se completo
                 if(step.completed) {
@@ -269,6 +299,17 @@ class Reporting {
                     improvment = "Empeora";
                 }
                 informe[`improvment [I:${instance}]`] = improvment;
+            }
+
+            let contador=1;
+            for(let {patronMejora,
+                     compromisoRepresentante, 
+                     detalleTransaccion ,
+                     resultadosRepresentante} of textosPorInstancias){
+                        informe[`Oportunidades identificadas [S:${contador}]`] = patronMejora;
+                        informe[`Compromiso del representante [I:${contador}]`] = compromisoRepresentante;
+                        informe[`Detalle de transacción [I:${contador}]`] = detalleTransaccion;
+                        informe[`Resultados del representante de todas las instancias [I:${contador}]`] = resultadosRepresentante;
             }
 
             for(let i = 0; i < messages.length; i++) {
