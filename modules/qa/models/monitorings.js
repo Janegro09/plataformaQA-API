@@ -247,11 +247,15 @@ class Monitoring {
         }
 
         let query = await monSchema.find(where).skip(skip).limit(limit).sort({ transactionDate: -1 });
+        
+        let monitoring_total_count = await monSchema.find(where).count();
+
         let returnData = []
         for(let mons of query) {
             let program = await Program.getProgramName(mons.programId);
             let td = {
                 id: mons._id,
+                monitoring_total_count,
                 userId: mons.userId,
                 invalidated: mons.invalidated,
                 improvment: mons.improvment,
