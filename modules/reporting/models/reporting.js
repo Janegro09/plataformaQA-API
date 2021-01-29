@@ -172,6 +172,7 @@ class Reporting {
                 patronMejora: "",
                 audioCoaching: 0,
                 modificaciones: "",
+                modificacionesLider: "",
                 resultadosRepresentante: "",
                 patronMejora: "",
                 detalleTransaccion: "",
@@ -299,7 +300,11 @@ class Reporting {
                     let d = new Date(parseInt(modification.date));
                     let dataString = `${d.getUTCDate()}/${d.getUTCMonth()}/${d.getUTCFullYear()}`;
                     let mensaje = `${modification.id} / ${modification.section} / ${dataString}`;
-                    informe.modificaciones += informe.modificaciones ? " | " + mensaje : mensaje;
+                    if(modification.section == 'LIDER') {
+                        informe.modificacionesLider = mensaje;
+                    } else {
+                        informe.modificaciones += informe.modificaciones ? " | " + mensaje : mensaje;
+                    }
                     savedSection.push(modification.section)
                 }
             }
