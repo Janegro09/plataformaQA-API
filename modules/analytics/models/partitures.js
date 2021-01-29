@@ -673,7 +673,7 @@ class Partitures {
 
             if (modify.improvment) {
                 let improvment = modify.improvment;
-                const acceptedValues = ['+', '+-', '-'];
+                const acceptedValues = ['+', '+-', '-', 'n/a'];
                 if (acceptedValues.includes(improvment)) {
                     await infobyPartitureSchema.updateOne({ partitureId: id, userId }, {
                         improvment

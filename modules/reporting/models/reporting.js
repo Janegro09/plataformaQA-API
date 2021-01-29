@@ -312,6 +312,8 @@ class Reporting {
                     improvment = "Mantiene";
                 } else if(improvment === '-') {
                     improvment = "Empeora";
+                } else if(improvment === 'n/a') {
+                    improvment = "No Aplica"
                 }
                 informe[`improvment [I:${instance}]`] = improvment;
             }
