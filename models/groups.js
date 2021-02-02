@@ -217,12 +217,14 @@ class Groups {
         GroupArray = String(GroupArray);
         GroupArray = GroupArray.split('|');
         // Traemos los grupos de ese usuario
-        await groupsPerUserSchema.deleteMany({userId: userId});
-
+        // await groupsPerUserSchema.deleteMany({userId: userId});
+        
         for(let x = 0, c; x < GroupArray.length; x++){
             // Verificamos si existe el grupo
             c = await groupsSchema.find({_id: GroupArray[x]});
-            if(c.length > 0){
+            let siExit = await groupsPerUserSchema.find({userId,groupId: GroupArray[x]}) 
+
+            if(c.length > 0 && siExit.length === 0){
                 c = new groupsPerUserSchema({
                     userId: userId,
                     groupId: GroupArray[x]
