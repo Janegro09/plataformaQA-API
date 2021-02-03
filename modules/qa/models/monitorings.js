@@ -553,28 +553,43 @@ class Monitoring {
 
         const getValuesByCustomField = (cfield, responses) => {
             if(cfield.values && cfield.type !== 'text' && cfield.type !== 'area') {
-                let response;
-                if(responses.data && !responses.data.includes('~~')){
-                    response = cfield.values.find(e => e.value == responses.data);
-                } else {
-                    response = {};
-                    response.value = responses.data || "";
-                }
-                if(!response) return false;
-                let td = [{
-                    name: cfield.name,
-                    value: response.value,
-                    parametrizableValue: response.parametrizableValue
-                }]
-                if(response.customFieldsSync && responses.child) {
-                    let more = getValuesByCustomField(response.customFieldsSync[0], responses.child)
-                    td = td.concat(more);
+                let td = [];
+                for(const rsp of responses) {
+                    let response;
+                    if(rsp.value){
+                        response = cfield.values.find(e => e.value == rsp.value);
+                    } else {
+                        response = {};
+                        response.value = rsp.value || "";
+                    }
+                    if(!response) return false;
+
+                    // Buscamos si ya existe la columna
+                    let indexExists = td.findIndex(element => element.id == cfield.id);
+
+                    if(indexExists === -1) {
+                        const temp_td = {
+                            id: rsp.id,
+                            name: cfield.name,
+                            value: rsp.value,
+                            parametrizableValue: response.parametrizableValue
+                        }
+                        td.push(temp_td);
+                    } else {
+                       td[indexExists].value += ` | ${rsp.value}` 
+                    }
+                    
+                    if(rsp.responses && rsp.responses.length > 0) {
+                        let more = getValuesByCustomField(response.customFieldsSync[0], rsp.responses)
+                        td = td.concat(more);
+                    }
                 }
                 return td;
             } else if(cfield.type === 'text' || cfield.type === 'area') {
                 return [{
+                    id: responses[0].id,
                     name: cfield.name,
-                    value: responses.data || "",
+                    value: responses[0].value || "",
                     parametrizableValue: false
                 }]
             } else return false;
@@ -699,12 +714,11 @@ class Monitoring {
                     
                         for(let resp of mon[c]) {
                             let sect = resp.name;
-
                             for(let cfield of resp.customFields) {
                                 let question = cfield.question;
 
                                 // Vamos a agregar una columna por respuesta
-                                let q = getValuesByCustomField(cfield, cfield.response);
+                                let q = getValuesByCustomField(cfield, cfield.responses);
                                 if(q && q.length > 0) {
                                     q.forEach((v, i) => {
                                         data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name}`] = {value: v.value, style: ""};
