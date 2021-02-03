@@ -49,7 +49,7 @@ var monitorings = new Schema({
         {
             section: String,
             question: String,
-            response: Object,
+            responses: Array,
             parametrizableValue: mongoose.SchemaTypes.Mixed,
             calibrate: Boolean
 
