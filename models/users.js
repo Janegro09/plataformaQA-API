@@ -111,7 +111,7 @@ class Users {
                      * Desactivamos esta funcion para que no elimine todos los grupos del usuario y los asigne como estan en la nomina, ya que se les resetean los mismos en cada actualizacion diaria
                      * 
                      */
-                    // await Groups.assignUserGroup(c[0]._id, data.group);
+                    await Groups.assignUserGroup(c[0]._id, data.group);
                 }
                 data.updatedAt = Date.now();
 		

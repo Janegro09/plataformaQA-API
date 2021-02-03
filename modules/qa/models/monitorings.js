@@ -160,60 +160,46 @@ class Monitoring {
         let limit = 50;
         let skip  = 0;
         let monsViews = [];
-
         if(id) {
             where._id = id
         } else if(searchParams) {
             // Solo usamos parametros de busqueda si no se especifico id
             let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateTransactionStart, dateTransactionEnd, limit:limit_of_get, offset:offset_of_get, status } = searchParams;
-            
             if(limit_of_get && limit_of_get < 200 && limit_of_get > 0 ) {
                 limit = parseInt(limit_of_get)
             } 
             if(offset_of_get && offset_of_get > 0) {
                 skip = parseInt(offset_of_get);
             }
-
             if(userId) { where.userId = userId; }
-
             if(caseId) { where.caseId = caseId; }
-
             if(program) { 
                 program = program.split('%%');
                 where.programId = { $in: program }; 
             }
-
             if(createdBy) { where.createdBy = createdBy; }
-
             if(dateTransactionStart) {
                 dateTransactionStart = helper.date_to_UTCDate(dateTransactionStart);
                 if(dateTransactionStart instanceof Date) { 
                     where.transactionDate = { $gte: dateTransactionStart }
                 }
             }
-
             if(dateTransactionEnd) {
                 dateTransactionEnd = helper.date_to_UTCDate(dateTransactionEnd);
                 if(dateTransactionEnd instanceof Date) { 
                     where.transactionDate = where.transactionDate ? { ...where.transactionDate, $lte: dateTransactionEnd } : { $lte: dateTransactionEnd };
                 }
             }
-
-        
             if(status && existingStatus.includes(status)) { where.status = status; }
-
             if(disputado) { 
                 where.disputar = disputado === 'false' ? false : { $ne: false }; 
             }
-
             if(disputar_response) {
                 where.disputar_response = disputar_response === 'false' ? false : { $nin: ["", undefined] };
             }
-
             if(invalidated) {
                 where.invalidated = invalidated === 'false' ? false : { $ne: false }; 
             }
-
             if(evaluated) {
                 where.evaluated = evaluated === 'false' ? false : { $ne: false };
             }
@@ -245,7 +231,6 @@ class Monitoring {
         if(monsViews[0] !== 'all') {
             where.programId = { $in: monsViews };
         }
-
         let query = await monSchema.find(where).skip(skip).limit(limit).sort({ transactionDate: -1 });
         
         let monitoring_total_count = await monSchema.find(where).count();
@@ -437,45 +422,52 @@ class Monitoring {
 
         /** Esta funcion retorna los valores para incluir a los arrays
          */
-        const checkResponse = (cfield, response) => {
+        const checkResponse = (cfield, responses_of_question) => {
             let responseData = {
                 parametrizableValue: false,
                 calibrable: cfield.calibrable
             }
-            if(response.child === undefined) {
-                // Es porque responde directamente sin importarle los childs
-
-                // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
-                /**
-                 * Comentamos los valores de calibrables para los hijos, ya que solamente me insteresa saber si es calibrable el padre 
-                 */
-                // responseData.calibrable = cfield.calibrable;
-                
-                if(response.data && !response.data.includes('~~')) { // Si incluye ~~ significa que es una repuesta de opcion multiple
-                    let v = cfield.values.find(e => e.value == response.data);
-                    if(!v) return false;
+            for(let response of responses_of_question ) {
+                // ATENCIOOOON! SOLO VAMOS A PONER COMO PARAMETRIZABLE EL VALOR DEL PADRE
+                if(response.value) { 
+                    let v = cfield.values.find(e => e.value == response.value);
+                    if(!v) continue;
                     responseData.parametrizableValue = v.parametrizableValue || false;
                 }
-
-                return responseData
-            } else {
-                for(let v of cfield.values) {
-                    if(v.value === response.data) {
-                        if(!v.customFieldsSync) {
-                            // responseData.calibrable = cfield.calibrable;
-                            responseData.parametrizableValue = v.parametrizableValue;
-                            return responseData;
-                        }
-                        let customFieldSync = v.customFieldsSync[0];
-                        if(customFieldSync.type !== 'text' || customFieldsSync.type !== 'area') {
-                            // Solo revisamos los valores si no es text o text area
-                            return checkResponse(customFieldSync, response.child);
-                        } else {
-                            return responseData;
-                        }
-                    }
-                }
+                // if((response.responses && response.responses.length === 0) || response.responses === undefined) {
+                //     // Es porque responde directamente sin importarle los childs
+    
+                //     // Solo cambiamos el valor de calibrable si es falso, si es true queda asi
+                //     /**
+                //      * Comentamos los valores de calibrables para los hijos, ya que solamente me insteresa saber si es calibrable el padre 
+                //      */
+                //     // responseData.calibrable = cfield.calibrable;
+                    
+                //     if(response.value) { 
+                //         let v = cfield.values.find(e => e.value == response.value);
+                //         if(!v) return false;
+                //         responseData.parametrizableValue = v.parametrizableValue || false;
+                //     }
+                // } else {
+                //     for(let v of cfield.values) {
+                //         if(v.value === response.data) {
+                //             if(!v.customFieldsSync) {
+                //                 // responseData.calibrable = cfield.calibrable;
+                //                 responseData.parametrizableValue = v.parametrizableValue;
+                //                 return responseData;
+                //             }
+                //             let customFieldSync = v.customFieldsSync[0];
+                //             if(customFieldSync.type !== 'text' || customFieldsSync.type !== 'area') {
+                //                 // Solo revisamos los valores si no es text o text area
+                //                 return checkResponse(customFieldSync, response.child);
+                //             } 
+                //         }
+                //     }
+                // }
             }
+
+            return responseData
+
         }
 
         for(let r of responses) {
@@ -483,7 +475,7 @@ class Monitoring {
             let questionToPush = {
                 section: r.section,
                 question: r.question,
-                response: r.response,
+                responses: r.responses,
                 parametrizableValue: false,
                 calibrate: false
             }
@@ -496,12 +488,9 @@ class Monitoring {
 
             // Consultamos el tipo de pregunta
             const { type } = question;
-            if(type === 'text' || type === 'area') {
+            if(type !== 'text' && type !== 'area') {
                 // Agregamos la pregunta directamente, ya que no es calibrable ni monitoreable
-                questionToPush.response = r.response;
-
-            } else {
-                let d = checkResponse(question, r.response);
+                let d = checkResponse(question, r.responses);
                 if(!d) continue;
 
                 let { calibrable, parametrizableValue } = d;
@@ -509,7 +498,6 @@ class Monitoring {
                 questionToPush.parametrizableValue  = parametrizableValue;
 
             }
-
             returnData.responses.push(questionToPush);
 
         }
