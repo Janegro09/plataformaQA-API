@@ -260,7 +260,7 @@ class Monitoring {
             }
             if(id) {
                 // td.customSections       = JSON.parse(mons.customSections);
-                // td.responses            = mons.responses;
+                td.responses_object = mons.responses;
                 td.comments = mons.comments;
                 td.userInfo = await includes.users.model.get(mons.userId);
                 td.userInfo = td.userInfo.length > 0 ? td.userInfo[0]: undefined;
@@ -291,12 +291,12 @@ class Monitoring {
 
                 customSections[c].customFields[j] = {
                     ...cField,
-                    response: {}
+                    responses: []
                 }
 
 
-                if(rsp && rsp.response) {
-                    customSections[c].customFields[j].response = rsp.response;
+                if(rsp) {
+                    customSections[c].customFields[j].responses = rsp.responses;
                 }
             }
 
