@@ -587,7 +587,7 @@ class Monitoring {
                 return td;
             } else if(cfield.type === 'text' || cfield.type === 'area') {
                 return [{
-                    id: responses[0].id,
+                    id: responses[0].id || "",
                     name: cfield.name,
                     value: responses[0].value || "",
                     parametrizableValue: false
