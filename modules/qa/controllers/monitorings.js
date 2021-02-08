@@ -181,7 +181,15 @@ const controller = {
             if(empresa_consulta === 'TELECOM'){
                 companies = req.body;
             } else{
-                companies = [empresa_consulta]; // Si no es de TELECOM, solamente pregutaremos por su propia empresa
+                switch (empresa_consulta) {
+                    case 'CAT TECHNOLOGIES':
+                        companies = ["CAT"]
+                        break;
+                
+                    default:
+                        companies = [empresa_consulta]; // Si no es de TELECOM, solamente pregutaremos por su propia empresa
+                        break;
+                }
             }
         } else return views.error.message(res, "Error en la empresa de quien consulta")
 
