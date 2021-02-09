@@ -566,17 +566,22 @@ class Monitoring {
 
                     // Buscamos si ya existe la columna
                     let indexExists = td.findIndex(element => element.id == cfield.id);
+                    
+                    console.log(rsp);
 
+                    const parent_value = rsp.parent_id == rsp.parent_value ? "" : `${rsp.parent_value} --> `;
+
+                    const value = `${parent_value}${rsp.value}`;
                     if(indexExists === -1) {
                         const temp_td = {
                             id: rsp.id,
                             name: cfield.name,
-                            value: rsp.value,
+                            value: value,
                             parametrizableValue: response.parametrizableValue
                         }
                         td.push(temp_td);
                     } else {
-                       td[indexExists].value += ` | ${rsp.value}` 
+                       td[indexExists].value += ` | ${value}` 
                     }
                     
                     if(rsp.responses && rsp.responses.length > 0) {
@@ -721,6 +726,7 @@ class Monitoring {
 
                                 // Vamos a agregar una columna por respuesta
                                 let q = getValuesByCustomField(cfield, cfield.responses);
+                                console.log(q);
                                 if(q && q.length > 0) {
                                     q.forEach((v, i) => {
                                         data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name}`] = {value: v.value, style: ""};
