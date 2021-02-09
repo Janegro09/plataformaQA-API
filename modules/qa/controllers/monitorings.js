@@ -185,7 +185,12 @@ const controller = {
                     case 'CAT TECHNOLOGIES':
                         companies = ["CAT"]
                         break;
-                
+                    case 'IPCONEX':
+                        companies = ["ACTIVO"]
+                        break;
+                    case 'CENTRO INTERACCION MULTIMEDIA S.A.':
+                        companies =["APEX"]
+                        break;
                     default:
                         companies = [empresa_consulta]; // Si no es de TELECOM, solamente pregutaremos por su propia empresa
                         break;
