@@ -330,14 +330,19 @@ class Monitoring {
         let consulta = await monSchema.findById(id).where({ deleted: false });
         if(!consulta) throw new Error('Monitoreo inexistente');
 
-        if(consulta.responses.length > 0 || consulta.status !== 'pending') throw new Error('No se puede eliminar un monitoreo que ya se modificó');
+        // Modificamos el delete logico de los monitoreos, por un delete total. aceptado por Gabriel Pellicen el 10/02/2021
 
-        let query = await monSchema.updateOne({ _id: id }, { deleted: true });
-        if(query.ok > 0) {
-            this.addModificationByUser(id, deletedBy)
-            return true;
-        }else return false;
+        // if(consulta.responses.length > 0 || consulta.status !== 'pending') throw new Error('No se puede eliminar un monitoreo que ya se modificó');
 
+        // let query = await monSchema.updateOne({ _id: id }, { deleted: true });
+        // if(query.ok > 0) {
+        //     this.addModificationByUser(id, deletedBy)
+        //     return true;
+        // }else return false;
+
+        let query = await monSchema.deleteOne({ _id: id });
+        if(query.ok > 0) return true;
+        else return false;
     }
 
     /**
@@ -567,8 +572,6 @@ class Monitoring {
                     // Buscamos si ya existe la columna
                     let indexExists = td.findIndex(element => element.id == cfield.id);
                     
-                    console.log(rsp);
-
                     const parent_value = rsp.parent_id == rsp.parent_value ? "" : `${rsp.parent_value} --> `;
 
                     const value = `${parent_value}${rsp.value}`;
