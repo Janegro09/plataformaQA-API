@@ -164,7 +164,7 @@ class Monitoring {
             where._id = id
         } else if(searchParams) {
             // Solo usamos parametros de busqueda si no se especifico id
-            let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateTransactionStart, dateCreatedAtEnd, limit:limit_of_get, offset:offset_of_get, status } = searchParams;
+            let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateCreatedAtStart, dateCreatedAtEnd, limit:limit_of_get, offset:offset_of_get, status } = searchParams;
             if(limit_of_get && limit_of_get < 200 && limit_of_get > 0 ) {
                 limit = parseInt(limit_of_get)
             } 
@@ -178,10 +178,10 @@ class Monitoring {
                 where.programId = { $in: program }; 
             }
             if(createdBy) { where.createdBy = createdBy; }
-            if(dateTransactionStart) {
-                dateTransactionStart = helper.date_to_UTCDate(dateTransactionStart);
-                if(dateTransactionStart instanceof Date) { 
-                    where.createdAt = { $gte: dateTransactionStart }
+            if(dateCreatedAtStart) {
+                dateCreatedAtStart = helper.date_to_UTCDate(dateCreatedAtStart);
+                if(dateCreatedAtStart instanceof Date) { 
+                    where.createdAt = { $gte: dateCreatedAtStart }
                 }
             }
             if(dateCreatedAtEnd) {
