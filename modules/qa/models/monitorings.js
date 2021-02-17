@@ -164,30 +164,38 @@ class Monitoring {
             where._id = id
         } else if(searchParams) {
             // Solo usamos parametros de busqueda si no se especifico id
+
             let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateCreatedAtStart, dateCreatedAtEnd, limit:limit_of_get, offset:offset_of_get, status } = searchParams;
             if(limit_of_get && limit_of_get < 200 && limit_of_get > 0 ) {
                 limit = parseInt(limit_of_get)
             } 
+
             if(offset_of_get && offset_of_get > 0) {
                 skip = parseInt(offset_of_get);
             }
+
             if(userId) { where.userId = userId; }
             if(caseId) { where.caseId = caseId; }
+
             if(program) { 
                 program = program.split('%%');
                 where.programId = { $in: program }; 
             }
+
             if(createdBy) { where.createdBy = createdBy; }
+
             if(dateCreatedAtStart) {
                 dateCreatedAtStart = helper.date_to_UTCDate(dateCreatedAtStart);
                 if(dateCreatedAtStart instanceof Date) { 
                     where.createdAt = { $gte: dateCreatedAtStart }
                 }
             }
+
             if(dateCreatedAtEnd) {
                 dateCreatedAtEnd = helper.date_to_UTCDate(dateCreatedAtEnd);
+
                 if(dateCreatedAtEnd instanceof Date) { 
-                    where.createdAt = where.transactionDate ? { ...where.transactionDate, $lte: dateCreatedAtEnd } : { $lte: dateCreatedAtEnd };
+                    where.createdAt = where.createdAt ? { ...where.transactionDate, $lte: dateCreatedAtEnd } : { $lte: dateCreatedAtEnd };
                 }
             }
             if(status && existingStatus.includes(status)) { where.status = status; }
