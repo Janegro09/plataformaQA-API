@@ -33,7 +33,7 @@ const controller = {
 
             // Especificamos el id del usuario que esta logeado
             if(req.authUser.length > 0) {
-                data.createdBy = req.authUser[0].name;
+                data.createdBy = req.authUser[0].id;
             }
 
         
@@ -181,7 +181,20 @@ const controller = {
             if(empresa_consulta === 'TELECOM'){
                 companies = req.body;
             } else{
-                companies = [empresa_consulta]; // Si no es de TELECOM, solamente pregutaremos por su propia empresa
+                switch (empresa_consulta) {
+                    case 'CAT TECHNOLOGIES':
+                        companies = ["CAT"]
+                        break;
+                    case 'IPCONEX':
+                        companies = ["ACTIVO"]
+                        break;
+                    case 'CENTRO INTERACCION MULTIMEDIA S.A.':
+                        companies =["APEX"]
+                        break;
+                    default:
+                        companies = [empresa_consulta]; // Si no es de TELECOM, solamente pregutaremos por su propia empresa
+                        break;
+                }
             }
         } else return views.error.message(res, "Error en la empresa de quien consulta")
 

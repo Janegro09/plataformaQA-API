@@ -164,30 +164,38 @@ class Monitoring {
             where._id = id
         } else if(searchParams) {
             // Solo usamos parametros de busqueda si no se especifico id
-            let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateTransactionStart, dateTransactionEnd, limit:limit_of_get, offset:offset_of_get, status } = searchParams;
+
+            let { disputar_response, userId, caseId, createdBy, evaluated, invalidated, disputado, program, dateCreatedAtStart, dateCreatedAtEnd, limit:limit_of_get, offset:offset_of_get, status } = searchParams;
             if(limit_of_get && limit_of_get < 200 && limit_of_get > 0 ) {
                 limit = parseInt(limit_of_get)
             } 
+
             if(offset_of_get && offset_of_get > 0) {
                 skip = parseInt(offset_of_get);
             }
+
             if(userId) { where.userId = userId; }
             if(caseId) { where.caseId = caseId; }
+
             if(program) { 
                 program = program.split('%%');
                 where.programId = { $in: program }; 
             }
+
             if(createdBy) { where.createdBy = createdBy; }
-            if(dateTransactionStart) {
-                dateTransactionStart = helper.date_to_UTCDate(dateTransactionStart);
-                if(dateTransactionStart instanceof Date) { 
-                    where.transactionDate = { $gte: dateTransactionStart }
+
+            if(dateCreatedAtStart) {
+                dateCreatedAtStart = helper.date_to_UTCDate(dateCreatedAtStart);
+                if(dateCreatedAtStart instanceof Date) { 
+                    where.createdAt = { $gte: dateCreatedAtStart }
                 }
             }
-            if(dateTransactionEnd) {
-                dateTransactionEnd = helper.date_to_UTCDate(dateTransactionEnd);
-                if(dateTransactionEnd instanceof Date) { 
-                    where.transactionDate = where.transactionDate ? { ...where.transactionDate, $lte: dateTransactionEnd } : { $lte: dateTransactionEnd };
+
+            if(dateCreatedAtEnd) {
+                dateCreatedAtEnd = helper.date_to_UTCDate(dateCreatedAtEnd);
+
+                if(dateCreatedAtEnd instanceof Date) { 
+                    where.createdAt = where.createdAt ? { ...where.transactionDate, $lte: dateCreatedAtEnd } : { $lte: dateCreatedAtEnd };
                 }
             }
             if(status && existingStatus.includes(status)) { where.status = status; }
@@ -330,14 +338,19 @@ class Monitoring {
         let consulta = await monSchema.findById(id).where({ deleted: false });
         if(!consulta) throw new Error('Monitoreo inexistente');
 
-        if(consulta.responses.length > 0 || consulta.status !== 'pending') throw new Error('No se puede eliminar un monitoreo que ya se modificó');
+        // Modificamos el delete logico de los monitoreos, por un delete total. aceptado por Gabriel Pellicen el 10/02/2021
 
-        let query = await monSchema.updateOne({ _id: id }, { deleted: true });
-        if(query.ok > 0) {
-            this.addModificationByUser(id, deletedBy)
-            return true;
-        }else return false;
+        // if(consulta.responses.length > 0 || consulta.status !== 'pending') throw new Error('No se puede eliminar un monitoreo que ya se modificó');
 
+        // let query = await monSchema.updateOne({ _id: id }, { deleted: true });
+        // if(query.ok > 0) {
+        //     this.addModificationByUser(id, deletedBy)
+        //     return true;
+        // }else return false;
+
+        let query = await monSchema.deleteOne({ _id: id });
+        if(query.ok > 0) return true;
+        else return false;
     }
 
     /**
@@ -566,17 +579,20 @@ class Monitoring {
 
                     // Buscamos si ya existe la columna
                     let indexExists = td.findIndex(element => element.id == cfield.id);
+                    
+                    const parent_value = rsp.parent_id == rsp.parent_value ? "" : `${rsp.parent_value} --> `;
 
+                    const value = `${parent_value}${rsp.value}`;
                     if(indexExists === -1) {
                         const temp_td = {
                             id: rsp.id,
                             name: cfield.name,
-                            value: rsp.value,
+                            value: value,
                             parametrizableValue: response.parametrizableValue
                         }
                         td.push(temp_td);
                     } else {
-                       td[indexExists].value += ` | ${rsp.value}` 
+                       td[indexExists].value += ` | ${value}` 
                     }
                     
                     if(rsp.responses && rsp.responses.length > 0) {
@@ -586,12 +602,14 @@ class Monitoring {
                 }
                 return td;
             } else if(cfield.type === 'text' || cfield.type === 'area') {
-                return [{
-                    id: responses[0].id,
-                    name: cfield.name,
-                    value: responses[0].value || "",
-                    parametrizableValue: false
-                }]
+                if(responses && responses[0]) {
+                    return [{
+                        id: responses[0].id || "",
+                        name: cfield.name,
+                        value: responses[0].value || "",
+                        parametrizableValue: false
+                    }]
+                }
             } else return false;
         }
 
@@ -719,6 +737,7 @@ class Monitoring {
 
                                 // Vamos a agregar una columna por respuesta
                                 let q = getValuesByCustomField(cfield, cfield.responses);
+                                console.log(q);
                                 if(q && q.length > 0) {
                                     q.forEach((v, i) => {
                                         data[`S: ${sect}[Q: ${question}]--> R: ${i + 1}. ${v.name}`] = {value: v.value, style: ""};

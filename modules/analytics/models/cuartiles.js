@@ -311,15 +311,15 @@ const Cuartiles = {
                 if(cuartil.name == column){
                     for(let q in cuartil){
                         if(q.indexOf('Q') >= 0){
-                            if(q == 'Q2' && value.value > cuartil[q].VMin && value.value < cuartil[q].VMax){
+                            if(q == 'Q1' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax) {
+                                temp = q;	
+                            } else if(q == 'Q2' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax){
                                 temp = q;
-                            }else if(q == 'Q4' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
+                            } else if(q == 'Q3' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax) {
                                 temp = q;
-                            } else if(q == 'Q1' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
-                                temp = q;		
-                            }else if(q == 'Q3' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax) {
+                            } else if(q == 'Q4' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
                                 temp = q;
-                            }else{ continue; } 
+                            } else { continue; } 
                             if(temp){
                                 if(cuartil.order == 'ASC'){
                                     switch(q){
