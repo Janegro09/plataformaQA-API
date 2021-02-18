@@ -380,7 +380,8 @@ class Users {
                         }
         
                         where.$or.push({ name: { $regex: q, $options: 'i' } });
-                        // where.$or.push({ lastName: { $regex: q, $options: 'i' } });
+                        where.$or.push({ id: { $regex: q, $options: 'i' } });
+                        where.$or.push({ _id: q });
 
                         const division_palabra = q.trim().toLowerCase().split(" ");
 
