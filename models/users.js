@@ -381,7 +381,6 @@ class Users {
         
                         where.$or.push({ name: { $regex: q, $options: 'i' } });
                         where.$or.push({ id: { $regex: q, $options: 'i' } });
-                        where.$or.push({ _id: q });
 
                         const division_palabra = q.trim().toLowerCase().split(" ");
 
@@ -392,7 +391,7 @@ class Users {
                 }
             }
         }
-        
+
         const [ sort, skip, limit ] = helper.get_custom_variables_for_get_methods(req.query || {});
 
         where.userDelete = false;
