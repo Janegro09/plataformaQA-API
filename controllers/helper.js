@@ -173,6 +173,17 @@ module.exports = {
             return dataReturn;
         }      
     },
+    get_custom_variables_for_get_methods: ({ order = 'DESC', orderBy = 'createdAt', limit = 50, offset = 0 }) => {
+        let sort_return    = {};
+        let skip_return    = 0;
+        let limit_return   = 50;
+
+        sort_return[orderBy] = order === "ASC" ? 1 : -1;
+        skip_return         = parseInt(offset) || 0;
+        limit_return        = parseInt(limit)  || 50;
+
+        return [ sort_return, skip_return, limit_return ];
+    },
     files:{
         /**
          * Eliminar archivo

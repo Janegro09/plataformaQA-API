@@ -367,9 +367,33 @@ class Users {
             if(req.query !== undefined && req.query.specificdata === 'true'){
                 specificData = true;
             }
+
+            if(req.query) {
+                const search_params = req.query;
+                if(search_params.q !== undefined){
+                    const { q } = search_params;
+                    if(q.includes('@')) {
+                        where.email = { $regex: q, $options: 'i' }
+                    } else {
+                        if(!where.$or){
+                            where.$or = [];
+                        }
+        
+                        where.$or.push({ name: { $regex: q, $options: 'i' } });
+                        // where.$or.push({ lastName: { $regex: q, $options: 'i' } });
+
+                        const division_palabra = q.trim().toLowerCase().split(" ");
+
+                        for(let d of division_palabra) {
+                            where.$or.push({ lastName: { $regex: d, $options: 'i' } });
+                        }
+                    }
+                }
+            }
         }
         
-        
+        const [ sort, skip, limit ] = helper.get_custom_variables_for_get_methods(req.query || {});
+
         where.userDelete = false;
 
         if(!allData){
@@ -385,7 +409,7 @@ class Users {
             where.id = id;
             roleTotal = true;
         }
-        let respuesta = await userSchema.find().where(where);
+        let respuesta = await userSchema.find().where(where).limit(limit).skip(skip).sort(sort);
         if(respuesta.length == 0) return false;
         let img, userObject, role = "", group = "";
         for(let y = 0; y < respuesta.length; y++){
@@ -399,7 +423,7 @@ class Users {
                     role    = await Roles.get(respuesta[y].role,roleTotal);
                     group   = await Groups.getUserGroupsName(respuesta[y]._id);
                 }
-            
+                
                 var {
                     fechaIngresoLinea,
                     cuil,
