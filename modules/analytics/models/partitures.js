@@ -376,8 +376,10 @@ class Partitures {
         } else {
             // Agregamos parametros de busqueda
             const { q } = req.query;
+            if(q) {
+                where.name = { $regex: q, $options: 'i' };
+            }
 
-            where.name = { $regex: q, $options: 'i' };
         }
 
 
