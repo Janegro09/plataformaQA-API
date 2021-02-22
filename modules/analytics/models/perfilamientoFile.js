@@ -14,7 +14,6 @@
 const includes = require('../../includes');
 
 // Schemas
-const helper = require('../helper');
 
 const programsModel = require('../../programs/models/programs');
 
@@ -165,6 +164,7 @@ const PerfilamientoFile = {
     async getFiles(req) {
         let returnData = [];
 
+        let [ sort, skip, limit ] = includes.helper.get_custom_variables_for_get_methods(req.query);
         const rolesQueVenTodosLosArchivos = ["ADMINISTRATOR", "LIDER ON SITE", "COORDINADOR", "COORDINADOR OC"];
 
         if(!req) throw new Error('Error en permisos');
@@ -187,13 +187,16 @@ const PerfilamientoFile = {
             }
             where._id = { $in: archivosPermitidos };
         }
-        
-        let c = await includes.files.getAllFiles(where)
-        // Buscamos los archivos
-        
-        let ordenado = c.sort((a,b) => b.updatedAt - a.updatedAt);
 
-        for(let x = 0; x < ordenado.length; x++){
+        const { q } = req.query;
+        if(q) {
+            where.name = { $regex: q, $options: 'i' }
+        }
+        
+        let c = await includes.files.getAllFiles(where, limit, skip);
+
+        // Buscamos los archivos
+        for(let x = 0; x < c.length; x++){
             // Consultamos el programa asignado
             let programa = await programsModel.getProgramtoPerfilamiento(c[x]._id);
             let tempData = {

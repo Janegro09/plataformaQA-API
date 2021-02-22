@@ -182,6 +182,10 @@ module.exports = {
         skip_return         = parseInt(offset) || 0;
         limit_return        = parseInt(limit)  || 50;
 
+        if(limit_return > 300) {
+            limit_return = 50;
+        }
+
         return [ sort_return, skip_return, limit_return ];
     },
     files:{

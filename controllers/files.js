@@ -230,8 +230,13 @@ class uploadFile {
      * Funcion que devuelve los registros de la base de datos ordenados por fecha en orden DESC
      * @param {Object} where 
      */
-    static async getAllFiles(where = {}) {
-        let c = await filesModel.find(where).sort({updatedAt: 'desc'});
+    static async getAllFiles(where = {}, limit = false, skip = false) {
+        let c;
+        if(limit !== false && skip !== false) {
+            c = await filesModel.find(where).limit(limit).skip(skip).sort({updatedAt: 'desc'});
+        } else {
+            c = await filesModel.find(where).sort({updatedAt: 'desc'});
+        }
 
         return c;
     }

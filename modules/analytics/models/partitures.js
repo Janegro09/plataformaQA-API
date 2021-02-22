@@ -351,6 +351,9 @@ class Partitures {
             }
         }
 
+        let [ sort, skip, limit ] = includes.helper.get_custom_variables_for_get_methods(req.query || {});
+
+
         if (id && userId && stepId) {
             // Retornamos informacion sobre un paso especifico
             where = { _id: id };
@@ -370,12 +373,19 @@ class Partitures {
             where = { _id: id };
             wherePartiture = { partitureId: id };
             partitureInfoByUser = true;
+        } else {
+            // Agregamos parametros de busqueda
+            const { q } = req.query;
+
+            where.name = { $regex: q, $options: 'i' };
         }
+
+
 
 
         try {
             // Traemos todas las partituras o la partitura especifica segun where
-            let partitures = await partituresSchema.find().where(where);
+            let partitures = await partituresSchema.find().where(where).skip(skip).limit(limit).sort(sort);
             if (partitures.length === 0) throw new Error('No existen registros en nuestra base de datos');
             const FileId = partitures[0].fileId;
 
