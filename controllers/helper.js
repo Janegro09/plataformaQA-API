@@ -62,12 +62,12 @@ module.exports = {
     date_to_UTCDate: (date) => {
         console.log("fecha1: "+date)
 
-        date = new Date(date);
+        // date = new Date(date);
         // const horas_resta = date.getUTCHours();
         // const resta = (((60 * 60) * horas_resta) * 1000);
         
-        date = Date.parse(date);
-        console.log("fecha2: "+ date)
+        // date = Date.parse(date);
+        // console.log("fecha2: "+ date)
         // return new Date(date - resta);
         return date;
     },
