@@ -252,10 +252,17 @@ const PerfilamientoFile = {
 
             let usersCount = rows.length;
             let UsersbyQ = usersCount / 4;
-            let usersQ1 = parseInt(UsersbyQ);
-            let usersQ2 = parseInt(UsersbyQ);
-            let usersQ3 = parseInt(UsersbyQ);
-            let usersQ4 = usersCount - (parseInt(UsersbyQ) * 3);
+            let users_for_Q32 = ((usersCount - (UsersbyQ * 2)) / 2)
+            let usersQ = {
+                Q1: parseInt(UsersbyQ),
+                Q2: parseInt(users_for_Q32),
+                Q3: parseInt(users_for_Q32),
+                Q4: parseInt(UsersbyQ),
+            }
+            // let usersQ1 = parseInt(UsersbyQ);
+            // let usersQ2 = parseInt(users_for_Q32);
+            // let usersQ3 = parseInt(users_for_Q32);
+            // let usersQ4 = parseInt(UsersbyQ);
 
             let AllValues = []
             /**
@@ -284,22 +291,14 @@ const PerfilamientoFile = {
                 AllValues = AllValues.sort((a, b) => a - b);
 
                 let value;
-                for(let q1 = 0; q1 < usersQ1; q1++) {
-                    value = AllValues[q1]
-                    if(value >= tempData.DefaultValues.Q1.VMax) {
-                        tempData.DefaultValues.Q1.VMax = value;
-                    }
-                }
-                for(let q2 = usersQ1; q2 < (usersQ2 * 2); q2++) {
-                    value = AllValues[q2]
-                    if(value >= tempData.DefaultValues.Q2.VMax) {
-                        tempData.DefaultValues.Q2.VMax = value;
-                    }
-                }
-                for(let q3 = usersQ2; q3 < (usersQ3 * 3); q3++) {
-                    value = AllValues[q3]
-                    if(value >= tempData.DefaultValues.Q3.VMax) {
-                        tempData.DefaultValues.Q3.VMax = value;
+                let current_row = 0;
+                for(let Q in usersQ) {
+                    for(let i = 0; i < usersQ[Q]; i++) {
+                        value = AllValues[current_row]
+                        if(value >= tempData.DefaultValues[Q].VMax) {
+                            tempData.DefaultValues[Q].VMax = value;
+                        }
+                        current_row++;
                     }
                 }
             } else {

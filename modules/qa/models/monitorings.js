@@ -186,6 +186,7 @@ class Monitoring {
 
             if(dateCreatedAtStart) {
                 dateCreatedAtStart = helper.date_to_UTCDate(dateCreatedAtStart);
+                console.log(dateCreatedAtStart)
                 if(dateCreatedAtStart instanceof Date) { 
                     where.createdAt = { $gte: dateCreatedAtStart }
                 }
@@ -195,7 +196,7 @@ class Monitoring {
                 dateCreatedAtEnd = helper.date_to_UTCDate(dateCreatedAtEnd);
 
                 if(dateCreatedAtEnd instanceof Date) { 
-                    where.createdAt = where.createdAt ? { ...where.transactionDate, $lte: dateCreatedAtEnd } : { $lte: dateCreatedAtEnd };
+                    where.createdAt = where.createdAt ? { ...where.createdAt, $lte: dateCreatedAtEnd } : { $lte: dateCreatedAtEnd };
                 }
             }
             if(status && existingStatus.includes(status)) { where.status = status; }
@@ -239,6 +240,9 @@ class Monitoring {
         if(monsViews[0] !== 'all') {
             where.programId = { $in: monsViews };
         }
+        
+        console.log(where);
+
         let query = await monSchema.find(where).skip(skip).limit(limit).sort({ transactionDate: -1 });
         
         let monitoring_total_count = await monSchema.find(where).count();
