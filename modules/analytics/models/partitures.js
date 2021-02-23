@@ -135,11 +135,11 @@ class Partitures {
 
 
             // // Info extra de partituras por usuarios
-            c = await infobyPartitureSchema.insertMany(partitureInfoByUser);
+            let c = await infobyPartitureSchema.insertMany(partitureInfoByUser);
             if (c.length === 0) throw new Error('Error al crear el registro.CODE02')
 
             // // Partituras
-            let c = await partitureObject.save()
+            c = await partitureObject.save()
             if (!c) throw new Error('Error al crear el registro. CODE01')
 
             // // Instancias
