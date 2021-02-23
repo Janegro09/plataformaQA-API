@@ -44,6 +44,8 @@ class Partitures {
 
     async create() {
         try {
+            /** Modificamos la estructura para crear multiples partituras */
+
             // Partitures --------------------------
             for(let f of this.file){
                 let response = await cuartilesGroupsModel.getPerfilamientos(f, true, true);
@@ -53,7 +55,7 @@ class Partitures {
             }
             // Chequeamos la existencia de los perfilamientos asignados
             await this.getFileName();
-            if (this.perfilamientosAssignados.lenth === 0 || !this.perfilamientosAssignados) throw new Error('No asigno perfilamientos')
+            if (this.perfilamientosAssignados.length === 0 || !this.perfilamientosAssignados) throw new Error('No asigno perfilamientos')
             let partitureInfoByUser = [];
 
 
@@ -130,13 +132,15 @@ class Partitures {
             }
             // Guardamos todos los registros en la base de datos
 
-            // // Partituras
-            let c = await partitureObject.save()
-            if (!c) throw new Error('Error al crear el registro. CODE01')
+
 
             // // Info extra de partituras por usuarios
             c = await infobyPartitureSchema.insertMany(partitureInfoByUser);
             if (c.length === 0) throw new Error('Error al crear el registro.CODE02')
+
+            // // Partituras
+            let c = await partitureObject.save()
+            if (!c) throw new Error('Error al crear el registro. CODE01')
 
             // // Instancias
             c = await instancesSchema.insertMany(instances);
