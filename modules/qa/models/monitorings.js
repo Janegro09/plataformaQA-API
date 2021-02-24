@@ -185,16 +185,14 @@ class Monitoring {
             if(createdBy) { where.createdBy = createdBy; }
 
             if(dateCreatedAtStart) {
-                dateCreatedAtStart = helper.date_to_UTCDate(dateCreatedAtStart);
-                console.log(dateCreatedAtStart)
+                dateCreatedAtStart = new Date(dateCreatedAtStart);
                 if(dateCreatedAtStart instanceof Date) { 
                     where.createdAt = { $gte: dateCreatedAtStart }
                 }
             }
 
             if(dateCreatedAtEnd) {
-                dateCreatedAtEnd = helper.date_to_UTCDate(dateCreatedAtEnd);
-
+                dateCreatedAtEnd = new Date(dateCreatedAtEnd);
                 if(dateCreatedAtEnd instanceof Date) { 
                     where.createdAt = where.createdAt ? { ...where.createdAt, $lte: dateCreatedAtEnd } : { $lte: dateCreatedAtEnd };
                 }

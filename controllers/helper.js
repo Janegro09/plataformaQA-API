@@ -60,9 +60,7 @@ module.exports = {
      * @param {*} date 
      */
     date_to_UTCDate: (date) => {
-
-        date = date + ":00.000Z"
-        // date = new Date(date);
+        date = new Date(date);
         
         // const horas_resta = date.getUTCHours();
         // const resta = (((60 * 60) * horas_resta) * 1000);
