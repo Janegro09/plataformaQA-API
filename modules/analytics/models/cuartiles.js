@@ -70,15 +70,17 @@ const Cuartiles = {
                     VMax: cuartilActual.Q4.VMax
                 }
             }
+
             tempData.Q1.VMax = parseFloat(cuartilActual.Q1.VMax ? cuartilActual.Q1.VMax : tempData.Q1.VMin + bloques);
             tempData.Q2.VMin = parseFloat(tempData.Q1.VMax);
-            tempData.Q2.VMax = parseFloat(cuartilActual.Q2 && (cuartilActual.Q2.VMax && cuartilActual.Q2.VMax > tempData.Q2.VMin && cuartilActual.Q2.VMax < tempData.Q3.VMin) ? cuartilActual.Q2.VMax : tempData.Q2.VMin + bloques);
+            tempData.Q2.VMax = parseFloat(cuartilActual.Q2 && (cuartilActual.Q2.VMax && cuartilActual.Q2.VMax > tempData.Q2.VMin) ? cuartilActual.Q2.VMax : tempData.Q2.VMin + bloques);
             tempData.Q3.VMin = parseFloat(tempData.Q2.VMax);
             tempData.Q3.VMax = parseFloat(cuartilActual.Q2 && cuartilActual.Q2.VMax ? cuartilActual.Q3.VMax : tempData.Q3.VMin + bloques);
             tempData.Q4.VMin = parseFloat(tempData.Q3.VMax);
 
             this.cuartiles.push(tempData)
         }  
+
 
         // Asignamos los valores a los usuarios y los cuartiles
         this.createNewData();
@@ -215,7 +217,6 @@ const Cuartiles = {
                             style: {}
                         }
                     }
-                    
                 }
                 // Assign style to columns with Q1 Q2 Q3 Q4
                 userData = this.assignStyle(userData);
@@ -311,13 +312,13 @@ const Cuartiles = {
                 if(cuartil.name == column){
                     for(let q in cuartil){
                         if(q.indexOf('Q') >= 0){
-                            if(q == 'Q1' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax) {
+                            if(q == 'Q1' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax) {
                                 temp = q;	
-                            } else if(q == 'Q2' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax){
+                            } else if(q == 'Q2' && value.value > cuartil[q].VMin && value.value <= cuartil[q].VMax){
                                 temp = q;
-                            } else if(q == 'Q3' && value.value >= cuartil[q].VMin && value.value < cuartil[q].VMax) {
+                            } else if(q == 'Q3' && value.value > cuartil[q].VMin && value.value <= cuartil[q].VMax) {
                                 temp = q;
-                            } else if(q == 'Q4' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
+                            } else if(q == 'Q4' && value.value > cuartil[q].VMin && value.value <= cuartil[q].VMax){
                                 temp = q;
                             } else { continue; } 
                             if(temp){

@@ -74,7 +74,7 @@ const cuartilesGroups = {
                         tempData['Cant de agentes'].value++;
                         this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, tempData['Cluster'].value);
                         this.assignedUsers.push(users[l]) // Asignamos los usuarios al array
-                    }else if(assignAllUsers){
+                    }else if(assignAllUsers && userMatch){
                         tempData['Cant de agentes'].value++;
                         this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, false);
                     }
