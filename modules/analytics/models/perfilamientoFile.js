@@ -249,24 +249,21 @@ const PerfilamientoFile = {
                     }
                 }
             }
-
+            
             let usersCount = rows.length;
-            let UsersbyQ = parseInt(usersCount / 4);
-            let users_for_Q32 = parseInt((usersCount - (UsersbyQ * 2)) / 2)
-            let usersQ = {
-                Q1: UsersbyQ,
-                Q2: users_for_Q32,
-                Q3: users_for_Q32,
-                Q4: UsersbyQ,
-            }
             let AllValues = []
+            let columnas_NaN = 0;
+
             /**
-             * Guardamos los valores en un array
+             * Guardamos los valores en un array y sumamos las columnas NaN para descontarlas de los usarios
              */
             for(let d = 0; d < usersCount; d++){
                 let value = rows[d][tempData.columnName];
                 value = parseFloat(value);
-                if(isNaN(value)) continue;
+                if(isNaN(value)) {
+                    columnas_NaN++;
+                    continue;
+                };
                 AllValues.push(value);
                 if(value > tempData.VMax){
                     tempData.VMax = value;
@@ -276,6 +273,16 @@ const PerfilamientoFile = {
                     tempData.VMin = value;
                     tempData.DefaultValues.Q1.VMin = value;
                 }
+            }
+
+            usersCount = usersCount - columnas_NaN; // Descontamos los que son NaN para que no cuatilice mal
+            let UsersbyQ = parseInt(usersCount / 4);
+            let users_for_Q32 = parseInt((usersCount - (UsersbyQ * 2)) / 2)
+            let usersQ = {
+                Q1: UsersbyQ,
+                Q2: users_for_Q32,
+                Q3: users_for_Q32,
+                Q4: UsersbyQ,
             }
 
             const columnas_booleanas = ["Grupo_Anterior", "SUSTENTABLE", "CAPACITACION"]
