@@ -251,19 +251,14 @@ const PerfilamientoFile = {
             }
 
             let usersCount = rows.length;
-            let UsersbyQ = usersCount / 4;
-            let users_for_Q32 = ((usersCount - (UsersbyQ * 2)) / 2)
+            let UsersbyQ = parseInt(usersCount / 4);
+            let users_for_Q32 = parseInt((usersCount - (UsersbyQ * 2)) / 2)
             let usersQ = {
-                Q1: parseInt(UsersbyQ),
-                Q2: parseInt(users_for_Q32),
-                Q3: parseInt(users_for_Q32),
-                Q4: parseInt(UsersbyQ),
+                Q1: UsersbyQ,
+                Q2: users_for_Q32,
+                Q3: users_for_Q32,
+                Q4: UsersbyQ,
             }
-            // let usersQ1 = parseInt(UsersbyQ);
-            // let usersQ2 = parseInt(users_for_Q32);
-            // let usersQ3 = parseInt(users_for_Q32);
-            // let usersQ4 = parseInt(UsersbyQ);
-
             let AllValues = []
             /**
              * Guardamos los valores en un array
