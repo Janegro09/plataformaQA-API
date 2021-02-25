@@ -174,7 +174,7 @@ module.exports = {
             return dataReturn;
         }      
     },
-    get_custom_variables_for_get_methods: ({ order = 'DESC', orderBy = 'createdAt', limit = 50, offset = 0 }) => {
+    get_custom_variables_for_get_methods: ({ order = 'DESC', orderBy = 'createdAt', limit = 10, offset = 0 }) => {
         let sort_return    = {};
         let skip_return    = 0;
         let limit_return   = 50;
@@ -183,7 +183,7 @@ module.exports = {
         skip_return         = parseInt(offset) || 0;
         limit_return        = parseInt(limit)  || 50;
 
-        if(limit_return > 300) {
+        if(limit_return > 200) {
             limit_return = 50;
         }
 

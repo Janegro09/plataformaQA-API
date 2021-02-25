@@ -401,6 +401,7 @@ class Partitures {
                 let u = await infobyPartitureSchema.find().where(wherePartiture);
 
                 for (let x = 0; x < u.length; x++) {
+                    if(!u[x].userId.match(/^[0-9a-fA-F]{24}$/)) continue;
                     let temp = await includes.users.schema.find({ _id: u[x].userId }).where({ userDelete: false });
                     if (temp.length === 0) continue;
                     let rowFromPartiture = "";
@@ -572,6 +573,9 @@ class Partitures {
                     endDate = endDate[0].expirationDate;
                 }
 
+                // Obtenemos los cuartiles del archivo
+
+
                 let tempData = {
                     id: partiture._id,
                     name: partiture.name,
@@ -581,6 +585,7 @@ class Partitures {
                     dates: {
                         createdAt: partiture.createdAt
                     },
+                    cuartiles: await Partitures.get_partiture_clusters(partiture._id),
                     grupoAssigned,
                     endDate,
                     users: users,
@@ -594,6 +599,24 @@ class Partitures {
             throw e
         }
 
+    }
+
+    /**
+     * Esta funcion busca en todos los usuarios que tiene asignado una partitura, cuales son los clusters y los devuelve en un array
+     * @param {String} partitureId 
+     */
+    static async get_partiture_clusters(partitureId) {
+        if(!partitureId) return [];
+        const data_return = [];
+
+        // Buscamos la informacion de partitura por usuario
+        const partiture_info_by_users = await infobyPartitureSchema.find({ partitureId });
+        for(const { cluster } of partiture_info_by_users) {
+            if(data_return.includes(cluster)) continue;
+            data_return.push(cluster);
+        }
+
+        return data_return;
     }
 
     static async getPartitureInfoByUser(userId) {
