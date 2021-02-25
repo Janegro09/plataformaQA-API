@@ -275,7 +275,9 @@ const PerfilamientoFile = {
                 }
             }
 
-            if(tempData.VMax !== 1 || tempData.VMin !== 0) {
+            const columnas_booleanas = ["Grupo_Anterior", "SUSTENTABLE", "CAPACITACION"]
+
+            if(!columnas_booleanas.includes(headers[x])) {
                 // solo divide los valores por usuarios en caso que los valores maximos y minimos no sean 0 y 1, 
                 // Si es 1 entendemos que estamos hablando de campos booleanos como sustentable o grupo_anterior
 
@@ -300,7 +302,6 @@ const PerfilamientoFile = {
                 tempData.DefaultValues.Q2.VMax = bloques * 2;
                 tempData.DefaultValues.Q3.VMax = bloques * 3;
             }
-
 
 
             /**
