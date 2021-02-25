@@ -14,7 +14,6 @@
 const includes = require('../../includes');
 
 // Schemas
-const helper = require('../helper');
 
 const programsModel = require('../../programs/models/programs');
 
@@ -165,6 +164,7 @@ const PerfilamientoFile = {
     async getFiles(req) {
         let returnData = [];
 
+        let [ sort, skip, limit ] = includes.helper.get_custom_variables_for_get_methods(req.query);
         const rolesQueVenTodosLosArchivos = ["ADMINISTRATOR", "LIDER ON SITE", "COORDINADOR", "COORDINADOR OC"];
 
         if(!req) throw new Error('Error en permisos');
@@ -187,13 +187,16 @@ const PerfilamientoFile = {
             }
             where._id = { $in: archivosPermitidos };
         }
-        
-        let c = await includes.files.getAllFiles(where)
-        // Buscamos los archivos
-        
-        let ordenado = c.sort((a,b) => b.updatedAt - a.updatedAt);
 
-        for(let x = 0; x < ordenado.length; x++){
+        const { q } = req.query;
+        if(q) {
+            where.name = { $regex: q, $options: 'i' }
+        }
+        
+        let c = await includes.files.getAllFiles(where, limit, skip);
+
+        // Buscamos los archivos
+        for(let x = 0; x < c.length; x++){
             // Consultamos el programa asignado
             let programa = await programsModel.getProgramtoPerfilamiento(c[x]._id);
             let tempData = {
@@ -246,24 +249,21 @@ const PerfilamientoFile = {
                     }
                 }
             }
-
+            
             let usersCount = rows.length;
-            let UsersbyQ = parseInt(usersCount / 4);
-            let users_for_Q32 = parseInt((usersCount - (UsersbyQ * 2)) / 2)
-            let usersQ = {
-                Q1: UsersbyQ,
-                Q2: users_for_Q32,
-                Q3: users_for_Q32,
-                Q4: UsersbyQ,
-            }
             let AllValues = []
+            let columnas_NaN = 0;
+
             /**
-             * Guardamos los valores en un array
+             * Guardamos los valores en un array y sumamos las columnas NaN para descontarlas de los usarios
              */
             for(let d = 0; d < usersCount; d++){
                 let value = rows[d][tempData.columnName];
                 value = parseFloat(value);
-                if(isNaN(value)) continue;
+                if(isNaN(value)) {
+                    columnas_NaN++;
+                    continue;
+                };
                 AllValues.push(value);
                 if(value > tempData.VMax){
                     tempData.VMax = value;
@@ -273,6 +273,16 @@ const PerfilamientoFile = {
                     tempData.VMin = value;
                     tempData.DefaultValues.Q1.VMin = value;
                 }
+            }
+
+            usersCount = usersCount - columnas_NaN; // Descontamos los que son NaN para que no cuatilice mal
+            let UsersbyQ = parseInt(usersCount / 4);
+            let users_for_Q32 = parseInt((usersCount - (UsersbyQ * 2)) / 2)
+            let usersQ = {
+                Q1: UsersbyQ,
+                Q2: users_for_Q32,
+                Q3: users_for_Q32,
+                Q4: UsersbyQ,
             }
 
             const columnas_booleanas = ["Grupo_Anterior", "SUSTENTABLE", "CAPACITACION"]
