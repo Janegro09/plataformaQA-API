@@ -55,6 +55,8 @@ const cuartilesGroups = {
                 crt.users = this.usersToCuartil(crt);
 
             }
+
+            const usersAssignedInThisGroup = [];
             
             // Asignamos los cuartiles a los grupos
             for(let c = 0; c < actual.cuartilAssign.length; c++){
@@ -74,9 +76,10 @@ const cuartilesGroups = {
                         tempData['Cant de agentes'].value++;
                         this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, tempData['Cluster'].value);
                         this.assignedUsers.push(users[l]) // Asignamos los usuarios al array
-                    }else if(assignAllUsers && userMatch){
+                    }else if(assignAllUsers && userMatch && !usersAssignedInThisGroup.includes(users[l])){
                         tempData['Cant de agentes'].value++;
                         this.assignGCtoUser(users[l], tempData['Nombre del grupo'].value, false);
+                        usersAssignedInThisGroup.push(users[l]);
                     }
                 }
 
