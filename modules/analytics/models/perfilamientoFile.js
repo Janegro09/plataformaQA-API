@@ -16,6 +16,7 @@ const includes = require('../../includes');
 // Schemas
 
 const programsModel = require('../../programs/models/programs');
+const { getMediana } = require('../controllers/perfilamiento');
 
 const PerfilamientoFile = {
     /**
@@ -209,6 +210,80 @@ const PerfilamientoFile = {
         }
 
         return returnData;
+    },
+    async getMediana(id,data){
+        if(!id) throw new Error('ID No especificado');
+
+        // Chequeamos si existe el archivo
+        let c = await includes.files.checkExist(id);
+        if(!c) throw new Error('Archivo inexistente');
+
+        // Vamos a verificar que se hayan enviado los parametros requeridos
+        const { QName, Q1, Q3, Q4 } = data
+        if(!QName || !Q1 || !Q3 || !Q4) throw new Error('Error en los parametros enviados');
+
+        c = await includes.XLSX.XLSXFile.getData(c);
+        if(c.length === 0) throw new Error('Archivo Vacio');
+        let headers = c[0].data.headers;
+        let rows    = c[0].data.rows;
+
+        // verificamos si existe la columna
+        const column_name = headers.find(element => element === QName);
+        if(!column_name) throw new Error("La columna enviada no existe");
+
+        rows = rows.sort((a,b) => a[column_name] - b[column_name]);
+
+        // Obtenemos si la columna tiene valores NaN
+        let valores_NaN = 0;
+        let users_total = rows.length;
+
+        for(const row of rows){
+            if(!isNaN(row[column_name])) continue;
+            valores_NaN++;
+        }
+
+        users_total -= valores_NaN;
+
+        let aux_return = {
+            QName: column_name,
+            Q1: {
+                VMin: Q1.VMin,
+                VMax: Q1.VMax
+            },
+            Q2: {
+                VMax: 0
+            },
+            Q3: {
+                VMax: Q3.VMax
+            },
+            Q4: {
+                VMax: Q4.VMax
+            }
+        }
+
+        let usuarios_restantes = 0;
+
+        for(const row of rows) {
+            const col = row[column_name];
+
+            if(col <= Q1.VMax || col > Q3.VMax) continue;
+            usuarios_restantes++;
+        }
+
+        const users_by_Q2 = parseInt(usuarios_restantes / 2);
+        let count_user = 0;
+
+        for(const row of rows) {
+            const col = row[column_name];
+
+            if(col <= Q1.VMax || col > Q3.VMax) continue;
+            
+            if(col > Q1.VMax && col < Q3.VMax && count_user <= users_by_Q2) {
+                aux_return.Q2.VMax = col;
+                count_user++
+            } else continue;
+        }
+        return aux_return;
     },
     async getColumns(id) {
         if(!id) throw new Error('ID No especificado')

@@ -119,6 +119,15 @@ const controller = {
             return includes.views.error.message(res, e.message);
         })
     },
+    async getMediana(req, res) {
+        if(!req.params.id) return includes.views.error.code(res, 'ERR_09');
+        PerfilamientoFile.getMediana(req.params.id, req.body).then(v => {
+            if(v.length === 0) return includes.views.error.message(res, "Sin columnas para perfilar");
+            else return includes.views.customResponse(res, true, 200, "", v)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
+    },
     async assignProgram(req, res) {
         if(!req.params.id || !req.body.program) return includes.views.error.code(res, 'ERR_09');
         programModel.assignProgramtoPerfilamiento(req.params.id, req.body.program).then(v => {

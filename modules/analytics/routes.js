@@ -26,6 +26,7 @@ const controllerPerfilamientosModels     = require('./controllers/perfilamientos
 // ------------------------------------------ PERFILAMIENTO ---------------------------------------------------------
 // Perfilamiento Routes
 router.get('/file/:id/columns', controllerPerfilamiento.getColumns);
+router.post('/file/:id/mediana', controllerPerfilamiento.getMediana);
 router.post('/file',includes.permit.checkPermit,controllerPerfilamiento.new);
 router.put('/file/:id',includes.permit.checkPermit, controllerPerfilamiento.assignProgram)
 router.get('/file', includes.permit.checkPermit, controllerPerfilamiento.get);
