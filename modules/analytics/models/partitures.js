@@ -352,6 +352,7 @@ class Partitures {
                         }
                     })
                 }
+                where.fileId={$in:archivosPermitidos}
             }
         }
 
@@ -385,9 +386,6 @@ class Partitures {
             }
 
         }
-
-
-
 
         try {
             // Traemos todas las partituras o la partitura especifica segun where
@@ -527,7 +525,7 @@ class Partitures {
 
                 }
             }
-
+            
             for (let i = 0; i < partitures.length; i++) {
                 let AccesoaArchivo = true;
                 let partiture = partitures[i]
@@ -553,13 +551,7 @@ class Partitures {
                         break;
                     }
                 }
-                for(let p of partiture.fileId){
-                    if(!archivosPermitidos.includes(p)) {
-                        AccesoaArchivo = false;
-                    }
-                }
-
-                if (!viewAllPartitures && !AccesoaArchivo) continue;
+                
                 let grupoAssigned = "";
 
                 for(let ga of partiture.perfilamientos) {
@@ -593,7 +585,6 @@ class Partitures {
                 }
                 ReturnData.push(tempData)
             }
-
             return ReturnData;
         } catch (e) {
             throw e
