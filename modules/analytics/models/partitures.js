@@ -356,6 +356,9 @@ class Partitures {
             }
         }
 
+        // Forzamos el order
+        req.query.order = 'ASC'; // Hacemos ascendente para traer los ultimos registros primero
+
         let [ sort, skip, limit ] = includes.helper.get_custom_variables_for_get_methods(req.query || {});
 
 
