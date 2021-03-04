@@ -60,6 +60,7 @@ class uploadFile {
         for(let x in this.file){
             file = this.file[x]
             typeFile = (file.mimetype.split('/'))
+            console.log(typeFile)
             // if(file.size > 31425728) return false; // Valida si el archivo es mayor a 3MB
             // Folder name
             switch(typeFile[1]) {
@@ -69,6 +70,12 @@ class uploadFile {
                     break;     
                 case "wave": 
                     typeFile[1] = 'wav'; // Cambiamos el archivo para que no sea .wave 
+                    break;
+                case 'octet-stream':
+                    typeFile[1] = 'msg';
+                    break;
+                case 'x-m4a':
+                    typeFile[1] = 'm4a';
                     break;
                 default:
                     break;       
