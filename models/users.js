@@ -388,11 +388,12 @@ class Users {
 
                         const division_palabra = q.trim().split(" ");
 
-                        division_palabra.map(palabra => where.$or.push({ lastName: { $regex: d, $options: 'i' } })); // Agregamos cada palabra dividida por el espacio como apellido
+                        division_palabra.map(palabra => where.$or.push({ lastName: { $regex: palabra, $options: 'i' } })); // Agregamos cada palabra dividida por el espacio como apellido
                     }
                 }
             }
         }
+
 
         const [ sort, skip, limit ] = helper.get_custom_variables_for_get_methods(req.query || {});
 
