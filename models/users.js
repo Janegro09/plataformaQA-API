@@ -381,6 +381,7 @@ class Users {
         
                         where.$or.push({ name: { $regex: q, $options: 'i' } });
                         where.$or.push({ id: { $regex: q, $options: 'i' } });
+                        where.$or.push({ legajo: { $regex: q, $options: 'i' } });
 
                         const division_palabra = q.trim().toLowerCase().split(" ");
 
