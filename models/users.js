@@ -386,11 +386,9 @@ class Users {
                         where.$or.push({ name: { $regex: q, $options: 'i' } });
                         where.$or.push({ id: { $regex: q, $options: 'i' } });
 
-                        const division_palabra = q.trim().toLowerCase().split(" ");
+                        const division_palabra = q.trim().split(" ");
 
-                        for(let d of division_palabra) {
-                            where.$or.push({ lastName: { $regex: d, $options: 'i' } });
-                        }
+                        division_palabra.map(palabra => where.$or.push({ lastName: { $regex: d, $options: 'i' } })); // Agregamos cada palabra dividida por el espacio como apellido
                     }
                 }
             }
