@@ -371,9 +371,13 @@ class Users {
             if(req.query) {
                 const search_params = req.query;
                 if(search_params.q !== undefined){
-                    const { q } = search_params;
+                    let { q } = search_params;
+                    q = q.toLowerCase(); // Transformamos el string para que siempre sea lower case
+
                     if(q.includes('@')) {
                         where.email = { $regex: q, $options: 'i' }
+                    } else if(q.indexOf('u') === 0) {
+                        where.legajo = q; // Agregamos la posibilidad de buscar por legajo, solo cuando se coloca la U en el punto 0
                     } else {
                         if(!where.$or){
                             where.$or = [];
@@ -381,7 +385,6 @@ class Users {
         
                         where.$or.push({ name: { $regex: q, $options: 'i' } });
                         where.$or.push({ id: { $regex: q, $options: 'i' } });
-                        where.$or.push({ legajo: { $regex: q, $options: 'i' } });
 
                         const division_palabra = q.trim().toLowerCase().split(" ");
 
