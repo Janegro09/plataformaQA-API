@@ -188,7 +188,8 @@ const controller = {
                     case 'IPCONEX':
                         companies = ["ACTIVO"]
                         break;
-                    case 'CENTRO INTERACCION MULTIMEDIA S.A.':
+                    case 'CENTRO INTERACCION MULTIMEDIA S.A.':  
+                    case 'APEX CHACO S.A.':
                         companies =["APEX"]
                         break;
                     default:
