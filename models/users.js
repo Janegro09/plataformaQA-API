@@ -393,8 +393,6 @@ class Users {
                 }
             }
         }
-
-
         const [ sort, skip, limit ] = helper.get_custom_variables_for_get_methods(req.query || {});
 
         where.userDelete = false;
