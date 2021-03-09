@@ -288,17 +288,24 @@ const PerfilamientoFile = {
     async getColumns(id) {
         if(!id) throw new Error('ID No especificado')
 
-        // Chequeamos si existe el archivo
-        let c = await includes.files.checkExist(id);
-        if(!c) throw new Error('Archivo inexistente');
-
-        c = await includes.XLSX.XLSXFile.getData(c);
-        if(c.length === 0) throw new Error('Archivo Vacio');
-        let headers = c[0].data.headers;
-        let rows    = c[0].data.rows;
+        let headers = [];
+        let rows = [];
+        if(typeof id === 'string') {
+            // Chequeamos si existe el archivo
+            let c = await includes.files.checkExist(id);
+            if(!c) throw new Error('Archivo inexistente');
+    
+            c = await includes.XLSX.XLSXFile.getData(c);
+            if(c.length === 0) throw new Error('Archivo Vacio');
+            headers = c[0].data.headers;
+            rows    = c[0].data.rows;
+        } else {
+            // Significa que se esta enviando un objeto por parametro para realizar un test automatizado
+            headers = id.headers;
+            rows    = id.rows;
+        }
 
         let columnsHide = ["id", "DNI", "LEGAJO", "APELLIDO Y NOMBRE", "SUPERVISOR", "RESPONSABLE", "GERENTE TERCERO", "GERENTE2", "CANAL", "CANALIDAD", "PROVEEDOR", "FECHA INGRESO", "MES", "INFORME", "GRUPO PA", "ENTIDAD", "PERFILAMIENTO_MES_ANTERIOR", "PERFILAMIENTO_MES_ACTUAL", "DETALLE_PA"]
-
         let returnData = []
         // sacamos las colummas que no mostraremos
         for(let x = 0; x < headers.length; x++){
@@ -324,10 +331,12 @@ const PerfilamientoFile = {
                     }
                 }
             }
+
             
             let usersCount = rows.length;
             let AllValues = []
             let columnas_NaN = 0;
+            let columnas_repetidas = 0;
 
             /**
              * Guardamos los valores en un array y sumamos las columnas NaN para descontarlas de los usarios
@@ -337,6 +346,11 @@ const PerfilamientoFile = {
                 value = parseFloat(value);
                 if(isNaN(value)) {
                     columnas_NaN++;
+                    continue;
+                };
+
+                if(AllValues.includes(value)) {
+                    columnas_repetidas++;
                     continue;
                 };
                 AllValues.push(value);
@@ -350,8 +364,8 @@ const PerfilamientoFile = {
                 }
             }
 
-            usersCount = usersCount - columnas_NaN; // Descontamos los que son NaN para que no cuatilice mal
-            let UsersbyQ = parseInt(usersCount / 4);
+            usersCount = usersCount - columnas_NaN - columnas_repetidas; // Descontamos los que son NaN para que no cuatilice mal
+            let UsersbyQ = usersCount === 2 ? 1 : parseInt(usersCount / 4);
             let users_for_Q32 = parseInt((usersCount - (UsersbyQ * 2)) / 2)
             let usersQ = {
                 Q1: UsersbyQ,
@@ -409,11 +423,15 @@ const PerfilamientoFile = {
             tempData.DefaultValues.Q4.VMax = tempData.VMax;
             tempData.DefaultValues.Q1.VMin = tempData.VMin;
 
-            // if(tempData.VMin >= tempData.VMax) continue;
+            // Si Q2 y Q3 son 0 y Q4 y Q1 son != entonces debemos colocar el maximo
+            if(tempData.DefaultValues.Q3.VMax === 0 && tempData.DefaultValues.Q2.VMax === 0 && tempData.DefaultValues.Q4.VMax > tempData.DefaultValues.Q1.VMax){
+                tempData.DefaultValues.Q3.VMax = tempData.DefaultValues.Q4.VMax;
+                tempData.DefaultValues.Q2.VMax = tempData.DefaultValues.Q4.VMax;
+            }
 
+            // if(tempData.VMin >= tempData.VMax) continue;
             returnData.push(tempData)
         }
-
         return returnData;
     },
     async getUserInfo(fileId) {
