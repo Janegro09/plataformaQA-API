@@ -25,12 +25,13 @@ const controllerPerfilamientosModels     = require('./controllers/perfilamientos
 
 // ------------------------------------------ PERFILAMIENTO ---------------------------------------------------------
 // Perfilamiento Routes
-router.get('/file/:id/columns', controllerPerfilamiento.getColumns);
-router.post('/file/:id/mediana', controllerPerfilamiento.getMediana);
-router.post('/file',includes.permit.checkPermit,controllerPerfilamiento.new);
-router.put('/file/:id',includes.permit.checkPermit, controllerPerfilamiento.assignProgram)
 router.get('/file', includes.permit.checkPermit, controllerPerfilamiento.get);
+router.get('/file/:id/columns', controllerPerfilamiento.getColumns);
 router.get('/file/:id/download', controllerPerfilamiento.download);
+router.get('/file/:id/online/:column', controllerPerfilamiento.getOnline);
+router.post('/file',includes.permit.checkPermit,controllerPerfilamiento.new);
+router.post('/file/:id/mediana', controllerPerfilamiento.getMediana);
+router.put('/file/:id',includes.permit.checkPermit, controllerPerfilamiento.assignProgram)
 router.delete('/file/:id', includes.permit.checkPermit, controllerPerfilamiento.delete);
 
 // Cuartiles routes

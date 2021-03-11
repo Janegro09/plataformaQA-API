@@ -16,7 +16,7 @@ const includes = require('../../includes');
 // Schemas
 
 const programsModel = require('../../programs/models/programs');
-const { getMediana } = require('../controllers/perfilamiento');
+const { getMediana, getOnline } = require('../controllers/perfilamiento');
 
 const PerfilamientoFile = {
     /**
@@ -285,6 +285,28 @@ const PerfilamientoFile = {
         }
         return aux_return;
     },
+
+    async getOnline(id,column){
+        if(!id) throw new Error('ID No especificado');
+
+        // Chequeamos si existe el archivo
+        let c = await includes.files.checkExist(id);
+        if(!c) throw new Error('Archivo inexistente');
+        
+        c = await includes.XLSX.XLSXFile.getData(c);
+        if(c.length === 0) throw new Error('Archivo Vacio');
+        let headers = c[0].data.headers;
+        let rows    = c[0].data.rows;
+
+        // verificamos si existe la columna
+        const column_name = headers.find(element => element === column);
+        if(!column_name) throw new Error("La columna enviada no existe");
+
+        rows = rows.sort((a,b) => a[column_name] - b[column_name]);
+
+        return rows;
+    },
+
     async getColumns(id) {
         if(!id) throw new Error('ID No especificado')
 

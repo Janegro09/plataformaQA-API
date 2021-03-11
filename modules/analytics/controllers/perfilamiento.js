@@ -128,6 +128,16 @@ const controller = {
             return includes.views.error.message(res, e.message);
         })
     },
+    async getOnline(req, res) {
+        /*req.params.column el segundo parametro que recibe Online*/
+        if(!req.params.id || !req.params.column) return includes.views.error.code(res, 'ERR_09');
+        PerfilamientoFile.getOnline(req.params.id, req.params.column).then(v => {
+            if(v.length === 0) return includes.views.error.message(res, "No existe existe la columna indicada");
+            else return includes.views.customResponse(res, true, 200, "", v)
+        }).catch(e => {
+            return includes.views.error.message(res, e.message);
+        })
+    },
     async assignProgram(req, res) {
         if(!req.params.id || !req.body.program) return includes.views.error.code(res, 'ERR_09');
         programModel.assignProgramtoPerfilamiento(req.params.id, req.body.program).then(v => {
