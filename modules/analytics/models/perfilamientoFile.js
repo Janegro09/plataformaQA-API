@@ -302,7 +302,7 @@ const PerfilamientoFile = {
         const column_name = headers.find(element => element === column);
         if(!column_name) throw new Error("La columna enviada no existe");
 
-        rows = rows.sort((a,b) => a[column_name] - b[column_name]);
+        rows = rows.map(e => e[column_name]).sort((a,b) => a - b);
 
         return rows;
     },
