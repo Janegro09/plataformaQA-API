@@ -130,8 +130,11 @@ const controller = {
     },
     async getOnline(req, res) {
         /*req.params.column el segundo parametro que recibe Online*/
-        if(!req.params.id || !req.params.column) return includes.views.error.code(res, 'ERR_09');
-        PerfilamientoFile.getOnline(req.params.id, req.params.column).then(v => {
+        if(!req.params.id) return includes.views.error.code(res, 'ERR_09');
+
+        const { columnName } = req.body
+
+        PerfilamientoFile.getOnline(req.params.id, columnName).then(v => {
             if(v.length === 0) return includes.views.error.message(res, "No existe existe la columna indicada");
             else return includes.views.customResponse(res, true, 200, "", v)
         }).catch(e => {

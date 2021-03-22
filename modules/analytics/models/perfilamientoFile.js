@@ -287,7 +287,7 @@ const PerfilamientoFile = {
     },
 
     async getOnline(id,column){
-        if(!id) throw new Error('ID No especificado');
+        if(!id || !column) throw new Error('ID No especificado');
 
         // Chequeamos si existe el archivo
         let c = await includes.files.checkExist(id);
