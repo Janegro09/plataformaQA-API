@@ -316,6 +316,7 @@ class Partitures {
                 viewcoachingComments                = false;
                 break;
             case 'LIDER':
+            case 'SUPERVISOR AUXILIAR':
                 viewresponsibleComments             = true;
                 viewmanagerComments                 = false;
                 viewcoordinatorOnSiteComments       = false;
