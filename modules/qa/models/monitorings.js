@@ -233,13 +233,17 @@ class Monitoring {
         } else {
             monsViews = ["all"];
         }
-
+        
         if(monsViews.length === 0) throw new Error('No existe ningun monitoreo');
-        if(monsViews[0] !== 'all') {
+
+        if(monsViews[0] !== 'all' && !where.programId) {
             where.programId = { $in: monsViews };
+        } else if(monsViews[0] !== 'all'){
+            const programasBuscados = where.programId.$in;
+            const programasFiltrados = monsViews.filter( e => programasBuscados.includes(e.toString()))
+            where.programId.$in=programasFiltrados;
         }
         
-        console.log(where);
 
         let query = await monSchema.find(where).skip(skip).limit(limit).sort({ transactionDate: -1 });
         
