@@ -358,7 +358,6 @@ const PerfilamientoFile = {
             let usersCount = rows.length;
             let AllValues = []
             let columnas_NaN = 0;
-            let columnas_repetidas = 0;
 
             /**
              * Guardamos los valores en un array y sumamos las columnas NaN para descontarlas de los usarios
@@ -371,10 +370,6 @@ const PerfilamientoFile = {
                     continue;
                 };
 
-                if(AllValues.includes(value)) {
-                    columnas_repetidas++;
-                    continue;
-                };
                 AllValues.push(value);
                 if(value > tempData.VMax){
                     tempData.VMax = value;
@@ -386,7 +381,7 @@ const PerfilamientoFile = {
                 }
             }
 
-            usersCount = usersCount - columnas_NaN - columnas_repetidas; // Descontamos los que son NaN para que no cuatilice mal
+            usersCount = usersCount - columnas_NaN // Descontamos los que son NaN para que no cuatilice mal
             let UsersbyQ = usersCount === 2 ? 1 : parseInt(usersCount / 4);
             let users_for_Q32 = parseInt((usersCount - (UsersbyQ * 2)) / 2)
             let usersQ = {
@@ -407,13 +402,53 @@ const PerfilamientoFile = {
 
                 let value;
                 let current_row = 0;
+                let valoresAgregadosPorCuartil ={
+                    Q1:0,
+                    Q2:0,
+                    Q3:0,
+                    Q4:0
+                };
+                const MAXIMAVARIACION=3;
+
                 for(let Q in usersQ) {
-                    for(let i = 0; i < usersQ[Q]; i++) {
-                        value = AllValues[current_row]
+                    let i = 0;
+                    while( i < usersQ[Q]) {
+                        value = AllValues[current_row];
+                        let valorRepetido=AllValues.filter(e=>e==value)
+                        valorRepetido=valorRepetido.length;
+                        
+                        if(valoresAgregadosPorCuartil[Q]+valorRepetido>usersQ[Q]){
+                            let diferenciaProxima = valoresAgregadosPorCuartil[Q]+valorRepetido -usersQ[Q];
+                            if(diferenciaProxima>MAXIMAVARIACION){
+                                break;
+                            } else {
+                                
+                                switch (Q) {
+                                    case "Q1":
+                                        let mitadDiferencia=(diferenciaProxima > 1) ? parseInt(diferenciaProxima/2): diferenciaProxima;
+
+                                        usersQ.Q2-=mitadDiferencia;
+                                        usersQ.Q3-=(diferenciaProxima-mitadDiferencia);
+                                        break;
+                                    case "Q2":
+                                        usersQ.Q3-=diferenciaProxima                           
+                                        break;
+                                    case "Q3":
+                                        usersQ.Q4-=diferenciaProxima                
+                                        break;
+                                
+                                    default:
+                                        break;
+                                }
+                            }
+                        }
+                        
                         if(value >= tempData.DefaultValues[Q].VMax) {
                             tempData.DefaultValues[Q].VMax = value;
+                            valoresAgregadosPorCuartil[Q]+=valorRepetido;
                         }
-                        current_row++;
+                        current_row+=valorRepetido;
+                        i+=valorRepetido;
                     }
                 }
             } else {
