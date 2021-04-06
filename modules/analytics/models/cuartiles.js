@@ -78,11 +78,6 @@ const Cuartiles = {
             tempData.Q3.VMax = parseFloat(cuartilActual.Q2 && cuartilActual.Q2.VMax ? cuartilActual.Q3.VMax : tempData.Q3.VMin + bloques);
             tempData.Q4.VMin = parseFloat(tempData.Q3.VMax);
 
-            if(tempData.name=='SALIENTES'){
-                console.log(tempData)
-                console.log(cuartilActual)
-            }
-
             this.cuartiles.push(tempData)
         }  
 
