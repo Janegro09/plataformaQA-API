@@ -244,7 +244,6 @@ class Monitoring {
             where.programId.$in=programasFiltrados;
         }
         
-
         let query = await monSchema.find(where).skip(skip).limit(limit).sort({ transactionDate: -1 });
         
         let monitoring_total_count = await monSchema.find(where).count();
@@ -291,7 +290,6 @@ class Monitoring {
 
             returnData.push(td);
         }
-
         return returnData;
     }
 
@@ -308,12 +306,10 @@ class Monitoring {
                     responses: []
                 }
 
-
                 if(rsp) {
                     customSections[c].customFields[j].responses = rsp.responses;
                 }
             }
-
         }
         return customSections;
     }
