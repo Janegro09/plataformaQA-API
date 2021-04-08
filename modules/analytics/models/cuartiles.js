@@ -316,9 +316,9 @@ const Cuartiles = {
                                 temp = q;	
                             } else if(q == 'Q2' && value.value > cuartil[q].VMin && value.value <= cuartil[q].VMax){
                                 temp = q;
-                            } else if(q == 'Q3' && value.value > cuartil[q].VMin && value.value <= cuartil[q].VMax) {
+                            } else if(q == 'Q3' && value.value > cuartil[q].VMin && value.value < cuartil[q].VMax) {
                                 temp = q;
-                            } else if(q == 'Q4' && value.value > cuartil[q].VMin && value.value <= cuartil[q].VMax){
+                            } else if(q == 'Q4' && value.value >= cuartil[q].VMin && value.value <= cuartil[q].VMax){
                                 temp = q;
                             } else { continue; } 
                             if(temp){
