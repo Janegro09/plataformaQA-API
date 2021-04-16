@@ -476,7 +476,6 @@ const PerfilamientoFile = {
                 
             }
 
-
             tempData.DefaultValues.Q4.VMax = tempData.VMax;
             tempData.DefaultValues.Q1.VMin = tempData.VMin;
 

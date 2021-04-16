@@ -289,6 +289,7 @@ class Partitures {
             case 'ADMINISTRATOR':
             case 'SUPERVISOR':
             case 'COORDINADOR':
+            case 'LIDER ON SITE':
                 viewresponsibleComments             = true;
                 viewmanagerComments                 = true;
                 viewcoordinatorOnSiteComments       = true;
@@ -307,6 +308,7 @@ class Partitures {
                 viewcoachingComments                = false;
                 break;
             case 'RESPONSABLE':
+            case 'SUPERVISOR':
                 viewresponsibleComments             = true;
                 viewmanagerComments                 = true;
                 viewcoordinatorOnSiteComments       = false;
@@ -322,15 +324,6 @@ class Partitures {
                 viewcoordinatorOnSiteComments       = false;
                 viewcoordinatorComments             = false;
                 viewcoordinatorOCComments           = false;
-                viewaccountAdministratorComments    = false;
-                viewcoachingComments                = false;
-                break;
-            case 'LIDER ON SITE':
-                viewresponsibleComments             = true;
-                viewmanagerComments                 = true;
-                viewcoordinatorOnSiteComments       = true;
-                viewcoordinatorComments             = true;
-                viewcoordinatorOCComments           = true;
                 viewaccountAdministratorComments    = false;
                 viewcoachingComments                = false;
                 break;
